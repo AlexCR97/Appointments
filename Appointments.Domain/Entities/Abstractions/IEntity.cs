@@ -2,11 +2,11 @@
 
 public interface IEntity
 {
-    public Guid Id { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public string? CreatedBy { get; set; }
-    public DateTime? UpdatedAt { get; set; }
-    public string? UpdatedBy { get; set; }
-    public DateTime? DeletedAt { get; set; }
-    public string? DeletedBy { get; set; }
+    public Guid Id { get; }
+    public DateTime CreatedAt { get; }
+    public string? CreatedBy { get; }
+    public DateTime? UpdatedAt { get; }
+    public string? UpdatedBy { get; }
+    public DateTime? DeletedAt { get; }
+    public string? DeletedBy { get; }
 }
