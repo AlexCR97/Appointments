@@ -72,6 +72,11 @@ public class User : Entity
             profileImage));
     }
 
+    public void SetSelectedTenant(Tenant tenant, string? updatedBy)
+    {
+        SetExtension("SelectedTenant", tenant.Id.ToString(), updatedBy);
+    }
+
     public void Delete(string? deletedBy)
     {
         DeletedAt = DateTime.UtcNow;

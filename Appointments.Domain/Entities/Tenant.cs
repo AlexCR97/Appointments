@@ -4,6 +4,8 @@ namespace Appointments.Domain.Entities;
 
 public class Tenant : Entity
 {
+    public const int UrlIdLength = 8;
+
     public string Name { get; private set; }
     public string? Slogan { get; private set; }
     public string UrlId { get; private set; }
