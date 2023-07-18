@@ -1,4 +1,6 @@
 ﻿using Appointments.Domain.Entities.Abstractions;
+using Appointments.Domain.Events.Abstractions;
+using Appointments.Domain.Events.Entities;
 using System.Text.Json;
 
 namespace Appointments.Domain.Entities;
@@ -12,26 +14,87 @@ public class Entity : IEntity
     public string? UpdatedBy { get; protected set; }
     public DateTime? DeletedAt { get; protected set; }
     public string? DeletedBy { get; protected set; }
-    public List<string> Tags { get; protected set; } = new();
-    public Dictionary<string, string?> Extensions { get; protected set; } = new();
 
     #region Tags
 
-    public void AddTag(string tag)
-        => Tags.Add(tag);
+    private readonly List<string> _tags = new();
+    public IReadOnlyList<string> Tags => _tags;
 
-    public void RemoveTag(string tag)
-        => Tags.Remove(tag);
+    public void AddTag(string tag, string? updatedBy)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+
+        _tags.Add(tag);
+
+        AddEvent(new TagAddedEvent(
+            Id,
+            UpdatedAt.Value,
+            updatedBy,
+            tag));
+    }
+
+    public void RemoveTag(string tag, string? updatedBy)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+        
+        _tags.Remove(tag);
+
+        AddEvent(new TagRemovedEvent(
+            Id,
+            UpdatedAt.Value,
+            updatedBy,
+            tag));
+    }
 
     #endregion
 
     #region Extensions
 
-    public void AddExtension(string key, string? value)
-        => Extensions.Add(key, value);
+    public Dictionary<string, string?> _extensions = new();
+    public IReadOnlyDictionary<string, string?> Extensions => _extensions;
 
-    public void RemoveExtension(string key)
-        => Extensions.Remove(key);
+    public void SetExtension(string key, string? value, string? updatedBy)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+
+        _extensions[key] = value;
+
+        AddEvent(new ExtensionSetEvent(
+            Id,
+            UpdatedAt.Value,
+            updatedBy,
+            key,
+            value));
+    }
+
+    public void RemoveExtension(string key, string? updatedBy)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+
+        _extensions.Remove(key);
+
+        AddEvent(new ExtensionRemovedEvent(
+            Id,
+            UpdatedAt.Value,
+            updatedBy,
+            key));
+    }
+
+    #endregion
+
+    #region Events
+
+    private readonly List<IEvent> _events = new();
+    public IReadOnlyList<IEvent> Events => _events;
+
+    public bool HasChanged => _events.Count > 0;
+
+    protected void AddEvent(IEvent @event)
+        => _events.Add(@event);
 
     #endregion
 
