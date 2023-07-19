@@ -2,7 +2,14 @@
 
 public class DateRange
 {
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public bool Disabled { get; set; }
+    public DateTime StartDate { get; }
+    public DateTime EndDate { get; }
+    public bool Disabled { get; }
+
+    public DateRange(DateTime startDate, DateTime endDate, bool disabled)
+    {
+        StartDate = startDate;
+        EndDate = endDate;
+        Disabled = disabled;
+    }
 }

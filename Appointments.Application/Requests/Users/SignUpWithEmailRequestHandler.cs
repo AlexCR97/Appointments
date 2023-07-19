@@ -92,4 +92,13 @@ internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRe
             await _eventProcessor.ProcessAsync(user.Events);
         }
     }
+
+    private async Task CreateBranchOfficeAsync(User user, Tenant tenant)
+    {
+        var branchOffice = BranchOffice.CreateSlim(
+            user.Email,
+            tenant.Id);
+
+        // TODO Implement
+    }
 }
