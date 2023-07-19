@@ -2,7 +2,7 @@
 
 namespace Appointments.Application.Requests.Users;
 
-internal class SignUpWithEmailRequest : IRequest
+public class SignUpWithEmailRequest : IRequest<Guid>
 {
     public string TenantName { get; }
     public string FirstName { get; }

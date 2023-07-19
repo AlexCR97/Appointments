@@ -1,5 +1,7 @@
 ﻿using Appointments.Application.Exceptions;
 using Appointments.Application.Extensions.Normalization;
+using Appointments.Application.Repositories.BranchOffices;
+using Appointments.Application.Repositories.Services;
 using Appointments.Application.Repositories.Tenants;
 using Appointments.Application.Repositories.Users;
 using Appointments.Application.Services.Events;
@@ -10,26 +12,33 @@ using PasswordGenerator;
 
 namespace Appointments.Application.Requests.Users;
 
-internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRequest>
+internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRequest, Guid>
 {
+    private readonly IBranchOfficeRepository _branchOfficeRepository;
     private readonly IEventProcessor _eventProcessor;
+    private readonly IServiceRepository _serviceRepository;
     private readonly ITenantRepository _tenantRepository;
     private readonly IUserPasswordManager _userPasswordManager;
     private readonly IUserRepository _userRepository;
 
-    public SignUpWithEmailRequestHandler(IEventProcessor eventProcessor, ITenantRepository tenantRepository, IUserPasswordManager userPasswordManager, IUserRepository userRepository)
+    public SignUpWithEmailRequestHandler(IBranchOfficeRepository branchOfficeRepository, IEventProcessor eventProcessor, IServiceRepository serviceRepository, ITenantRepository tenantRepository, IUserPasswordManager userPasswordManager, IUserRepository userRepository)
     {
+        _branchOfficeRepository = branchOfficeRepository;
         _eventProcessor = eventProcessor;
+        _serviceRepository = serviceRepository;
         _tenantRepository = tenantRepository;
         _userPasswordManager = userPasswordManager;
         _userRepository = userRepository;
     }
 
-    public async Task Handle(SignUpWithEmailRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(SignUpWithEmailRequest request, CancellationToken cancellationToken)
     {
         var createdUser = await CreateUserAsync(request);
         var createdTenant = await CreateTenantAsync(request, createdUser);
         await SetSelectedTenantAsync(createdUser, createdTenant);
+        await CreateBranchOfficeAsync(createdUser, createdTenant);
+        await CreateServiceAsync(createdUser, createdTenant);
+        return createdUser.Id;
     }
 
     private async Task<User> CreateUserAsync(SignUpWithEmailRequest request)
@@ -99,6 +108,23 @@ internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRe
             user.Email,
             tenant.Id);
 
-        // TODO Implement
+        if (branchOffice.HasChanged)
+        {
+            await _branchOfficeRepository.CreateAsync(branchOffice);
+            await _eventProcessor.ProcessAsync(branchOffice.Events);
+        }
+    }
+
+    private async Task CreateServiceAsync(User user, Tenant tenant)
+    {
+        var service = Service.CreateSlim(
+            user.Email,
+            tenant.Id);
+
+        if (service.HasChanged)
+        {
+            await _serviceRepository.CreateAsync(service);
+            await _eventProcessor.ProcessAsync(service.Events);
+        }
     }
 }
