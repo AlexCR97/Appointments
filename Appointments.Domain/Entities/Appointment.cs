@@ -36,4 +36,8 @@ public class Appointment : Entity
     public AppointmentCustomer Customer { get; set; }
 
     public string? Notes { get; set; }
+
+    public Appointment(Guid id, DateTime createdAt, string? createdBy, DateTime? updatedAt, string? updatedBy, DateTime? deletedAt, string? deletedBy, List<string> tags, Dictionary<string, string?> extensions) : base(id, createdAt, createdBy, updatedAt, updatedBy, deletedAt, deletedBy, tags, extensions)
+    {
+    }
 }

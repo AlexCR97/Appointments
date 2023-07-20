@@ -15,9 +15,31 @@ public class Entity : IEntity
     public DateTime? DeletedAt { get; protected set; }
     public string? DeletedBy { get; protected set; }
 
+    public Entity(
+        Guid id,
+        DateTime createdAt,
+        string? createdBy,
+        DateTime? updatedAt,
+        string? updatedBy,
+        DateTime? deletedAt,
+        string? deletedBy,
+        List<string> tags,
+        Dictionary<string, string?> extensions)
+    {
+        Id = id;
+        CreatedAt = createdAt;
+        CreatedBy = createdBy;
+        UpdatedAt = updatedAt;
+        UpdatedBy = updatedBy;
+        DeletedAt = deletedAt;
+        DeletedBy = deletedBy;
+        _tags = tags;
+        _extensions = extensions;
+    }
+
     #region Tags
 
-    private readonly List<string> _tags = new();
+    private readonly List<string> _tags;
     public IReadOnlyList<string> Tags => _tags;
 
     public void AddTag(string tag, string? updatedBy)
@@ -52,7 +74,7 @@ public class Entity : IEntity
 
     #region Extensions
 
-    public Dictionary<string, string?> _extensions = new();
+    public Dictionary<string, string?> _extensions;
     public IReadOnlyDictionary<string, string?> Extensions => _extensions;
 
     public void SetExtension(string key, string? value, string? updatedBy)

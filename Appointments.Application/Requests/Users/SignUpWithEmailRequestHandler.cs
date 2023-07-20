@@ -68,19 +68,15 @@ internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRe
 
     private async Task<Tenant> CreateTenantAsync(SignUpWithEmailRequest request, User user)
     {
-        var tenant = new Tenant(
+        var tenant = Tenant.CreateMinimal(
             user.Email,
             request.TenantName,
-            null,
             new Password()
                 .LengthRequired(Tenant.UrlIdLength)
                 .IncludeUppercase()
                 .IncludeLowercase()
                 .IncludeNumeric()
-                .Next(),
-            null,
-            null,
-            null);
+                .Next());
 
         if (tenant.HasChanged)
         {
@@ -104,7 +100,7 @@ internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRe
 
     private async Task CreateBranchOfficeAsync(User user, Tenant tenant)
     {
-        var branchOffice = BranchOffice.CreateSlim(
+        var branchOffice = BranchOffice.CreateMinimal(
             user.Email,
             tenant.Id);
 
@@ -117,7 +113,7 @@ internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRe
 
     private async Task CreateServiceAsync(User user, Tenant tenant)
     {
-        var service = Service.CreateSlim(
+        var service = Service.CreateMinimal(
             user.Email,
             tenant.Id);
 

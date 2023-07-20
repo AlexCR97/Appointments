@@ -1,13 +1,14 @@
 ﻿using Appointments.Domain.Events.Abstractions;
 
-namespace Appointments.Domain.Entities;
+namespace Appointments.Domain.Events.Services;
 
-public class SlimServiceCreatedEvent : IEvent
+public class MinimalServiceCreatedEvent : IEvent
 {
     public Guid Id { get; }
     public string? CreatedBy { get; }
     public Guid TenantId { get; }
-    public SlimServiceCreatedEvent(Guid id, string? createdBy, Guid tenantId)
+
+    public MinimalServiceCreatedEvent(Guid id, string? createdBy, Guid tenantId)
     {
         Id = id;
         CreatedBy = createdBy;

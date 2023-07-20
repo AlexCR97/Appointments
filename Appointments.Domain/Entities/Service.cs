@@ -1,4 +1,6 @@
-﻿namespace Appointments.Domain.Entities;
+﻿using Appointments.Domain.Events.Services;
+
+namespace Appointments.Domain.Entities;
 
 public class Service : Entity
 {
@@ -21,8 +23,17 @@ public class Service : Entity
     public List<IndexedImage> Images { get; private set; }
     public List<string> TermsAndConditions { get; private set; }
 
-    private Service(
+    public Service(
+        Guid id,
+        DateTime createdAt,
         string? createdBy,
+        DateTime? updatedAt,
+        string? updatedBy,
+        DateTime? deletedAt,
+        string? deletedBy,
+        List<string> tags,
+        Dictionary<string, string?> extensions,
+
         Guid tenantId,
         string name,
         decimal price,
@@ -32,11 +43,17 @@ public class Service : Entity
         TimeSpan? calendarDuration,
         List<IndexedImage> images,
         List<string> termsAndConditions)
+    : base(
+        id,
+        createdAt,
+        createdBy,
+        updatedAt,
+        updatedBy,
+        deletedAt,
+        deletedBy,
+        tags,
+        extensions)
     {
-        Id = Guid.NewGuid();
-        CreatedAt = DateTime.UtcNow;
-        CreatedBy = createdBy;
-
         TenantId = tenantId;
         Name = name;
         Price = price;
@@ -48,12 +65,21 @@ public class Service : Entity
         TermsAndConditions = termsAndConditions;
     }
 
-    public static Service CreateSlim(
+    public static Service CreateMinimal(
         string? createdBy,
         Guid tenantId)
     {
         var service = new Service(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
             createdBy,
+            null,
+            null,
+            null,
+            null,
+            new List<string>(),
+            new Dictionary<string, string?>(),
+
             tenantId,
             string.Empty,
             0,
@@ -64,7 +90,7 @@ public class Service : Entity
             new List<IndexedImage>(),
             new List<string>());
 
-        service.AddEvent(new SlimServiceCreatedEvent(
+        service.AddEvent(new MinimalServiceCreatedEvent(
             service.Id,
             createdBy,
             tenantId));

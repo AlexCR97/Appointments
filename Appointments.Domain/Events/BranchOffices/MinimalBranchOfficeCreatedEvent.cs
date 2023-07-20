@@ -1,7 +1,8 @@
-﻿using Appointments.Domain.Events.Abstractions;
+﻿using Appointments.Domain.Entities;
+using Appointments.Domain.Events.Abstractions;
 
-namespace Appointments.Domain.Entities;
-internal class SlimBranchOfficeCreatedEvent : IEvent
+namespace Appointments.Domain.Events.BranchOffices;
+internal class MinimalBranchOfficeCreatedEvent : IEvent
 {
     public Guid Id { get; }
     public DateTime CreatedAt { get; }
@@ -10,7 +11,7 @@ internal class SlimBranchOfficeCreatedEvent : IEvent
     public Location Empty { get; }
     public WeeklySchedule NineToFive { get; }
 
-    public SlimBranchOfficeCreatedEvent(Guid id, DateTime createdAt, string? createdBy, Guid tenantId, Location empty, WeeklySchedule nineToFive)
+    public MinimalBranchOfficeCreatedEvent(Guid id, DateTime createdAt, string? createdBy, Guid tenantId, Location empty, WeeklySchedule nineToFive)
     {
         Id = id;
         CreatedAt = createdAt;

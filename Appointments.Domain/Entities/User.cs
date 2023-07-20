@@ -4,14 +4,48 @@ namespace Appointments.Domain.Entities;
 
 public class User : Entity
 {
-    public string Email { get; private set; } = null!;
-    public string Password { get; private set; } = null!;
+    public string Email { get; private set; }
+    public string Password { get; private set; }
     public bool IsPasswordPlainText { get; private set; }
     public string? FirstName { get; private set; }
     public string? LastName { get; private set; }
     public string? ProfileImage { get; private set; }
 
-    private User() { }
+    public User(
+        Guid id,
+        DateTime createdAt,
+        string? createdBy,
+        DateTime? updatedAt,
+        string? updatedBy,
+        DateTime? deletedAt,
+        string? deletedBy,
+        List<string> tags,
+        Dictionary<string, string?> extensions,
+        
+        string email,
+        string password,
+        bool isPasswordPlainText,
+        string? firstName,
+        string? lastName,
+        string? profileImage)
+    : base(
+        id,
+        createdAt,
+        createdBy,
+        updatedAt,
+        updatedBy,
+        deletedAt,
+        deletedBy,
+        tags,
+        extensions)
+    {
+        Email = email;
+        Password = password;
+        IsPasswordPlainText = isPasswordPlainText;
+        FirstName = firstName;
+        LastName = lastName;
+        ProfileImage = profileImage;
+    }
 
     public static User CreateWithEmailCredentials(
         string? createdBy,
@@ -22,19 +56,23 @@ public class User : Entity
         string? lastName,
         string? profileImage)
     {
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            CreatedBy = createdBy,
+        var user = new User(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
+            createdBy,
+            null,
+            null,
+            null,
+            null,
+            new List<string>(),
+            new Dictionary<string, string?>(),
 
-            Email = email,
-            Password = password,
-            IsPasswordPlainText = isPasswordPlainText,
-            FirstName = firstName,
-            LastName = lastName,
-            ProfileImage = profileImage,
-        };
+            email,
+            password,
+            isPasswordPlainText,
+            firstName,
+            lastName,
+            profileImage);
 
         user.AddEvent(new UserCreatedWithEmailEvent(
             user.Id,
