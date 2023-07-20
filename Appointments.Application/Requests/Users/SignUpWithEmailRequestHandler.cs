@@ -6,7 +6,9 @@ using Appointments.Application.Repositories.Tenants;
 using Appointments.Application.Repositories.Users;
 using Appointments.Application.Services.Events;
 using Appointments.Application.Services.Users;
+using Appointments.Application.Validations.Users;
 using Appointments.Domain.Entities;
+using FluentValidation;
 using MediatR;
 using PasswordGenerator;
 
@@ -33,6 +35,8 @@ internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRe
 
     public async Task<Guid> Handle(SignUpWithEmailRequest request, CancellationToken cancellationToken)
     {
+        new SignUpWithEmailRequestValidator().ValidateAndThrow(request);
+
         var createdUser = await CreateUserAsync(request);
         var createdTenant = await CreateTenantAsync(request, createdUser);
         await SetSelectedTenantAsync(createdUser, createdTenant);
