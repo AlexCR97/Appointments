@@ -32,9 +32,17 @@ internal class EntityRepository<TEntity, TDocument> : IEntityRepository<TEntity,
         return _mapper.Map<TEntity>(createdDocument);
     }
 
-    public Task<PagedResult<TEntity>> GetAsync(int pageIndex, int pageSize)
+    public async Task<PagedResult<TEntity>> GetAsync(int pageIndex, int pageSize)
     {
-        throw new NotImplementedException();
+        var documents = await _repository.GetAsync(pageIndex, pageSize);
+
+        return new PagedResult<TEntity>(
+            pageIndex,
+            pageSize,
+            documents.TotalCount,
+            documents.Results
+                .Select(x => _mapper.Map<TEntity>(x))
+                .ToList());
     }
 
     public async Task<TEntity> GetByIdAsync(Guid id)
@@ -43,23 +51,28 @@ internal class EntityRepository<TEntity, TDocument> : IEntityRepository<TEntity,
         return _mapper.Map<TEntity>(document);
     }
 
-    public Task<TEntity?> GetByIdOrDefaultAsync(Guid id)
+    public async Task<TEntity?> GetByIdOrDefaultAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var document = await _repository.GetOneOrDefaultAsync(id);
+        
+        return document is null
+            ? null
+            : _mapper.Map<TEntity>(document);
     }
 
-    public Task UpdateAsync(TEntity entity)
+    public async Task UpdateAsync(TEntity entity)
     {
-        throw new NotImplementedException();
+        var document = _mapper.Map<TDocument>(entity);
+        await _repository.UpdateAsync(document);
     }
 
-    public Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        await _repository.DeleteAsync(id);
     }
 
-    public Task PurgeAsync(Guid id)
+    public async Task PurgeAsync(Guid id)
     {
-        throw new NotImplementedException();
+        await _repository.PurgeAsync(id);
     }
 }

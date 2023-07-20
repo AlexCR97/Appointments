@@ -1,3 +1,6 @@
+using Appointments.Application.Repositories.BranchOffices;
+using Appointments.Application.Repositories.Services;
+using Appointments.Application.Repositories.Tenants;
 using Appointments.Application.Repositories.Users;
 using Appointments.Application.Services.Users;
 using Appointments.Common.MongoClient.DependencyInjection;
@@ -5,7 +8,7 @@ using Appointments.Common.Secrets.Redis;
 using Appointments.Common.Secrets.Redis.DependencyInjection;
 using Appointments.Infrastructure.Mapper.Mapsters.DependencyInjection;
 using Appointments.Infrastructure.Mongo.Documents;
-using Appointments.Infrastructure.Repositories.Users;
+using Appointments.Infrastructure.Repositories;
 using Appointments.Infrastructure.Services.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +50,9 @@ public static class DependencyInjectionExtensions
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         return services
+            .AddScoped<IBranchOfficeRepository, BranchOfficeRepository>()
+            .AddScoped<IServiceRepository, ServiceRepository>()
+            .AddScoped<ITenantRepository, TenantRepository>()
             .AddScoped<IUserRepository, UserRepository>();
     }
 

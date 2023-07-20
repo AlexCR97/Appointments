@@ -5,7 +5,7 @@ using Appointments.Domain.Entities;
 using Appointments.Infrastructure.Mapper.Abstractions;
 using Appointments.Infrastructure.Mongo.Documents;
 
-namespace Appointments.Infrastructure.Repositories.Users;
+namespace Appointments.Infrastructure.Repositories;
 
 internal class UserRepository : EntityRepository<User, UserDocument>, IUserRepository
 {
