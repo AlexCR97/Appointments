@@ -23,6 +23,11 @@ public class Service : Entity
     public List<IndexedImage> Images { get; private set; }
     public List<string> TermsAndConditions { get; private set; }
 
+    public Service()
+    {
+        // Needed for auto-mapping
+    }
+
     public Service(
         Guid id,
         DateTime createdAt,

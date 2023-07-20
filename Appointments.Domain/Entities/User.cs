@@ -11,6 +11,11 @@ public class User : Entity
     public string? LastName { get; private set; }
     public string? ProfileImage { get; private set; }
 
+    public User()
+    {
+        // Needed for auto-mapping
+    }
+
     public User(
         Guid id,
         DateTime createdAt,

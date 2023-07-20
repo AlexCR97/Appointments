@@ -11,6 +11,11 @@ public class BranchOffice : Entity
     public List<SocialMediaContact> SocialMediaContacts { get; private set; }
     public WeeklySchedule WeeklySchedule { get; private set; }
 
+    public BranchOffice()
+    {
+        // Needed for auto-mapping
+    }
+
     public BranchOffice(
         Guid id,
         DateTime createdAt,

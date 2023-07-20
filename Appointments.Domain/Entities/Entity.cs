@@ -15,6 +15,11 @@ public class Entity : IEntity
     public DateTime? DeletedAt { get; protected set; }
     public string? DeletedBy { get; protected set; }
 
+    public Entity()
+    {
+        // Needed for auto-mapping
+    }
+
     public Entity(
         Guid id,
         DateTime createdAt,

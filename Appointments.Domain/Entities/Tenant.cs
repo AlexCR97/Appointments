@@ -14,6 +14,11 @@ public class Tenant : Entity
     public List<SocialMediaContact> SocialMediaContacts { get; private set; }
     public WeeklySchedule? WeeklySchedule { get; private set; }
 
+    public Tenant()
+    {
+        // Needed for auto-mapping
+    }
+
     public Tenant(
         Guid id,
         DateTime createdAt,
