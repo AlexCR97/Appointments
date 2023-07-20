@@ -48,6 +48,7 @@ public class User : Entity
     }
 
     public static User CreateWithEmailCredentials(
+        Guid id,
         string? createdBy,
         string email,
         string password,
@@ -57,7 +58,7 @@ public class User : Entity
         string? profileImage)
     {
         var user = new User(
-            Guid.NewGuid(),
+            id,
             DateTime.UtcNow,
             createdBy,
             null,

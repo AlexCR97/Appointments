@@ -2,5 +2,6 @@
 
 public interface IUserPasswordManager
 {
-    Task<string> SaveAsync(string plainTextPassword);
+    Task<string> GetAsync(Guid userId);
+    Task<string> SetAsync(Guid userId, string password);
 }

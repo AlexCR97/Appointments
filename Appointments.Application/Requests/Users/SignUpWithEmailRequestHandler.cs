@@ -46,9 +46,12 @@ internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRe
         if (await _userRepository.ExistsByEmailAsync(request.Email))
             throw new AlreadyExistsException<User>(nameof(User.Email), request.Email);
 
-        var managedPassword = await _userPasswordManager.SaveAsync(request.Password);
+        var userId = Guid.NewGuid();
+
+        var managedPassword = await _userPasswordManager.SetAsync(userId, request.Password);
 
         var user = User.CreateWithEmailCredentials(
+            userId,
             null,
             request.Email.NormalizeForComparison(),
             managedPassword,
