@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Appointments.Application\Appointments.Application.csproj" />
+    <ProjectReference Include="..\Appointments.Common.MongoClient\Appointments.Common.MongoClient.csproj" />
     <ProjectReference Include="..\Appointments.Common.Secrets\Appointments.Common.Secrets.csproj" />
   </ItemGroup>
 
