@@ -32,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{242DCE61
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{E33B0306-4D6A-435F-A608-7FCED5EA9DEF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Appointments.Common.MongoClient", "Appointments.Common.MongoClient\Appointments.Common.MongoClient.csproj", "{CE2E4874-0E9C-4955-B641-CC0422A9066E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{C623B674-4778-4570-AE88-E80C865AAAD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C623B674-4778-4570-AE88-E80C865AAAD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C623B674-4778-4570-AE88-E80C865AAAD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE2E4874-0E9C-4955-B641-CC0422A9066E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE2E4874-0E9C-4955-B641-CC0422A9066E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE2E4874-0E9C-4955-B641-CC0422A9066E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE2E4874-0E9C-4955-B641-CC0422A9066E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{E438371E-21C7-41CB-A5B2-BD9A681F6CEF} = {87F1789D-EA73-4A8D-A778-D0BAEE1D4C87}
 		{C623B674-4778-4570-AE88-E80C865AAAD2} = {E33B0306-4D6A-435F-A608-7FCED5EA9DEF}
 		{E33B0306-4D6A-435F-A608-7FCED5EA9DEF} = {242DCE61-99CA-4395-99AF-868E362B1B63}
+		{CE2E4874-0E9C-4955-B641-CC0422A9066E} = {87F1789D-EA73-4A8D-A778-D0BAEE1D4C87}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3DBF397E-FFFF-49E3-A67E-1102164183E1}
