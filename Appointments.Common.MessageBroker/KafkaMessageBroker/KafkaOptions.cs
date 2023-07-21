@@ -1,15 +1,15 @@
 ﻿namespace Appointments.Common.MessageBroker.KafkaMessageBroker;
 
-public interface IKafkaMessageBrokerOptions
+public interface IKafkaOptions
 {
     public string BootstrapServers { get; }
 }
 
-public class KafkaMessageBrokerOptions : IKafkaMessageBrokerOptions
+public class KafkaOptions : IKafkaOptions
 {
     public string BootstrapServers { get; }
 
-    public KafkaMessageBrokerOptions(string bootstrapServers)
+    public KafkaOptions(string bootstrapServers)
     {
         BootstrapServers = bootstrapServers;
     }

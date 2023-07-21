@@ -5,33 +5,40 @@ using System.Text.Json;
 
 namespace Appointments.Common.MessageBroker.KafkaMessageBroker;
 
-internal class KafkaProducer<TMessage> : IPublisher<TMessage>
+internal class KafkaProducer<TTopic> : IPublisher<TTopic>
+    where TTopic : IKafkaTopic
 {
-    private readonly IKafkaProducerOptions<TMessage> _options;
     private readonly IProducer<string, string> _producer;
+    private readonly TTopic _topic;
 
-    public KafkaProducer(IKafkaProducerOptions<TMessage> options, IProducer<string, string> producer)
+    public KafkaProducer(IProducer<string, string> producer, TTopic topic)
     {
-        _options = options;
         _producer = producer;
+        _topic = topic;
     }
 
-    public async Task PublishAsync(TMessage message)
+    public async Task PublishAsync<TMessage>(TMessage message)
     {
-        var messageType = message?.GetType()?.Name;
-        var messageTypeEncoded = messageType is null
-            ? null
-            : Encoding.UTF8.GetBytes(messageType);
-
-        await _producer.ProduceAsync(_options.Topic, new Message<string, string>
+        await _producer.ProduceAsync(_topic.Topic, new Message<string, string>
         {
             Key = Guid.NewGuid().ToString(),
             Timestamp = Timestamp.Default,
             Value = JsonSerializer.Serialize(message),
             Headers = new Headers
             {
-                new Header("MessageType", messageTypeEncoded),
+                CreateMessageTypeHeader(message),
             },
         });
+    }
+
+    private static Header CreateMessageTypeHeader<TMessage>(TMessage message)
+    {
+        var messageType = message?.GetType()?.Name;
+        
+        var messageTypeEncoded = messageType is null
+            ? null
+            : Encoding.UTF8.GetBytes(messageType);
+
+        return new Header("MessageType", messageTypeEncoded);
     }
 }

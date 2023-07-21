@@ -6,7 +6,7 @@ namespace Appointments.Common.MessageBroker.KafkaMessageBroker.DependencyInjecti
 
 public static class KafkaDependencyInjection
 {
-    public static IServiceCollection AddKafkaMessageBroker(this IServiceCollection services, IKafkaMessageBrokerOptions options)
+    public static IServiceCollection AddKafka(this IServiceCollection services, IKafkaOptions options)
     {
         var producerConfig = new ProducerConfig
         {
@@ -14,17 +14,18 @@ public static class KafkaDependencyInjection
             AllowAutoCreateTopics = true,
         };
 
-        var producer = new ProducerBuilder<string, string>(producerConfig).Build();
+        var producer = new ProducerBuilder<Guid, string>(producerConfig).Build();
 
-        services.AddSingleton<IProducer<string, string>>(producer);
+        services.AddSingleton<IProducer<Guid, string>>(producer);
         
         return services;
     }
 
-    public static IServiceCollection AddKafkaProducer<TMessage>(this IServiceCollection services, IKafkaProducerOptions<TMessage> options)
+    public static IServiceCollection AddKafkaProducer<TTopic>(this IServiceCollection services, TTopic topic)
+        where TTopic : class, IKafkaTopic
     {
         return services
-            .AddSingleton<IKafkaProducerOptions<TMessage>>(options)
-            .AddTransient<IPublisher<TMessage>, KafkaProducer<TMessage>>();
+            .AddSingleton<TTopic>(topic)
+            .AddTransient<IPublisher<TTopic>, KafkaProducer<TTopic>>();
     }
 }

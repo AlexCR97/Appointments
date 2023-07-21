@@ -1,6 +1,7 @@
 ﻿namespace Appointments.Common.MessageBroker.Abstractions;
 
-public interface IPublisher<TMessage>
+public interface IPublisher<TQueue>
+    where TQueue : IQueue
 {
-    Task PublishAsync(TMessage message);
+    Task PublishAsync<TMessage>(TMessage message);
 }
