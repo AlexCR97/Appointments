@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Appointments.Infrastructure.DependencyInjection;
 
-internal static class ConfigurationExtensions
+public static class ConfigurationExtensions
 {
     public static string GetRequiredString(this IConfiguration configuration, string key)
     {
