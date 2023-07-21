@@ -10,6 +10,7 @@ using Appointments.Common.MongoClient.DependencyInjection;
 using Appointments.Common.Secrets.Redis;
 using Appointments.Common.Secrets.Redis.DependencyInjection;
 using Appointments.Infrastructure.Mapper.Mapsters.DependencyInjection;
+using Appointments.Infrastructure.MessageBroker.Kafka;
 using Appointments.Infrastructure.Mongo.Documents;
 using Appointments.Infrastructure.Repositories;
 using Appointments.Infrastructure.Services.Events;
@@ -25,7 +26,7 @@ public static class DependencyInjectionExtensions
     {
         return services
             .AddMapper()
-            .AddMessageBroker()
+            .AddMessageBroker(configuration)
             .AddMongo(configuration)
             .AddRepositories()
             .AddSecretManager(configuration)
@@ -39,12 +40,13 @@ public static class DependencyInjectionExtensions
             .AddMapsterMapper();
     }
 
-    private static IServiceCollection AddMessageBroker(this IServiceCollection services)
+    private static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
     {
+        var bootstrapServers = configuration.GetRequiredString("MessageBroker:Kafka:BootstrapServers");
+
         return services
-            .AddKafkaMessageBroker(new KafkaMessageBrokerOptions("localhost:9092")) // TODO Get this from configuration
-            //.AddKafkaProducer<SomeType>(new KafkaProducerOptions<SomeType>(nameof(SomeType)))
-            ;
+            .AddKafka(new KafkaOptions(bootstrapServers))
+            .AddKafkaProducer<IEventsQueue>(new EventsQueue());
     }
 
     private static IServiceCollection AddMongo(this IServiceCollection services, IConfiguration configuration)

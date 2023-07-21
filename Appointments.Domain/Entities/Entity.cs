@@ -1,6 +1,7 @@
 ﻿using Appointments.Domain.Entities.Abstractions;
 using Appointments.Domain.Events.Abstractions;
 using Appointments.Domain.Events.Entities;
+using Newtonsoft.Json;
 using System.Text.Json;
 
 namespace Appointments.Domain.Entities;
@@ -126,5 +127,5 @@ public class Entity : IEntity
     #endregion
 
     public override string ToString()
-        => JsonSerializer.Serialize(this);
+        => JsonConvert.SerializeObject(this);
 }

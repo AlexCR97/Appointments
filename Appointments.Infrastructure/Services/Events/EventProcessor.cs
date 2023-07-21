@@ -1,21 +1,24 @@
 ﻿using Appointments.Application.Services.Events;
+using Appointments.Common.MessageBroker.Abstractions;
 using Appointments.Domain.Events.Abstractions;
-using Microsoft.Extensions.Logging;
+using Appointments.Infrastructure.MessageBroker.Kafka;
 
 namespace Appointments.Infrastructure.Services.Events;
 
 internal class EventProcessor : IEventProcessor
 {
-    private readonly ILogger<EventProcessor> _logger;
+    private readonly IPublisher<IEventsQueue> _publisher;
 
-    public EventProcessor(ILogger<EventProcessor> logger)
+    public EventProcessor(IPublisher<IEventsQueue> publisher)
     {
-        _logger = logger;
+        _publisher = publisher;
     }
 
-    public Task ProcessAsync(IEnumerable<IEvent> events)
+    public async Task ProcessAsync(IEnumerable<IEvent> events)
     {
-        _logger.LogWarning("Not implemented");
-        return Task.CompletedTask;
+        foreach (var @event in events)
+        {
+            await _publisher.PublishAsync(@event);
+        }
     }
 }

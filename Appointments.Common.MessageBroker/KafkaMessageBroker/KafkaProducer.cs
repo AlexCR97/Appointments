@@ -1,7 +1,7 @@
 ﻿using Appointments.Common.MessageBroker.Abstractions;
 using Confluent.Kafka;
+using Newtonsoft.Json;
 using System.Text;
-using System.Text.Json;
 
 namespace Appointments.Common.MessageBroker.KafkaMessageBroker;
 
@@ -23,7 +23,7 @@ internal class KafkaProducer<TTopic> : IPublisher<TTopic>
         {
             Key = Guid.NewGuid().ToString(),
             Timestamp = Timestamp.Default,
-            Value = JsonSerializer.Serialize(message),
+            Value = JsonConvert.SerializeObject(message),
             Headers = new Headers
             {
                 CreateMessageTypeHeader(message),

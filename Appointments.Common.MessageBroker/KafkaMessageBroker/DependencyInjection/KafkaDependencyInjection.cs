@@ -14,9 +14,9 @@ public static class KafkaDependencyInjection
             AllowAutoCreateTopics = true,
         };
 
-        var producer = new ProducerBuilder<Guid, string>(producerConfig).Build();
+        var producer = new ProducerBuilder<string, string>(producerConfig).Build();
 
-        services.AddSingleton<IProducer<Guid, string>>(producer);
+        services.AddSingleton<IProducer<string, string>>(producer);
         
         return services;
     }
