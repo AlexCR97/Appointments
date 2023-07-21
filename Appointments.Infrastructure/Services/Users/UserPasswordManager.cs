@@ -16,7 +16,7 @@ internal class UserPasswordManager : IUserPasswordManager
 
     public async Task<string> GetAsync(Guid userId)
     {
-        var key = BuildKey(userId.ToString());
+        var key = BuildKey(_userPasswordPrefix, userId.ToString());
         return await _secretManager.GetAsync(key);
     }
 

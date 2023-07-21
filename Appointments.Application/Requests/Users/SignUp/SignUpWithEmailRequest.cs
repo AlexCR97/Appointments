@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Application.Requests.Users.SignUp;
 
 public class SignUpWithEmailRequest : IRequest<Guid>
 {

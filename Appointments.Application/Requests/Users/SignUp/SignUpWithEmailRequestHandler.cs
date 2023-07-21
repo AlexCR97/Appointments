@@ -12,7 +12,7 @@ using FluentValidation;
 using MediatR;
 using PasswordGenerator;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Application.Requests.Users.SignUp;
 
 internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRequest, Guid>
 {

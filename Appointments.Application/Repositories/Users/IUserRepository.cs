@@ -6,4 +6,5 @@ namespace Appointments.Application.Repositories.Users;
 public interface IUserRepository : IRepository<User>
 {
     Task<bool> ExistsByEmailAsync(string email);
+    Task<User?> GetByEmailOrDefaultAsync(string email);
 }

@@ -1,4 +1,5 @@
-﻿using Appointments.Application.Requests.Users;
+﻿using Appointments.Application.Requests.Users.Login;
+using Appointments.Application.Requests.Users.SignUp;
 using Appointments.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,13 @@ public class UsersController : ControllerBase
             nameof(GetUserProfile),
             new { userId },
             new { userId });
+    }
+
+    [HttpPost("login/email", Name = nameof(LoginWithEmail))]
+    public async Task<ActionResult> LoginWithEmail([FromBody] LoginWithEmailRequest request)
+    {
+        var oAuthToken = await _mediator.Send(request);
+        return Ok(oAuthToken);
     }
 
     [HttpGet("{userId}", Name = nameof(GetUserProfile))]
