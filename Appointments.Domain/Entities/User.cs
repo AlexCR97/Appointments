@@ -105,23 +105,20 @@ public class User : Entity
     public void UpdateProfile(
         string? updatedBy,
         string firstName,
-        string lastName,
-        string? profileImage)
+        string lastName)
     {
         UpdatedAt = DateTime.UtcNow;
         UpdatedBy = updatedBy;
 
         FirstName = firstName;
         LastName = lastName;
-        ProfileImage = profileImage;
 
         AddEvent(new UserProfileUpdatedEvent(
             Id,
             UpdatedAt.Value,
             updatedBy,
             firstName,
-            lastName,
-            profileImage));
+            lastName));
     }
 
     public void SetSelectedTenant(Tenant tenant, string? updatedBy)

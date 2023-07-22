@@ -1,4 +1,5 @@
-﻿using Appointments.Application.Requests.Users;
+﻿using Appointments.Api.Exceptions;
+using Appointments.Application.Requests.Users;
 using Appointments.Application.Requests.Users.Login;
 using Appointments.Application.Requests.Users.SignUp;
 using Appointments.Domain.Models;
@@ -40,5 +41,15 @@ public class UsersController : ControllerBase
     public async Task<UserProfile> GetUserProfile([FromRoute] Guid userId)
     {
         return await _mediator.Send(new GetUserProfileRequest(userId));
+    }
+
+    [HttpPut("{userId}/profile", Name = nameof(UpdateUserProfile))]
+    public async Task<IActionResult> UpdateUserProfile(
+        [FromRoute] Guid userId,
+        [FromBody] UpdateProfileRequest request)
+    {
+        IdMismatchException.ThrowIfMismatch(userId, request.Id);
+        await _mediator.Send(request);
+        return Ok();
     }
 }

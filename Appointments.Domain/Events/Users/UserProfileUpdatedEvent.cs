@@ -7,15 +7,13 @@ public class UserProfileUpdatedEvent : Event
     public string? UpdatedBy { get; }
     public string FirstName { get; }
     public string LastName { get; }
-    public string? ProfileImage { get; }
 
-    public UserProfileUpdatedEvent(Guid id, DateTime updatedAt, string? updatedBy, string firstName, string lastName, string? profileImage)
+    public UserProfileUpdatedEvent(Guid id, DateTime updatedAt, string? updatedBy, string firstName, string lastName)
     {
         Id = id;
         UpdatedAt = updatedAt;
         UpdatedBy = updatedBy;
         FirstName = firstName;
         LastName = lastName;
-        ProfileImage = profileImage;
     }
 }
