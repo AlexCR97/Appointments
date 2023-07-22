@@ -30,13 +30,19 @@ internal class MongoRepository<TDocument> : IMongoRepository<TDocument>
 
     public async Task<IPagedResult<TDocument>> GetAsync(
         int pageIndex,
-        int pageSize)
+        int pageSize,
+        string? sort = null,
+        string? filter = null)
     {
         var totalCount = await _collection
             .CountDocumentsAsync(_ => true);
 
+        FilterDefinition<TDocument> mongoFilter = string.IsNullOrWhiteSpace(filter)
+            ? "{}"
+            : filter;
+
         var results = await _collection
-            .Find(_ => true)
+            .Find(mongoFilter)
             .Skip(pageIndex * pageSize)
             .Limit(pageSize)
             .ToListAsync();

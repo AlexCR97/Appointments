@@ -9,7 +9,9 @@ public interface IMongoRepository<TDocument>
 
     Task<IPagedResult<TDocument>> GetAsync(
         int pageIndex,
-        int pageSize);
+        int pageSize,
+        string? sort = null,
+        string? filter = null);
 
     Task<TDocument> GetOneAsync(Guid id);
     Task<TDocument> GetOneAsync(Expression<Func<TDocument, bool>> filter);

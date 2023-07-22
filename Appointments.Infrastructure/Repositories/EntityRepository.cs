@@ -32,9 +32,13 @@ internal class EntityRepository<TEntity, TDocument> : IEntityRepository<TEntity,
         return _mapper.Map<TEntity>(createdDocument);
     }
 
-    public async Task<PagedResult<TEntity>> GetAsync(int pageIndex, int pageSize)
+    public async Task<PagedResult<TEntity>> GetAsync(int pageIndex, int pageSize, string? sort, string? filter)
     {
-        var documents = await _repository.GetAsync(pageIndex, pageSize);
+        var documents = await _repository.GetAsync(
+            pageIndex,
+            pageSize,
+            sort: sort,
+            filter: filter);
 
         return new PagedResult<TEntity>(
             pageIndex,
