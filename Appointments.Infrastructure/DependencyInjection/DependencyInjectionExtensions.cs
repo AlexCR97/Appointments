@@ -9,7 +9,6 @@ using Appointments.Common.MessageBroker.KafkaMessageBroker.DependencyInjection;
 using Appointments.Common.MongoClient.DependencyInjection;
 using Appointments.Common.Secrets.Redis;
 using Appointments.Common.Secrets.Redis.DependencyInjection;
-using Appointments.Infrastructure.Mapper.Masters.DependencyInjection;
 using Appointments.Infrastructure.MessageBroker.Kafka;
 using Appointments.Infrastructure.Mongo.Documents;
 using Appointments.Infrastructure.Repositories;
@@ -25,19 +24,12 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         return services
-            .AddMapper()
             .AddMessageBroker(configuration)
             .AddMongo(configuration)
             .AddRepositories()
             .AddSecretManager(configuration)
             .AddOtherServices()
             ;
-    }
-
-    private static IServiceCollection AddMapper(this IServiceCollection services)
-    {
-        return services
-            .AddMapsterMapper();
     }
 
     private static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)

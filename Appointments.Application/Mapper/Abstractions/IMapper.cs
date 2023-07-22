@@ -1,4 +1,4 @@
-﻿namespace Appointments.Infrastructure.Mapper.Abstractions;
+﻿namespace Appointments.Application.Mapper.Abstractions;
 
 public interface IMapper
 {

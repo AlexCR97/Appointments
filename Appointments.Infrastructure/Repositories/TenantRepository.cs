@@ -1,7 +1,7 @@
-﻿using Appointments.Application.Repositories.Tenants;
+﻿using Appointments.Application.Mapper.Abstractions;
+using Appointments.Application.Repositories.Tenants;
 using Appointments.Common.MongoClient.Abstractions;
 using Appointments.Domain.Entities;
-using Appointments.Infrastructure.Mapper.Abstractions;
 using Appointments.Infrastructure.Mongo.Documents;
 
 namespace Appointments.Infrastructure.Repositories;

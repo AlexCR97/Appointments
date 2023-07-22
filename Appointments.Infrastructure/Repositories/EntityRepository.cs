@@ -1,8 +1,8 @@
-﻿using Appointments.Application.Repositories.Abstractions;
+﻿using Appointments.Application.Mapper.Abstractions;
+using Appointments.Application.Repositories.Abstractions;
 using Appointments.Common.MongoClient.Abstractions;
 using Appointments.Domain.Entities;
 using Appointments.Domain.Models;
-using Appointments.Infrastructure.Mapper.Abstractions;
 
 namespace Appointments.Infrastructure.Repositories;
 
@@ -47,8 +47,18 @@ internal class EntityRepository<TEntity, TDocument> : IEntityRepository<TEntity,
 
     public async Task<TEntity> GetByIdAsync(Guid id)
     {
-        var document = await _repository.GetOneAsync(id);
-        return _mapper.Map<TEntity>(document);
+        try
+        {
+            var document = await _repository.GetOneAsync(id);
+            return _mapper.Map<TEntity>(document);
+        }
+        catch (Exception ex)
+        {
+            if (ex is Common.MongoClient.Exceptions.NotFoundException<TDocument>)
+                throw new Application.Exceptions.NotFoundException(typeof(TEntity).Name, id);
+
+            throw;
+        }
     }
 
     public async Task<TEntity?> GetByIdOrDefaultAsync(Guid id)

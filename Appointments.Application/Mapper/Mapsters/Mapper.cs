@@ -1,6 +1,8 @@
-﻿namespace Appointments.Infrastructure.Mapper.Masters;
+﻿using Appointments.Application.Mapper.Abstractions;
 
-internal class Mapper : Abstractions.IMapper
+namespace Appointments.Application.Mapper.Mapsters;
+
+internal class Mapper : IMapper
 {
     private readonly MapsterMapper.IMapper _mapper;
 

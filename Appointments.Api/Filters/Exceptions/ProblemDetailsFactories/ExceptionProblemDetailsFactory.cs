@@ -67,6 +67,15 @@ internal class ExceptionProblemDetailsFactory : IProblemDetailsFactory<Exception
             .WithType($"{ErrorDocsUrl}#{exception.Code}")
             .WithTitle(exception.Code)
             .WithStatus(StatusCodes.Status400BadRequest);
+
+        if (exception is Application.Exceptions.NotFoundException notFoundException)
+            OverrideWith(builder, notFoundException);
+    }
+
+    private void OverrideWith(ProblemDetailsBuilder builder, Application.Exceptions.NotFoundException exception)
+    {
+        builder
+            .WithStatus(StatusCodes.Status404NotFound);
     }
 }
 
