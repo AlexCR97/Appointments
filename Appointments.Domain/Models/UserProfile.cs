@@ -1,9 +1,8 @@
 ﻿namespace Appointments.Domain.Models;
 
-public class UserProfile
-{
-    public Guid Id { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string? ProfileImage { get; set; }
-}
+public record UserProfile(
+    Guid Id,
+    string? FirstName,
+    string? LastName,
+    string? ProfileImage,
+    IReadOnlyDictionary<string, string?>? Extensions);

@@ -2,7 +2,6 @@
 using Appointments.Domain.Events.Abstractions;
 using Appointments.Domain.Events.Entities;
 using Newtonsoft.Json;
-using System.Text.Json;
 
 namespace Appointments.Domain.Entities;
 
@@ -39,21 +38,20 @@ public class Entity : IEntity
         UpdatedBy = updatedBy;
         DeletedAt = deletedAt;
         DeletedBy = deletedBy;
-        _tags = tags;
-        _extensions = extensions;
+        Tags = tags;
+        Extensions = extensions;
     }
 
     #region Tags
 
-    private readonly List<string> _tags;
-    public IReadOnlyList<string> Tags => _tags;
+    public List<string> Tags { get; protected set; }
 
     public void AddTag(string tag, string? updatedBy)
     {
         UpdatedAt = DateTime.UtcNow;
         UpdatedBy = updatedBy;
 
-        _tags.Add(tag);
+        Tags.Add(tag);
 
         AddEvent(new TagAddedEvent(
             Id,
@@ -67,7 +65,7 @@ public class Entity : IEntity
         UpdatedAt = DateTime.UtcNow;
         UpdatedBy = updatedBy;
         
-        _tags.Remove(tag);
+        Tags.Remove(tag);
 
         AddEvent(new TagRemovedEvent(
             Id,
@@ -80,15 +78,14 @@ public class Entity : IEntity
 
     #region Extensions
 
-    public Dictionary<string, string?> _extensions;
-    public IReadOnlyDictionary<string, string?> Extensions => _extensions;
+    public Dictionary<string, string?> Extensions { get; protected set; }
 
     public void SetExtension(string key, string? value, string? updatedBy)
     {
         UpdatedAt = DateTime.UtcNow;
         UpdatedBy = updatedBy;
 
-        _extensions[key] = value;
+        Extensions[key] = value;
 
         AddEvent(new ExtensionSetEvent(
             Id,
@@ -103,7 +100,7 @@ public class Entity : IEntity
         UpdatedAt = DateTime.UtcNow;
         UpdatedBy = updatedBy;
 
-        _extensions.Remove(key);
+        Extensions.Remove(key);
 
         AddEvent(new ExtensionRemovedEvent(
             Id,

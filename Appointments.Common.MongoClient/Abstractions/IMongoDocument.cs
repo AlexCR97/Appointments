@@ -9,6 +9,6 @@ public interface IMongoDocument
     public string? UpdatedBy { get; set; }
     public DateTime? DeletedAt { get; set; }
     public string? DeletedBy { get; set; }
-    public List<string>? Tags { get; set; }
-    public Dictionary<string, string?>? Extensions { get; set; }
+    public List<string> Tags { get; set; }
+    public Dictionary<string, string?> Extensions { get; set; }
 }

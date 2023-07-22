@@ -9,7 +9,7 @@ using Appointments.Common.MessageBroker.KafkaMessageBroker.DependencyInjection;
 using Appointments.Common.MongoClient.DependencyInjection;
 using Appointments.Common.Secrets.Redis;
 using Appointments.Common.Secrets.Redis.DependencyInjection;
-using Appointments.Infrastructure.Mapper.Mapsters.DependencyInjection;
+using Appointments.Infrastructure.Mapper.Masters.DependencyInjection;
 using Appointments.Infrastructure.MessageBroker.Kafka;
 using Appointments.Infrastructure.Mongo.Documents;
 using Appointments.Infrastructure.Repositories;

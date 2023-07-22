@@ -1,4 +1,5 @@
 ﻿using Appointments.Domain.Events.Users;
+using Appointments.Domain.Models;
 
 namespace Appointments.Domain.Entities;
 
@@ -93,6 +94,13 @@ public class User : Entity
 
         return user;
     }
+
+    public UserProfile GetProfile() => new(
+        Id,
+        FirstName,
+        LastName,
+        ProfileImage,
+        Extensions);
 
     public void UpdateProfile(
         string? updatedBy,

@@ -1,4 +1,5 @@
-﻿using Appointments.Application.Requests.Users.Login;
+﻿using Appointments.Application.Requests.Users;
+using Appointments.Application.Requests.Users.Login;
 using Appointments.Application.Requests.Users.SignUp;
 using Appointments.Domain.Models;
 using MediatR;
@@ -35,9 +36,9 @@ public class UsersController : ControllerBase
         return Ok(oAuthToken);
     }
 
-    [HttpGet("{userId}", Name = nameof(GetUserProfile))]
+    [HttpGet("{userId}/profile", Name = nameof(GetUserProfile))]
     public async Task<UserProfile> GetUserProfile([FromRoute] Guid userId)
     {
-        throw new NotImplementedException();
+        return await _mediator.Send(new GetUserProfileRequest(userId));
     }
 }
