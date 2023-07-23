@@ -12,6 +12,14 @@ internal static class ValidationsExtensions
             .MaximumLength(_maxNameLength);
     }
 
+    private const int _maxDescriptionLength = 1000;
+
+    public static IRuleBuilder<T, string> MaxDescriptionLength<T>(this IRuleBuilder<T, string> builder)
+    {
+        return builder
+            .MaximumLength(_maxDescriptionLength);
+    }
+
     private const int _minPasswordLength = 6;
     private const int _maxPasswordLength = 256;
 

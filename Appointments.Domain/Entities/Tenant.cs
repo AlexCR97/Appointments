@@ -100,9 +100,7 @@ public class Tenant : Entity
         string name,
         string? slogan,
         string urlId,
-        string? logo,
-        List<SocialMediaContact>? socialMediaContacts,
-        WeeklySchedule? weeklySchedule)
+        List<SocialMediaContact>? socialMediaContacts)
     {
         UpdatedAt = DateTime.UtcNow;
         UpdatedBy = updatedBy;
@@ -110,20 +108,16 @@ public class Tenant : Entity
         Name = name;
         Slogan = slogan;
         UrlId = urlId;
-        Logo = logo;
         SocialMediaContacts = socialMediaContacts ?? new();
-        WeeklySchedule = weeklySchedule;
 
-        AddEvent(new TenantUpdateEvent(
+        AddEvent(new TenantUpdatedEvent(
             Id,
             UpdatedAt.Value,
             updatedBy,
             name,
             slogan,
             urlId,
-            logo,
-            socialMediaContacts,
-            weeklySchedule));
+            socialMediaContacts));
     }
 
     public void UpdateLogo(

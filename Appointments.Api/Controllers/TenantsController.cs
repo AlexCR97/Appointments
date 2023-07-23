@@ -1,4 +1,5 @@
-﻿using Appointments.Api.Extensions.Files;
+﻿using Appointments.Api.Exceptions;
+using Appointments.Api.Extensions.Files;
 using Appointments.Application.Requests.Tenants;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,16 @@ public class TenantsController : ControllerBase
     {
         var tenant = await _mediator.Send(new GetTenantRequest(tenantId));
         return Ok(tenant);
+    }
+
+    [HttpPatch("{tenantId}", Name = nameof(UpdateTenant))]
+    public async Task<IActionResult> UpdateTenant(
+        [FromRoute] Guid tenantId,
+        [FromBody] UpdateTenantRequest request)
+    {
+        IdMismatchException.ThrowIfMismatch(tenantId, request.Id);
+        await _mediator.Send(request);
+        return Ok();
     }
 
     [HttpPost("{tenantId}/logo", Name = nameof(UploadTenantLogo))]
