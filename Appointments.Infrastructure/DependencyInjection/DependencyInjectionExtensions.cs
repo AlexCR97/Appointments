@@ -3,6 +3,7 @@ using Appointments.Application.Repositories.Services;
 using Appointments.Application.Repositories.Tenants;
 using Appointments.Application.Repositories.Users;
 using Appointments.Application.Services.Events;
+using Appointments.Application.Services.Files;
 using Appointments.Application.Services.Users;
 using Appointments.Common.MessageBroker.KafkaMessageBroker;
 using Appointments.Common.MessageBroker.KafkaMessageBroker.DependencyInjection;
@@ -13,6 +14,7 @@ using Appointments.Infrastructure.MessageBroker.Kafka;
 using Appointments.Infrastructure.Mongo.Documents;
 using Appointments.Infrastructure.Repositories;
 using Appointments.Infrastructure.Services.Events;
+using Appointments.Infrastructure.Services.FileStorages.LocalStorage;
 using Appointments.Infrastructure.Services.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,12 +26,24 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         return services
+            .AddFileStorage(configuration)
             .AddMessageBroker(configuration)
             .AddMongo(configuration)
             .AddRepositories()
             .AddSecretManager(configuration)
             .AddOtherServices()
             ;
+    }
+
+    private static IServiceCollection AddFileStorage(this IServiceCollection services, IConfiguration configuration)
+    {
+        var storagePath = configuration.GetRequiredString("FileStorage:Local:StoragePath");
+        var storageOptions = new LocalFileStorageOptions(storagePath);
+        services.AddSingleton<ILocalFileStorageOptions>(storageOptions);
+        
+        services.AddScoped<IFileStorage, LocalFileStorage>();
+
+        return services;
     }
 
     private static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)

@@ -1,4 +1,5 @@
 ﻿using Appointments.Api.Exceptions;
+using Appointments.Api.Extensions.Files;
 using Appointments.Application.Requests.Users;
 using Appointments.Application.Requests.Users.Login;
 using Appointments.Application.Requests.Users.SignUp;
@@ -43,7 +44,7 @@ public class UsersController : ControllerBase
         return await _mediator.Send(new GetUserProfileRequest(userId));
     }
 
-    [HttpPut("{userId}/profile", Name = nameof(UpdateUserProfile))]
+    [HttpPatch("{userId}/profile", Name = nameof(UpdateUserProfile))]
     public async Task<IActionResult> UpdateUserProfile(
         [FromRoute] Guid userId,
         [FromBody] UpdateProfileRequest request)
@@ -51,5 +52,18 @@ public class UsersController : ControllerBase
         IdMismatchException.ThrowIfMismatch(userId, request.Id);
         await _mediator.Send(request);
         return Ok();
+    }
+
+    [HttpPost("{userId}/profile/image", Name = nameof(UploadUserProfileImage))]
+    public async Task<IActionResult> UploadUserProfileImage(
+        [FromRoute] Guid userId,
+        [FromForm] IFormFile image)
+    {
+        var profileImagePath = await _mediator.Send(new UploadProfileImageRequest(
+            userId,
+            image.FileName,
+            image.GetBytes()));
+
+        return Ok(new { profileImage = profileImagePath });
     }
 }

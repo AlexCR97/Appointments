@@ -121,6 +121,22 @@ public class User : Entity
             lastName));
     }
 
+    public void UpdateProfileImage(
+        string? updatedBy,
+        string profileImage)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+
+        ProfileImage = profileImage;
+
+        AddEvent(new UserProfileImageUpdatedEvent(
+            Id,
+            UpdatedAt.Value,
+            updatedBy,
+            profileImage));
+    }
+
     public void SetSelectedTenant(Tenant tenant, string? updatedBy)
     {
         SetExtension("SelectedTenant", tenant.Id.ToString(), updatedBy);
