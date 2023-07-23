@@ -14,5 +14,5 @@ internal class MongoDocument : IMongoDocument
     public DateTime? DeletedAt { get; set; }
     public string? DeletedBy { get; set; }
     public List<string> Tags { get; set; } = new();
-    public Dictionary<string, string?> Extensions { get; set; } = new();
+    public Dictionary<string, object?> Extensions { get; set; } = new();
 }

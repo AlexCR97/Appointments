@@ -37,7 +37,7 @@ public class Service : Entity
         DateTime? deletedAt,
         string? deletedBy,
         List<string> tags,
-        Dictionary<string, string?> extensions,
+        Dictionary<string, object?> extensions,
 
         Guid tenantId,
         string name,
@@ -82,8 +82,8 @@ public class Service : Entity
             null,
             null,
             null,
-            new List<string>(),
-            new Dictionary<string, string?>(),
+            new(),
+            new(),
 
             tenantId,
             string.Empty,

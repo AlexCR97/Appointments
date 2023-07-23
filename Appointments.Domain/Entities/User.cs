@@ -26,7 +26,7 @@ public class User : Entity
         DateTime? deletedAt,
         string? deletedBy,
         List<string> tags,
-        Dictionary<string, string?> extensions,
+        Dictionary<string, object?> extensions,
         
         string email,
         string password,
@@ -71,8 +71,8 @@ public class User : Entity
             null,
             null,
             null,
-            new List<string>(),
-            new Dictionary<string, string?>(),
+            new(),
+            new(),
 
             email,
             password,
@@ -135,6 +135,28 @@ public class User : Entity
             UpdatedAt.Value,
             updatedBy,
             profileImage));
+    }
+
+    public void AddTenant(Tenant tenant, string? updatedBy)
+    {
+        var tenants = GetTenants();
+
+        if (tenants.Contains(tenant.Id))
+            return;
+
+        tenants.Add(tenant.Id);
+        SetExtension("Tenants", tenants, updatedBy);
+    }
+
+    private List<Guid> GetTenants()
+    {
+        var tenants = Extensions.GetValueOrDefault("Tenants");
+
+        Guid[] tenantsArray = tenants is null
+            ? Array.Empty<Guid>()
+            : (Guid[])tenants;
+
+        return tenantsArray.ToList();
     }
 
     public void SetSelectedTenant(Tenant tenant, string? updatedBy)

@@ -5,4 +5,4 @@ public record UserProfile(
     string? FirstName,
     string? LastName,
     string? ProfileImage,
-    IReadOnlyDictionary<string, string?>? Extensions);
+    IReadOnlyDictionary<string, object?>? Extensions);

@@ -39,7 +39,7 @@ internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRe
 
         var createdUser = await CreateUserAsync(request);
         var createdTenant = await CreateTenantAsync(request, createdUser);
-        await SetSelectedTenantAsync(createdUser, createdTenant);
+        await SetTenantExtensionsAsync(createdUser, createdTenant);
         await CreateBranchOfficeAsync(createdUser, createdTenant);
         await CreateServiceAsync(createdUser, createdTenant);
         return createdUser.Id;
@@ -94,8 +94,9 @@ internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRe
         return tenant;
     }
 
-    private async Task SetSelectedTenantAsync(User user, Tenant tenant)
+    private async Task SetTenantExtensionsAsync(User user, Tenant tenant)
     {
+        user.AddTenant(tenant, user.Email);
         user.SetSelectedTenant(tenant, user.Email);
 
         if (user.HasChanged)

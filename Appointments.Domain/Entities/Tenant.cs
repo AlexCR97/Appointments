@@ -28,7 +28,7 @@ public class Tenant : Entity
         DateTime? deletedAt,
         string? deletedBy,
         List<string> tags,
-        Dictionary<string, string?> extensions,
+        Dictionary<string, object?> extensions,
 
         string name,
         string? slogan,
@@ -68,8 +68,8 @@ public class Tenant : Entity
             null,
             null,
             null,
-            new List<string>(),
-            new Dictionary<string, string?>(),
+            new(),
+            new(),
 
             name,
             null,

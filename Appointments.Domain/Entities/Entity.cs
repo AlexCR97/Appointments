@@ -29,7 +29,7 @@ public class Entity : IEntity
         DateTime? deletedAt,
         string? deletedBy,
         List<string> tags,
-        Dictionary<string, string?> extensions)
+        Dictionary<string, object?> extensions)
     {
         Id = id;
         CreatedAt = createdAt;
@@ -78,13 +78,12 @@ public class Entity : IEntity
 
     #region Extensions
 
-    public Dictionary<string, string?> Extensions { get; protected set; }
+    public Dictionary<string, object?> Extensions { get; protected set; }
 
-    public void SetExtension(string key, string? value, string? updatedBy)
+    public void SetExtension(string key, object? value, string? updatedBy)
     {
         UpdatedAt = DateTime.UtcNow;
         UpdatedBy = updatedBy;
-
         Extensions[key] = value;
 
         AddEvent(new ExtensionSetEvent(
