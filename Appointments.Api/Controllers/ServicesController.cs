@@ -1,12 +1,10 @@
 ﻿using Appointments.Application.Requests.Services;
-using Appointments.Domain.Models;
-using Appointments.Domain.Models.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Appointments.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/services")]
 [ApiController]
 public class ServicesController : ControllerBase
 {
@@ -18,16 +16,18 @@ public class ServicesController : ControllerBase
     }
 
     [HttpGet(Name = nameof(GetServices))]
-    public async Task<PagedResult<ServiceModel>> GetServices(
+    public async Task<IActionResult> GetServices(
         [FromQuery] int pageIndex = 0,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sort = null,
         [FromQuery] string? filter = null)
     {
-        return await _mediator.Send(new GetServicesRequest(
+        var services = await _mediator.Send(new GetServicesRequest(
             pageIndex,
             pageSize,
             sort,
             filter));
+
+        return Ok(services);
     }
 }

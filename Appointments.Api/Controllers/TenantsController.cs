@@ -1,11 +1,10 @@
 ﻿using Appointments.Application.Requests.Tenants;
-using Appointments.Domain.Models.Tenants;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Appointments.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/tenants")]
 [ApiController]
 public class TenantsController : ControllerBase
 {
@@ -17,8 +16,9 @@ public class TenantsController : ControllerBase
     }
 
     [HttpGet("{tenantId}", Name = nameof(GetTenant))]
-    public async Task<TenantModel> GetTenant([FromRoute] Guid tenantId)
+    public async Task<IActionResult> GetTenant([FromRoute] Guid tenantId)
     {
-        return await _mediator.Send(new GetTenantRequest(tenantId));
+        var tenant = await _mediator.Send(new GetTenantRequest(tenantId));
+        return Ok(tenant);
     }
 }

@@ -3,13 +3,12 @@ using Appointments.Api.Extensions.Files;
 using Appointments.Application.Requests.Users;
 using Appointments.Application.Requests.Users.Login;
 using Appointments.Application.Requests.Users.SignUp;
-using Appointments.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Appointments.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/users")]
 [ApiController]
 public class UsersController : ControllerBase
 {
@@ -21,7 +20,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("sign-up/email", Name = nameof(SignUpWithEmail))]
-    public async Task<ActionResult> SignUpWithEmail([FromBody] SignUpWithEmailRequest request)
+    public async Task<IActionResult> SignUpWithEmail([FromBody] SignUpWithEmailRequest request)
     {
         var userId = await _mediator.Send(request);
 
@@ -32,16 +31,17 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("login/email", Name = nameof(LoginWithEmail))]
-    public async Task<ActionResult> LoginWithEmail([FromBody] LoginWithEmailRequest request)
+    public async Task<IActionResult> LoginWithEmail([FromBody] LoginWithEmailRequest request)
     {
         var oAuthToken = await _mediator.Send(request);
         return Ok(oAuthToken);
     }
 
     [HttpGet("{userId}/profile", Name = nameof(GetUserProfile))]
-    public async Task<UserProfile> GetUserProfile([FromRoute] Guid userId)
+    public async Task<IActionResult> GetUserProfile([FromRoute] Guid userId)
     {
-        return await _mediator.Send(new GetUserProfileRequest(userId));
+        var userProfile = await _mediator.Send(new GetUserProfileRequest(userId));
+        return Ok(userProfile);
     }
 
     [HttpPatch("{userId}/profile", Name = nameof(UpdateUserProfile))]
