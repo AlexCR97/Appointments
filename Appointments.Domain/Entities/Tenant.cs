@@ -126,6 +126,21 @@ public class Tenant : Entity
             weeklySchedule));
     }
 
+    public void UpdateLogo(
+        string? updatedBy,
+        string logo)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+        Logo = logo;
+
+        AddEvent(new TenantLogoUpdatedEvent(
+            Id,
+            UpdatedAt.Value,
+            updatedBy,
+            logo));
+    }
+
     public void Delete(string? deletedBy)
     {
         DeletedAt = DateTime.UtcNow;

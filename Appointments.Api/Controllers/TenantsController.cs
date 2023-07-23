@@ -1,4 +1,5 @@
-﻿using Appointments.Application.Requests.Tenants;
+﻿using Appointments.Api.Extensions.Files;
+using Appointments.Application.Requests.Tenants;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,5 +21,20 @@ public class TenantsController : ControllerBase
     {
         var tenant = await _mediator.Send(new GetTenantRequest(tenantId));
         return Ok(tenant);
+    }
+
+    [HttpPost("{tenantId}/logo", Name = nameof(UploadTenantLogo))]
+    public async Task<IActionResult> UploadTenantLogo(
+        [FromRoute] Guid tenantId,
+        [FromForm] IFormFile image)
+    {
+        var tenantLogoPath = await _mediator.Send(new UploadLogoRequest(
+            tenantId,
+            image.FileName,
+            image.GetBytes(),
+            null // TODO Set UpdatedBy
+            ));
+
+        return Ok(new { logoPath = tenantLogoPath });
     }
 }
