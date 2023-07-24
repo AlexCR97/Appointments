@@ -1,13 +1,16 @@
 ﻿using Appointments.Api.Exceptions;
 using Appointments.Api.Extensions.Files;
+using Appointments.Application.Policies;
 using Appointments.Application.Requests.Tenants;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Appointments.Api.Controllers;
 
 [Route("api/tenants")]
 [ApiController]
+[Authorize(Policy = TenantPolicy.PolicyName)]
 public class TenantsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -25,6 +28,7 @@ public class TenantsController : ControllerBase
     }
 
     [HttpPatch("{tenantId}", Name = nameof(UpdateTenant))]
+    [Authorize(Roles = $"{TenantPolicy.Roles.Owner},{TenantPolicy.Roles.Admin}")]
     public async Task<IActionResult> UpdateTenant(
         [FromRoute] Guid tenantId,
         [FromBody] UpdateTenantRequest request)
@@ -35,6 +39,7 @@ public class TenantsController : ControllerBase
     }
 
     [HttpPost("{tenantId}/logo", Name = nameof(UploadTenantLogo))]
+    [Authorize(Roles = $"{TenantPolicy.Roles.Owner},{TenantPolicy.Roles.Admin}")]
     public async Task<IActionResult> UploadTenantLogo(
         [FromRoute] Guid tenantId,
         [FromForm] IFormFile image)

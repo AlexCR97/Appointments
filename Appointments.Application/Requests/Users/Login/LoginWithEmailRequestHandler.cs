@@ -35,7 +35,13 @@ internal class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEmailRequ
         {
             new Claim(
                 "role",
-                JsonConvert.SerializeObject(new string[] { UserPolicy.Roles.Owner }),
+                JsonConvert.SerializeObject(new string[]
+                {
+                    UserPolicy.Roles.Owner,
+                    TenantPolicy.Roles.Owner,
+                    ServicePolicy.Roles.Owner,
+                    BranchOfficePolicy.Roles.Owner,
+                }),
                 JsonClaimValueTypes.JsonArray),
         });
         

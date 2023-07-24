@@ -78,6 +78,26 @@ builder.Services.AddAuthorization(config =>
                 TenantPolicy.Roles.Writer,
                 TenantPolicy.Roles.Reader,
             }));
+
+    config
+        .AddPolicy(ServicePolicy.PolicyName, policy => policy
+            .RequireRole(new string[]
+            {
+                ServicePolicy.Roles.Owner,
+                ServicePolicy.Roles.Admin,
+                ServicePolicy.Roles.Writer,
+                ServicePolicy.Roles.Reader,
+            }));
+
+    config
+        .AddPolicy(BranchOfficePolicy.PolicyName, policy => policy
+            .RequireRole(new string[]
+            {
+                BranchOfficePolicy.Roles.Owner,
+                BranchOfficePolicy.Roles.Admin,
+                BranchOfficePolicy.Roles.Writer,
+                BranchOfficePolicy.Roles.Reader,
+            }));
 });
 
 builder.Services.AddEndpointsApiExplorer();
