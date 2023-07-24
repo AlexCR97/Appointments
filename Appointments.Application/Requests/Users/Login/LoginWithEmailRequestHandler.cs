@@ -1,8 +1,11 @@
-﻿using Appointments.Application.Services.Jwt;
+﻿using Appointments.Application.Policies;
+using Appointments.Application.Services.Jwt;
 using Appointments.Application.Services.Users;
 using Appointments.Domain.Entities;
 using Appointments.Domain.Models.Auth;
 using MediatR;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Appointments.Application.Requests.Users.Login;
@@ -30,9 +33,12 @@ internal class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEmailRequ
     {
         var accessToken = _jwtService.GenerateJwt(new List<Claim>
         {
-            new Claim("email", user.Email, ClaimValueTypes.Email),
+            new Claim(
+                "role",
+                JsonConvert.SerializeObject(new string[] { UserPolicy.Roles.Owner }),
+                JsonClaimValueTypes.JsonArray),
         });
-
+        
         var idToken = _jwtService.GenerateJwt(new List<Claim>
         {
             new Claim("id", user.Id.ToString(), ClaimValueTypes.String),

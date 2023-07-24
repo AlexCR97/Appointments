@@ -1,15 +1,18 @@
 ﻿using Appointments.Api.Exceptions;
 using Appointments.Api.Extensions.Files;
+using Appointments.Application.Policies;
 using Appointments.Application.Requests.Users;
 using Appointments.Application.Requests.Users.Login;
 using Appointments.Application.Requests.Users.SignUp;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Appointments.Api.Controllers;
 
 [Route("api/users")]
 [ApiController]
+[Authorize(Policy = UserPolicy.PolicyName)]
 public class UsersController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -20,6 +23,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("sign-up/email", Name = nameof(SignUpWithEmail))]
+    [AllowAnonymous]
     public async Task<IActionResult> SignUpWithEmail([FromBody] SignUpWithEmailRequest request)
     {
         var userId = await _mediator.Send(request);
@@ -31,6 +35,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("login/email", Name = nameof(LoginWithEmail))]
+    [AllowAnonymous]
     public async Task<IActionResult> LoginWithEmail([FromBody] LoginWithEmailRequest request)
     {
         var oAuthToken = await _mediator.Send(request);
@@ -45,6 +50,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPatch("{userId}/profile", Name = nameof(UpdateUserProfile))]
+    [Authorize(Roles = UserPolicy.Roles.Owner)]
     public async Task<IActionResult> UpdateUserProfile(
         [FromRoute] Guid userId,
         [FromBody] UpdateProfileRequest request)
@@ -55,6 +61,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("{userId}/profile/image", Name = nameof(UploadUserProfileImage))]
+    [Authorize(Roles = UserPolicy.Roles.Owner)]
     public async Task<IActionResult> UploadUserProfileImage(
         [FromRoute] Guid userId,
         [FromForm] IFormFile image)

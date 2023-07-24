@@ -20,8 +20,12 @@ internal class JwtService : IJwtService
     {
         return JwtGenerator.Generate(
             _jwtOptions.SecretKey,
-            issuer: _jwtOptions.Issuer,
-            audience: _jwtOptions.Audience,
+            issuer: string.IsNullOrWhiteSpace(_jwtOptions.Issuer)
+                ? null
+                : _jwtOptions.Issuer,
+            audience: string.IsNullOrWhiteSpace(_jwtOptions.Audience)
+                ? null
+                : _jwtOptions.Audience,
             expiresInMinutes: _jwtOptions.ExpiresInMinutes,
             claims: claims);
     }
