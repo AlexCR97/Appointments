@@ -15,6 +15,7 @@ using Appointments.Infrastructure.Mongo.Documents;
 using Appointments.Infrastructure.Repositories;
 using Appointments.Infrastructure.Services.Events;
 using Appointments.Infrastructure.Services.FileStorages.LocalStorage;
+using Appointments.Infrastructure.Services.Geo;
 using Appointments.Infrastructure.Services.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,8 +32,7 @@ public static class DependencyInjectionExtensions
             .AddMongo(configuration)
             .AddRepositories()
             .AddSecretManager(configuration)
-            .AddOtherServices()
-            ;
+            .AddOtherServices(configuration);
     }
 
     private static IServiceCollection AddFileStorage(this IServiceCollection services, IConfiguration configuration)
@@ -87,13 +87,31 @@ public static class DependencyInjectionExtensions
             hashKey));
     }
 
-    private static IServiceCollection AddOtherServices(this IServiceCollection services)
+    private static IServiceCollection AddOtherServices(this IServiceCollection services, IConfiguration configuration)
     {
         // Events
         services.AddScoped<IEventProcessor, EventProcessor>();
 
+        // Geo
+        services.AddGeoService(configuration);
+
         // Users
         services.AddScoped<IUserPasswordManager, UserPasswordManager>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddGeoService(this IServiceCollection services, IConfiguration configuration)
+    {
+        var apiUrl = configuration.GetRequiredString("Geo:OpenStreetMaps:ApiUrl");
+        var format = configuration.GetRequiredString("Geo:OpenStreetMaps:Format");
+        var geoServiceOptions = new GeoServiceOptions(
+            apiUrl,
+            format);
+
+        services.AddSingleton<IGeoServiceOptions>(geoServiceOptions);
+
+        services.AddScoped<IGeoService, GeoService>();
 
         return services;
     }
