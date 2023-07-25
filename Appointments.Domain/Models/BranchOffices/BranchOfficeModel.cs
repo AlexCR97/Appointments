@@ -2,7 +2,7 @@
 
 namespace Appointments.Domain.Models.BranchOffices;
 
-public class BranchOfficeModel
+public class BranchOfficeModel : EntityModel
 {
     public Guid TenantId { get; set; }
     public string Name { get; set; } = null!;

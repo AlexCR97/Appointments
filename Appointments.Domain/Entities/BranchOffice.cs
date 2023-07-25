@@ -84,4 +84,28 @@ public class BranchOffice : Entity
 
         return branchOffice;
     }
+
+    public void Update(
+        string? updatedBy,
+        string name,
+        Location location,
+        string address,
+        List<SocialMediaContact> socialMediaContacts)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+
+        Name = name;
+        Location = location;
+        Address = address;
+        SocialMediaContacts = socialMediaContacts;
+
+        AddEvent(new BranchOfficeUpdatedEvent(
+            UpdatedAt.Value,
+            updatedBy,
+            name,
+            location,
+            address,
+            socialMediaContacts));
+    }
 }

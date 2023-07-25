@@ -1,4 +1,5 @@
-﻿using Appointments.Application.Policies;
+﻿using Appointments.Api.Exceptions;
+using Appointments.Application.Policies;
 using Appointments.Application.Requests.BranchOffices;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -32,5 +33,16 @@ public class BranchOfficesController : ControllerBase
             filter));
 
         return Ok(branchOffices);
+    }
+
+    [HttpPatch("{branchOfficeId}", Name = nameof(UpdateBranchOffice))]
+    [Authorize(Roles = $"{BranchOfficePolicy.Roles.Owner},{BranchOfficePolicy.Roles.Admin}")]
+    public async Task<IActionResult> UpdateBranchOffice(
+        [FromRoute] Guid branchOfficeId,
+        [FromBody] UpdateBranchOfficeRequest request)
+    {
+        IdMismatchException.ThrowIfMismatch(branchOfficeId, request.Id);
+        await _mediator.Send(request);
+        return Ok();
     }
 }
