@@ -5,23 +5,23 @@ using MediatR;
 
 namespace Appointments.Application.Requests.Tenants;
 
-public sealed record UpdateScheduleRequest(
+public sealed record UpdateTenantScheduleRequest(
     string? UpdatedBy,
     Guid Id,
     WeeklySchedule WeeklySchedule) : IRequest;
 
-internal sealed class UpdateScheduleRequestHandler : IRequestHandler<UpdateScheduleRequest>
+internal sealed class UpdateTenantScheduleRequestHandler : IRequestHandler<UpdateTenantScheduleRequest>
 {
     private readonly IEventProcessor _eventProcessor;
     private readonly ITenantRepository _tenantRepository;
 
-    public UpdateScheduleRequestHandler(IEventProcessor eventProcessor, ITenantRepository tenantRepository)
+    public UpdateTenantScheduleRequestHandler(IEventProcessor eventProcessor, ITenantRepository tenantRepository)
     {
         _eventProcessor = eventProcessor;
         _tenantRepository = tenantRepository;
     }
 
-    public async Task Handle(UpdateScheduleRequest request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateTenantScheduleRequest request, CancellationToken cancellationToken)
     {
         var tenant = await _tenantRepository.GetByIdAsync(request.Id);
 

@@ -6,26 +6,26 @@ using MediatR;
 
 namespace Appointments.Application.Requests.Tenants;
 
-public sealed record UploadLogoRequest(
+public sealed record UploadTenantLogoRequest(
     Guid Id,
     string FileName,
     byte[] File,
     string? UpdatedBy) : IRequest<string>;
 
-internal sealed class UploadLogoRequestHandler : IRequestHandler<UploadLogoRequest, string>
+internal sealed class UploadTenantLogoRequestHandler : IRequestHandler<UploadTenantLogoRequest, string>
 {
     private readonly IEventProcessor _eventProcessor;
     private readonly IFileStorage _fileStorage;
     private readonly ITenantRepository _tenantRepository;
 
-    public UploadLogoRequestHandler(IEventProcessor eventProcessor, IFileStorage fileStorage, ITenantRepository tenantRepository)
+    public UploadTenantLogoRequestHandler(IEventProcessor eventProcessor, IFileStorage fileStorage, ITenantRepository tenantRepository)
     {
         _eventProcessor = eventProcessor;
         _fileStorage = fileStorage;
         _tenantRepository = tenantRepository;
     }
 
-    public async Task<string> Handle(UploadLogoRequest request, CancellationToken cancellationToken)
+    public async Task<string> Handle(UploadTenantLogoRequest request, CancellationToken cancellationToken)
     {
         var tenant = await _tenantRepository.GetByIdAsync(request.Id);
 

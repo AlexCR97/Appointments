@@ -55,6 +55,47 @@ public class Tenant : Entity
         WeeklySchedule = weeklySchedule;
     }
 
+    public static Tenant Create(
+        string? createdBy,
+        string name,
+        string? slogan,
+        string urlId,
+        string? logo,
+        List<SocialMediaContact> socialMediaContacts,
+        WeeklySchedule? weeklySchedule)
+    {
+        var tenant = new Tenant(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
+            createdBy,
+            null,
+            null,
+            null,
+            null,
+            new List<string>(),
+            new Dictionary<string, object?>(),
+            
+            name,
+            slogan,
+            urlId,
+            logo,
+            socialMediaContacts,
+            weeklySchedule);
+
+        tenant.AddEvent(new TenantCreatedEvent(
+            tenant.Id,
+            tenant.CreatedAt,
+            tenant.CreatedBy,
+            tenant.Name,
+            tenant.Slogan,
+            tenant.UrlId,
+            tenant.Logo,
+            tenant.SocialMediaContacts,
+            tenant.WeeklySchedule));
+
+        return tenant;
+    }
+
     public static Tenant CreateMinimal(
         string? createdBy,
         string name,

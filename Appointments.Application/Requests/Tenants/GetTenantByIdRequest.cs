@@ -5,21 +5,21 @@ using MediatR;
 
 namespace Appointments.Application.Requests.Tenants;
 
-public record GetTenantRequest(
+public record GetTenantByIdRequest(
     Guid Id) : IRequest<TenantModel>;
 
-internal class GetTenantRequestHandler : IRequestHandler<GetTenantRequest, TenantModel>
+internal class GetTenantByIdRequestHandler : IRequestHandler<GetTenantByIdRequest, TenantModel>
 {
     private readonly IMapper _mapper;
     private readonly ITenantRepository _tenantRepository;
 
-    public GetTenantRequestHandler(IMapper mapper, ITenantRepository tenantRepository)
+    public GetTenantByIdRequestHandler(IMapper mapper, ITenantRepository tenantRepository)
     {
         _mapper = mapper;
         _tenantRepository = tenantRepository;
     }
 
-    public async Task<TenantModel> Handle(GetTenantRequest request, CancellationToken cancellationToken)
+    public async Task<TenantModel> Handle(GetTenantByIdRequest request, CancellationToken cancellationToken)
     {
         var tenant = await _tenantRepository.GetByIdAsync(request.Id);
         return _mapper.Map<TenantModel>(tenant);
