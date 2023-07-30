@@ -135,6 +135,21 @@ public class Tenant : Entity
             logo));
     }
 
+    public void UpdateSchedule(
+        string? updatedBy,
+        WeeklySchedule weeklySchedule)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+        WeeklySchedule = weeklySchedule;
+
+        AddEvent(new TenantScheduleUpdatedEvent(
+            Id,
+            UpdatedAt.Value,
+            updatedBy,
+            weeklySchedule));
+    }
+
     public void Delete(string? deletedBy)
     {
         DeletedAt = DateTime.UtcNow;

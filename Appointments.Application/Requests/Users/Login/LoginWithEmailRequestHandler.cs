@@ -33,8 +33,9 @@ internal class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEmailRequ
     {
         var accessToken = _jwtService.GenerateJwt(new List<Claim>
         {
+            new Claim(ClaimTypes.Email, user.Email, ClaimValueTypes.Email),
             new Claim(
-                "role",
+                ClaimTypes.Role,
                 JsonConvert.SerializeObject(new string[]
                 {
                     UserPolicy.Roles.Owner,
@@ -48,14 +49,14 @@ internal class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEmailRequ
         var idToken = _jwtService.GenerateJwt(new List<Claim>
         {
             new Claim("id", user.Id.ToString(), ClaimValueTypes.String),
-            new Claim("email", user.Email, ClaimValueTypes.Email),
+            new Claim(ClaimTypes.Email, user.Email, ClaimValueTypes.Email),
             new Claim("firstName", user.FirstName ?? string.Empty, ClaimValueTypes.String),
             new Claim("lastName", user.LastName ?? string.Empty, ClaimValueTypes.String),
         });
 
         var refreshToken = _jwtService.GenerateJwt(new List<Claim>
         {
-            new Claim("email", user.Email, ClaimValueTypes.Email),
+            new Claim(ClaimTypes.Email, user.Email, ClaimValueTypes.Email),
         });
 
         return new OAuthToken(

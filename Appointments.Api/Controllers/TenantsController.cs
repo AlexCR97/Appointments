@@ -1,4 +1,5 @@
 ﻿using Appointments.Api.Exceptions;
+using Appointments.Api.Extensions.AspNetCore;
 using Appointments.Api.Extensions.Files;
 using Appointments.Application.Policies;
 using Appointments.Application.Requests.Tenants;
@@ -48,9 +49,24 @@ public class TenantsController : ControllerBase
             tenantId,
             image.FileName,
             image.GetBytes(),
-            null // TODO Set UpdatedBy
-            ));
+            User.GetUsername()));
 
         return Ok(new { logoPath = tenantLogoPath });
+    }
+
+    [HttpPut("{tenantId}/schedule", Name = nameof(UpdateTenantSchedule))]
+    [Authorize(Roles = $"{TenantPolicy.Roles.Owner},{TenantPolicy.Roles.Admin}")]
+    public async Task<IActionResult> UpdateTenantSchedule(
+        [FromRoute] Guid tenantId,
+        [FromBody] Requests.UpdateScheduleRequest request)
+    {
+        IdMismatchException.ThrowIfMismatch(tenantId, request.Id);
+
+        await _mediator.Send(new UpdateScheduleRequest(
+            User.GetUsername(),
+            request.Id,
+            request.WeeklySchedule));
+
+        return Ok();
     }
 }
