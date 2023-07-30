@@ -1,4 +1,5 @@
 ﻿using Appointments.Domain.Events.Services;
+using Appointments.Domain.Events.Tenants;
 
 namespace Appointments.Domain.Entities;
 
@@ -101,5 +102,20 @@ public class Service : Entity
             tenantId));
 
         return service;
+    }
+
+    public void UpdateImages(
+        string? updatedBy,
+        List<IndexedImage> images)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+        Images = images;
+
+        AddEvent(new ServiceImagesUpdatedEvent(
+            Id,
+            UpdatedAt.Value,
+            updatedBy,
+            images));
     }
 }

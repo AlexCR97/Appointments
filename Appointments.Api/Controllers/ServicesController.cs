@@ -1,4 +1,6 @@
-﻿using Appointments.Application.Policies;
+﻿using Appointments.Api.Extensions.AspNetCore;
+using Appointments.Api.Extensions.Files;
+using Appointments.Application.Policies;
 using Appointments.Application.Requests.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -32,5 +34,24 @@ public class ServicesController : ControllerBase
             filter));
 
         return Ok(services);
+    }
+
+    [HttpPost("{serviceId}/images")]
+    [Authorize(Roles = $"{ServicePolicy.Roles.Owner},{ServicePolicy.Roles.Admin}")]
+    public async Task<IActionResult> UploadServiceImages(
+        [FromRoute] Guid serviceId,
+        [FromForm] IFormFileCollection images)
+    {
+        var indexedImages = await _mediator.Send(new UploadImagesRequest(
+            User.GetUsername(),
+            serviceId,
+            images
+                .Select((image, index) => new UploadImagesRequest.IndexedImage(
+                    index,
+                    image.FileName,
+                    image.GetBytes()))
+                .ToList()));
+
+        return Ok(indexedImages);
     }
 }

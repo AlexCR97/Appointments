@@ -31,25 +31,24 @@ internal class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEmailRequ
 
     private OAuthToken GenerateOAuthToken(User user)
     {
+        var roles = new string[]
+        {
+            UserPolicy.Roles.Owner,
+            TenantPolicy.Roles.Owner,
+            ServicePolicy.Roles.Owner,
+            BranchOfficePolicy.Roles.Owner,
+        };
+
         var accessToken = _jwtService.GenerateJwt(new List<Claim>
         {
             new Claim(ClaimTypes.Email, user.Email, ClaimValueTypes.Email),
-            new Claim(
-                ClaimTypes.Role,
-                JsonConvert.SerializeObject(new string[]
-                {
-                    UserPolicy.Roles.Owner,
-                    TenantPolicy.Roles.Owner,
-                    ServicePolicy.Roles.Owner,
-                    BranchOfficePolicy.Roles.Owner,
-                }),
-                JsonClaimValueTypes.JsonArray),
+            new Claim(ClaimTypes.Role, JsonConvert.SerializeObject(roles), JsonClaimValueTypes.JsonArray),
         });
         
         var idToken = _jwtService.GenerateJwt(new List<Claim>
         {
-            new Claim("id", user.Id.ToString(), ClaimValueTypes.String),
             new Claim(ClaimTypes.Email, user.Email, ClaimValueTypes.Email),
+            new Claim("id", user.Id.ToString(), ClaimValueTypes.String),
             new Claim("firstName", user.FirstName ?? string.Empty, ClaimValueTypes.String),
             new Claim("lastName", user.LastName ?? string.Empty, ClaimValueTypes.String),
         });

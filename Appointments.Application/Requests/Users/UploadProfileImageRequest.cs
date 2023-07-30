@@ -6,12 +6,12 @@ using MediatR;
 
 namespace Appointments.Application.Requests.Users;
 
-public record UploadProfileImageRequest(
+public sealed record UploadProfileImageRequest(
     Guid Id,
     string FileName,
     byte[] File): IRequest<string>;
 
-internal class UploadProfileImageRequestHandler : IRequestHandler<UploadProfileImageRequest, string>
+internal sealed class UploadProfileImageRequestHandler : IRequestHandler<UploadProfileImageRequest, string>
 {
     private readonly IEventProcessor _eventProcessor;
     private readonly IFileStorage _fileStorage;
@@ -26,13 +26,15 @@ internal class UploadProfileImageRequestHandler : IRequestHandler<UploadProfileI
 
     public async Task<string> Handle(UploadProfileImageRequest request, CancellationToken cancellationToken)
     {
+        // TODO Validate request
+
         var user = await _userRepository.GetByIdAsync(request.Id);
 
         var imageRelativePathWithoutFileName = Path.Join("Users", user.Id.ToString());
         await _fileStorage.EnsureDirectoryAsync(imageRelativePathWithoutFileName);
 
         var imageName = GetImageName(request);
-        var imageRelativePathWithFileName = Path.Join("Users", user.Id.ToString(), imageName);
+        var imageRelativePathWithFileName = Path.Join(imageRelativePathWithoutFileName, imageName);
         
         await TryDeletePreviousProfileImageAsync(user);
 
