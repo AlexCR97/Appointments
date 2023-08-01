@@ -21,14 +21,15 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(DefaultCorsPolicy, policy =>
     {
-        var whitelist = builder.Configuration
+        var allowedOrigins = builder.Configuration
             .GetRequiredSection("Cors")
             .GetRequiredSection("Default")
+            .GetRequiredSection("AllowedOrigins")
             .Get<string[]>()
             ?? Array.Empty<string>();
 
         policy
-            .WithOrigins(whitelist)
+            .WithOrigins(allowedOrigins)
             .AllowAnyMethod()
             .AllowAnyHeader();
     });

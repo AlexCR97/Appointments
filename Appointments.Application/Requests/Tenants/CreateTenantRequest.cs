@@ -1,18 +1,21 @@
 ﻿using Appointments.Application.Repositories.Tenants;
 using Appointments.Application.Services.Events;
+using Appointments.Application.Services.Tenants;
 using Appointments.Domain.Entities;
 using MediatR;
 
 namespace Appointments.Application.Requests.Tenants;
 
 public sealed record CreateTenantRequest(
-    string? CreatedBy,
     string Name,
     string? Slogan,
-    string UrlId,
-    List<SocialMediaContact> SocialMediaContacts,
+    string? UrlId,
+    List<SocialMediaContact>? SocialMediaContacts,
     WeeklySchedule? WeeklySchedule
-    ) : IRequest<Guid>;
+    ) : IRequest<Guid>
+{
+    public string? CreatedBy { get; set; }
+}
 
 internal sealed class CreateTenantRequestHandler : IRequestHandler<CreateTenantRequest, Guid>
 {
@@ -27,13 +30,15 @@ internal sealed class CreateTenantRequestHandler : IRequestHandler<CreateTenantR
 
     public async Task<Guid> Handle(CreateTenantRequest request, CancellationToken cancellationToken)
     {
+        // TODO Validate CreateTenantRequest
+
         var tenant = Tenant.Create(
             request.CreatedBy,
             request.Name,
             request.Slogan,
-            request.UrlId,
+            request.UrlId ?? TenantUrlIdGenerator.Random(),
             null,
-            request.SocialMediaContacts,
+            request.SocialMediaContacts ?? new List<SocialMediaContact>(),
             request.WeeklySchedule);
 
         if (tenant.HasChanged)

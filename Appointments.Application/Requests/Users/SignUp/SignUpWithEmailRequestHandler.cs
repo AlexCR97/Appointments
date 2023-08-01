@@ -5,6 +5,7 @@ using Appointments.Application.Repositories.Services;
 using Appointments.Application.Repositories.Tenants;
 using Appointments.Application.Repositories.Users;
 using Appointments.Application.Services.Events;
+using Appointments.Application.Services.Tenants;
 using Appointments.Application.Services.Users;
 using Appointments.Application.Validations.Users;
 using Appointments.Domain.Entities;
@@ -78,12 +79,7 @@ internal class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWithEmailRe
         var tenant = Tenant.CreateMinimal(
             user.Email,
             request.TenantName,
-            new Password()
-                .LengthRequired(Tenant.UrlIdLength)
-                .IncludeUppercase()
-                .IncludeLowercase()
-                .IncludeNumeric()
-                .Next());
+            TenantUrlIdGenerator.Random());
 
         if (tenant.HasChanged)
         {

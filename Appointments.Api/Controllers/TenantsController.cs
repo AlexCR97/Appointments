@@ -25,6 +25,7 @@ public class TenantsController : ControllerBase
     [Authorize(Roles = $"{TenantPolicy.Roles.Owner},{TenantPolicy.Roles.Admin}")]
     public async Task<IActionResult> CreateTenant([FromBody] CreateTenantRequest request)
     {
+        request.CreatedBy = User.GetUsername();
         var tenantId = await _mediator.Send(request);
         return CreatedAtRoute(nameof(GetTenantById), new { tenantId }, new { tenantId });
     }

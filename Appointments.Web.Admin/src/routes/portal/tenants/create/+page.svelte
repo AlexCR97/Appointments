@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { CreateTenantRequest, TenantApi } from '$lib/api/tenants';
 	import { Input } from '$lib/components/forms';
 	import { pageActions, pageTitle } from '$lib/components/page-header';
+
+	const tenantApi = new TenantApi();
 
 	const formId = 'createTenantForm';
 
@@ -23,11 +26,14 @@
 		}
 	]);
 
-	function onSubmit(e: Event) {
+	async function onSubmit(e: Event) {
 		e.preventDefault();
 		console.log('name:', name);
 		console.log('slogan', slogan);
 		console.log('urlId', urlId);
+
+		const response = await tenantApi.createAsync(new CreateTenantRequest(name, slogan, urlId));
+		console.log('response', response);
 	}
 </script>
 
