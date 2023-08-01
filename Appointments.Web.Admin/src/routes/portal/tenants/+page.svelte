@@ -1,139 +1,15 @@
-<h1>Tenants</h1>
+<script lang="ts">
+	import { pageActions, pageTitle } from '$lib/components/page-header';
 
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
+	pageTitle.set('Tenants');
 
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
+	pageActions.set([
+		{
+			label: 'New Tenant',
+			href: '/portal/tenants/create',
+			variant: 'primary'
+		}
+	]);
+</script>
 
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
-
-<h1>
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam a laudantium doloribus tempora
-	aut. Accusantium quod facilis, unde porro in sunt voluptas laudantium eaque culpa harum eos,
-	distinctio, sequi praesentium?
-</h1>
+<p class="text-center">TODO: Display Tenants</p>

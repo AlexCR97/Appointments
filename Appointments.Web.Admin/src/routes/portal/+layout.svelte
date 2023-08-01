@@ -16,7 +16,7 @@
 			<PageHeader />
 
 			<div class="w-100 h-100 overflow-auto">
-				<main class="container">
+				<main class="container py-4">
 					<slot />
 				</main>
 			</div>
