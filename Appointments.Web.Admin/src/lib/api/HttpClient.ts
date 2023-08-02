@@ -1,6 +1,7 @@
 import type { HttpMethod } from '@sveltejs/kit';
 import type { QueryParams } from './QueryParams';
 import { UrlBuilder } from './UrlBuilder';
+import { HttpClientError } from './HttpClientError';
 
 export interface HttpRequestOptions {
 	body?: object;
@@ -70,6 +71,24 @@ export class HttpClient {
 			body: options?.body !== undefined ? JSON.stringify(options.body) : undefined
 		});
 
-		return await response.json();
+		if (response.ok) {
+			return await response.json();
+		}
+
+		throw new HttpClientError(
+			method,
+			response.url,
+			response.status,
+			response.statusText,
+			await this.extractResponseAsync(response)
+		);
+	}
+
+	private async extractResponseAsync(response: Response): Promise<unknown> {
+		try {
+			return await response.json();
+		} catch (_) {
+			return await response.text();
+		}
 	}
 }

@@ -1,10 +1,11 @@
+import { env } from '$lib/env';
 import { HttpClient } from '../HttpClient';
 import type { CreateTenantRequest } from './CreateTenantRequest';
 import type { TenantCreatedResponse } from './TenantCreatedResponse';
 
 export class TenantApi {
 	private readonly httpClient = new HttpClient({
-		baseUrl: 'http://localhost:5013/api', // TODO Set with environment variable
+		baseUrl: env.api.baseUrl,
 		basePath: 'tenants'
 	});
 
