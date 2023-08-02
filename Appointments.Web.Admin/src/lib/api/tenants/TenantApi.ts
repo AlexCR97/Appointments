@@ -1,5 +1,5 @@
 import { env } from '$lib/env';
-import { HttpClient } from '../HttpClient';
+import { HttpClient } from '$lib/http';
 import type { CreateTenantRequest } from './CreateTenantRequest';
 import type { TenantCreatedResponse } from './TenantCreatedResponse';
 

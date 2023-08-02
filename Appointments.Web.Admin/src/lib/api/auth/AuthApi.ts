@@ -1,6 +1,6 @@
 import { AuthStore } from '$lib/auth';
 import { env } from '$lib/env';
-import { HttpClient } from '../HttpClient';
+import { HttpClient } from '$lib/http';
 import type { LoginWithEmailRequest } from './LoginWithEmailRequest';
 import type { OAuthTokenResponse } from './OAuthTokenResponse';
 
