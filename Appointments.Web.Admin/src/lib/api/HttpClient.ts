@@ -2,6 +2,9 @@ import type { HttpMethod } from '@sveltejs/kit';
 import type { QueryParams } from './QueryParams';
 import { UrlBuilder } from './UrlBuilder';
 import { HttpClientError } from './HttpClientError';
+import type { RequestInterceptor } from './RequestInterceptor';
+import type { ResponseInterceptor } from './ResponseInterceptor';
+import type { ResponseErrorInterceptor } from './ResponseErrorInterceptor';
 
 export interface HttpRequestOptions {
 	body?: object;
@@ -11,25 +14,30 @@ export interface HttpRequestOptions {
 export interface HttpClientOptions {
 	baseUrl: string;
 	basePath?: string;
-
-	// TODO Add support for interceptors
-	requestInterceptor?: any;
-	responseInterceptor?: any;
+	requestInterceptor?: RequestInterceptor;
+	responseInterceptor?: ResponseInterceptor;
+	responseErrorInterceptor?: ResponseErrorInterceptor;
 }
 
 export class HttpClient {
-	readonly baseUrl: string;
+	private readonly baseUrl: string;
+	private readonly requestInterceptor?: RequestInterceptor;
+	private readonly responseInterceptor?: ResponseInterceptor;
+	private readonly responseErrorInterceptor?: ResponseErrorInterceptor;
 
 	constructor(options: HttpClientOptions) {
 		this.baseUrl = new UrlBuilder(options.baseUrl).withPath(options.basePath).build();
+		this.requestInterceptor = options.requestInterceptor;
+		this.responseInterceptor = options.responseInterceptor;
+		this.responseErrorInterceptor = options.responseErrorInterceptor;
 	}
 
 	async deleteAsync<TResponse>(resource: string, options?: HttpRequestOptions): Promise<TResponse> {
-		return await this.sendAsync('DELETE', this.baseUrl, resource, options);
+		return await this.sendAsync('DELETE', resource, options);
 	}
 
 	async getAsync<TResponse>(resource: string, options?: HttpRequestOptions): Promise<TResponse> {
-		return await this.sendAsync('GET', this.baseUrl, resource, options);
+		return await this.sendAsync('GET', resource, options);
 	}
 
 	async postAsync<TResponse>(
@@ -39,7 +47,7 @@ export class HttpClient {
 	): Promise<TResponse> {
 		options = options ?? {};
 		options.body = body;
-		return await this.sendAsync('POST', this.baseUrl, resource, options);
+		return await this.sendAsync('POST', resource, options);
 	}
 
 	async putAsync<TResponse>(
@@ -49,42 +57,70 @@ export class HttpClient {
 	): Promise<TResponse> {
 		options = options ?? {};
 		options.body = body;
-		return await this.sendAsync('PUT', this.baseUrl, resource, options);
+		return await this.sendAsync('PUT', resource, options);
 	}
 
 	private async sendAsync<TResponse>(
 		method: HttpMethod,
-		baseUrl: string,
 		resource: string,
 		options?: HttpRequestOptions
 	): Promise<TResponse> {
-		const url = new UrlBuilder(baseUrl).withPath(resource).withQuery(options?.query).build();
-
-		const response = await fetch(url, {
-			method,
-			headers: {
-				// TODO How to set authorization header?
-				Authorization:
-					'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhbGVAbGl2ZS5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiVXNlci5Pd25lciIsIlRlbmFudC5Pd25lciIsIlNlcnZpY2UuT3duZXIiLCJCcmFuY2hPZmZpY2UuT3duZXIiXSwiZXhwIjoxNjkwOTEzMTc1LCJpc3MiOiJodHRwczovL2FwaS5hcHBvaW50bWVudHMuY29tL2FwaSJ9.bHhEHSO_Wfr5TwtWiODSSBFuXWCBNEIY3yMi0BAIaU0',
-				'Content-Type': 'application/json'
-			},
-			body: options?.body !== undefined ? JSON.stringify(options.body) : undefined
-		});
+		const url = new UrlBuilder(this.baseUrl).withPath(resource).withQuery(options?.query).build();
+		const request = await this.buildRequestAsync(method, options?.body, this.requestInterceptor);
+		const response = await fetch(url, request);
 
 		if (response.ok) {
-			return await response.json();
+			return await this.handleSuccessfulResponseAsync(response);
 		}
 
-		throw new HttpClientError(
+		const httpClientError = new HttpClientError(
 			method,
 			response.url,
 			response.status,
 			response.statusText,
-			await this.extractResponseAsync(response)
+			await this.extractRawResponseAsync(response)
 		);
+
+		if (this.responseErrorInterceptor === undefined) {
+			throw httpClientError;
+		} else {
+			throw await this.responseErrorInterceptor.intercept<unknown>(httpClientError);
+		}
 	}
 
-	private async extractResponseAsync(response: Response): Promise<unknown> {
+	private async buildRequestAsync(
+		method: HttpMethod,
+		body?: object,
+		interceptor?: RequestInterceptor
+	): Promise<RequestInit> {
+		let requestInit: RequestInit = {
+			method,
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: body !== undefined ? JSON.stringify(body) : undefined
+		};
+
+		if (interceptor) {
+			requestInit = await interceptor.intercept(requestInit);
+		}
+
+		return requestInit;
+	}
+
+	private async handleSuccessfulResponseAsync<TResponse>(response: Response): Promise<TResponse> {
+		let responseContent = await response.json();
+
+		if (this.responseInterceptor) {
+			responseContent = await this.responseInterceptor.intercept<TResponse, TResponse>(
+				responseContent
+			);
+		}
+
+		return responseContent;
+	}
+
+	private async extractRawResponseAsync(response: Response): Promise<unknown> {
 		try {
 			return await response.json();
 		} catch (_) {
