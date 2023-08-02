@@ -28,10 +28,6 @@
 
 	async function onSubmit(e: Event) {
 		e.preventDefault();
-		console.log('name:', name);
-		console.log('slogan', slogan);
-		console.log('urlId', urlId);
-
 		const response = await tenantApi.createAsync(new CreateTenantRequest(name, slogan, urlId));
 		console.log('response', response);
 	}

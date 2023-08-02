@@ -6,12 +6,12 @@ import type { RequestInterceptor } from './RequestInterceptor';
 import type { ResponseInterceptor } from './ResponseInterceptor';
 import type { ResponseErrorInterceptor } from './ResponseErrorInterceptor';
 
-export interface HttpRequestOptions {
+interface HttpRequestOptions {
 	body?: object;
 	query?: QueryParams;
 }
 
-export interface HttpClientOptions {
+interface HttpClientOptions {
 	baseUrl: string;
 	basePath?: string;
 	requestInterceptor?: RequestInterceptor;
@@ -66,7 +66,7 @@ export class HttpClient {
 		options?: HttpRequestOptions
 	): Promise<TResponse> {
 		const url = new UrlBuilder(this.baseUrl).withPath(resource).withQuery(options?.query).build();
-		const request = await this.buildRequestAsync(method, options?.body, this.requestInterceptor);
+		const request = await this.buildRequestAsync(method, options?.body);
 		const response = await fetch(url, request);
 
 		if (response.ok) {
@@ -88,12 +88,8 @@ export class HttpClient {
 		}
 	}
 
-	private async buildRequestAsync(
-		method: HttpMethod,
-		body?: object,
-		interceptor?: RequestInterceptor
-	): Promise<RequestInit> {
-		let requestInit: RequestInit = {
+	private async buildRequestAsync(method: HttpMethod, body?: object): Promise<RequestInit> {
+		const requestInit: RequestInit = {
 			method,
 			headers: {
 				'Content-Type': 'application/json'
@@ -101,11 +97,11 @@ export class HttpClient {
 			body: body !== undefined ? JSON.stringify(body) : undefined
 		};
 
-		if (interceptor) {
-			requestInit = await interceptor.intercept(requestInit);
+		if (this.requestInterceptor === undefined) {
+			return requestInit;
 		}
 
-		return requestInit;
+		return await this.requestInterceptor.intercept(requestInit);
 	}
 
 	private async handleSuccessfulResponseAsync<TResponse>(response: Response): Promise<TResponse> {
