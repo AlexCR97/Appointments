@@ -1,4 +1,5 @@
 import type { HttpClientError, ResponseErrorInterceptor } from '$lib/http';
+import { error } from '@sveltejs/kit';
 
 export class ApiResponseErrorInterceptor implements ResponseErrorInterceptor {
 	intercept(err: HttpClientError) {
@@ -22,15 +23,15 @@ export class ApiResponseErrorInterceptor implements ResponseErrorInterceptor {
 	}
 
 	private handleUnauthorizedError(err: HttpClientError) {
-		console.error('unauthorized error');
-		// TODO Redirect to unauthorized page
-		return err;
+		return error(err.status, {
+			message: 'You are not authorized to view this page'
+		});
 	}
 
 	private handleForbiddenError(err: HttpClientError) {
-		console.error('forbidden error');
-		// TODO Redirect to forbidden page
-		return err;
+		return error(err.status, {
+			message: 'You are not authorized to view this page'
+		});
 	}
 
 	private handleClientSideError(err: HttpClientError) {
@@ -40,8 +41,8 @@ export class ApiResponseErrorInterceptor implements ResponseErrorInterceptor {
 	}
 
 	private handleServerSideError(err: HttpClientError) {
-		console.error('server side error');
-		// TODO Redirect to error page
-		return err;
+		return error(err.status, {
+			message: 'You are not authorized to view this page'
+		});
 	}
 }
