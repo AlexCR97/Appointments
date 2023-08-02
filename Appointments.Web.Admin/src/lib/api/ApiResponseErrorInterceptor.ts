@@ -1,24 +1,24 @@
 import type { HttpClientError, ResponseErrorInterceptor } from '$lib/http';
 
 export class ApiResponseErrorInterceptor implements ResponseErrorInterceptor {
-	intercept<TOutgoing>(err: HttpClientError): TOutgoing | Promise<TOutgoing> {
+	intercept(err: HttpClientError) {
 		if (err.status === 401) {
-			return this.handleUnauthorizedError(err) as TOutgoing; // TODO Figure out how to type this correctly
+			return this.handleUnauthorizedError(err);
 		}
 
 		if (err.status === 403) {
-			return this.handleForbiddenError(err) as TOutgoing; // TODO Figure out how to type this correctly
+			return this.handleForbiddenError(err);
 		}
 
 		if (err.status >= 400 && err.status <= 499) {
-			return this.handleClientSideError(err) as TOutgoing; // TODO Figure out how to type this correctly
+			return this.handleClientSideError(err);
 		}
 
 		if (err.status >= 500) {
-			return this.handleServerSideError(err) as TOutgoing; // TODO Figure out how to type this correctly
+			return this.handleServerSideError(err);
 		}
 
-		return err as TOutgoing; // TODO Figure out how to type this correctly
+		return err;
 	}
 
 	private handleUnauthorizedError(err: HttpClientError) {

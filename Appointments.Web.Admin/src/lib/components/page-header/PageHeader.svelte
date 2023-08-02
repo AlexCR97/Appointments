@@ -6,7 +6,7 @@
 	let previousPath: string | undefined;
 
 	afterNavigate(({ from }) => {
-		previousPath = from?.url.pathname;
+		previousPath = from?.url?.pathname;
 	});
 
 	function onBackClick(_: MouseEvent, previousPath: string | undefined): void {

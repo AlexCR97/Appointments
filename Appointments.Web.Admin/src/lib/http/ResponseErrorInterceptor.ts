@@ -1,5 +1,5 @@
 import type { HttpClientError } from './HttpClientError';
 
 export interface ResponseErrorInterceptor {
-	intercept<TOutgoing>(err: HttpClientError): TOutgoing | Promise<TOutgoing>;
+	intercept(err: HttpClientError): any | Promise<any>; // TODO Improve typing (don't use "any")
 }
