@@ -1,5 +1,6 @@
 using Appointments.Common.MongoClient.Abstractions;
 using Appointments.Common.MongoClient.Exceptions;
+using Appointments.Common.MongoClient.Extensions.Filters;
 using MongoDB.Driver;
 using System.Linq.Expressions;
 
@@ -37,12 +38,9 @@ internal class MongoRepository<TDocument> : IMongoRepository<TDocument>
         var totalCount = await _collection
             .CountDocumentsAsync(_ => true);
 
-        FilterDefinition<TDocument> mongoFilter = string.IsNullOrWhiteSpace(filter)
-            ? "{}"
-            : filter;
-
         var results = await _collection
-            .Find(mongoFilter)
+            .Find(BuildFilterExpression(filter))
+            .Sort(BuildSortDefinition(sort))
             .Skip(pageIndex * pageSize)
             .Limit(pageSize)
             .ToListAsync();
@@ -52,6 +50,55 @@ internal class MongoRepository<TDocument> : IMongoRepository<TDocument>
             pageSize,
             totalCount,
             results);
+    }
+
+    private static Expression<Func<TDocument, bool>> BuildFilterExpression(string? filter)
+    {
+        try
+        {
+            return string.IsNullOrWhiteSpace(filter)
+                ? _ => true
+                : filter.ToExpression<TDocument>();
+        }
+        catch (Exception ex)
+        {
+            throw new Exceptions.MongoException(
+                "InvalidFilter",
+                @"A valid filter must have the format of an expression. E.g.: ""age == 10 or name.toLower().contains('Some value')""",
+                ex);
+        }
+    }
+
+    private static SortDefinition<TDocument> BuildSortDefinition(string? sort)
+    {
+        var sortDefinitionBuilder = new SortDefinitionBuilder<TDocument>();
+
+        if (string.IsNullOrWhiteSpace(sort))
+            return sortDefinitionBuilder.Combine();
+
+        var sortParts = sort
+            .Split(' ')
+            .ToList();
+
+        if (sortParts.Count == 1)
+        {
+            var sortProperty = sortParts[0];
+            return sortDefinitionBuilder.Ascending(sortProperty);
+        }
+
+        if (sortParts.Count == 2)
+        {
+            var sortProperty = sortParts[0];
+            var sortDirection = sortParts[1].ToLower();
+
+            return string.IsNullOrWhiteSpace(sortDirection) || sortDirection == "asc"
+                ? sortDefinitionBuilder.Ascending(sortProperty)
+                : sortDefinitionBuilder.Descending(sortProperty);
+        }
+
+        throw new Exceptions.MongoException(
+            "InvalidSort",
+            @"A valid sort must have the format ""property direction"", where direction is asc/desc. E.g.: ""createdAt desc""");
     }
 
     public async Task<TDocument> GetOneAsync(Guid id)
