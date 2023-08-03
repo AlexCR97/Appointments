@@ -2,6 +2,7 @@ import { env } from '$lib/env';
 import { HttpClient } from '$lib/http';
 import { ApiRequestInterceptor } from '../ApiRequestInterceptor';
 import { ApiResponseErrorInterceptor } from '../ApiResponseErrorInterceptor';
+import type { GetRequest } from '../GetRequest';
 import type { PagedResult } from '../PagedResult';
 import type { CreateTenantRequest } from './CreateTenantRequest';
 import type { TenantCreatedResponse } from './TenantCreatedResponse';
@@ -15,11 +16,22 @@ export class TenantApi {
 		responseErrorInterceptor: new ApiResponseErrorInterceptor()
 	});
 
+	get url(): string {
+		return this.httpClient.baseUrl;
+	}
+
 	async createAsync(request: CreateTenantRequest): Promise<TenantCreatedResponse> {
 		return await this.httpClient.postAsync<TenantCreatedResponse>('/', request);
 	}
 
-	async getAsync(): Promise<PagedResult<TenantProfile>> {
-		return await this.httpClient.getAsync<PagedResult<TenantProfile>>('/');
+	async getAsync(request: GetRequest): Promise<PagedResult<TenantProfile>> {
+		return await this.httpClient.getAsync<PagedResult<TenantProfile>>('/', {
+			query: {
+				pageIndex: request.pageIndex.toString(),
+				pageSize: request.pageSize.toString(),
+				sort: request.sort ?? '',
+				filter: request.filter ?? ''
+			}
+		});
 	}
 }

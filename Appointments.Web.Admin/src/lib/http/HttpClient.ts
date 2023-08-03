@@ -20,7 +20,7 @@ interface HttpClientOptions {
 }
 
 export class HttpClient {
-	private readonly baseUrl: string;
+	readonly baseUrl: string;
 	private readonly requestInterceptor?: RequestInterceptor;
 	private readonly responseInterceptor?: ResponseInterceptor;
 	private readonly responseErrorInterceptor?: ResponseErrorInterceptor;
@@ -78,13 +78,13 @@ export class HttpClient {
 			response.url,
 			response.status,
 			response.statusText,
-			await this.extractRawResponseAsync(response)
+			await response.text()
 		);
 
 		if (this.responseErrorInterceptor === undefined) {
 			throw httpClientError;
 		} else {
-			throw await this.responseErrorInterceptor.intercept<unknown>(httpClientError);
+			throw await this.responseErrorInterceptor.intercept(httpClientError);
 		}
 	}
 
@@ -114,13 +114,5 @@ export class HttpClient {
 		}
 
 		return responseContent;
-	}
-
-	private async extractRawResponseAsync(response: Response): Promise<unknown> {
-		try {
-			return await response.json();
-		} catch (_) {
-			return await response.text();
-		}
 	}
 }

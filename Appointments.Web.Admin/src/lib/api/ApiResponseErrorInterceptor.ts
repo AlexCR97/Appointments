@@ -1,8 +1,13 @@
+import { goto } from '$app/navigation';
 import type { HttpClientError, ResponseErrorInterceptor } from '$lib/http';
-import { error } from '@sveltejs/kit';
+import { message, problemDetails, statusCode } from '$lib/error-page';
 
 export class ApiResponseErrorInterceptor implements ResponseErrorInterceptor {
 	intercept(err: HttpClientError) {
+		statusCode.set(err.status);
+		message.set(err.message);
+		problemDetails.set(err.response);
+
 		if (err.status === 401) {
 			return this.handleUnauthorizedError(err);
 		}
@@ -23,26 +28,23 @@ export class ApiResponseErrorInterceptor implements ResponseErrorInterceptor {
 	}
 
 	private handleUnauthorizedError(err: HttpClientError) {
-		return error(err.status, {
-			message: 'You are not authorized to view this page'
-		});
+		goto('/error');
+		return err;
 	}
 
 	private handleForbiddenError(err: HttpClientError) {
-		return error(err.status, {
-			message: 'You are not authorized to view this page'
-		});
+		goto('/error');
+		return err;
 	}
 
 	private handleClientSideError(err: HttpClientError) {
-		console.error('client side error');
 		// TODO Show error notification
+		console.error('TODO Show error notification');
 		return err;
 	}
 
 	private handleServerSideError(err: HttpClientError) {
-		return error(err.status, {
-			message: 'You are not authorized to view this page'
-		});
+		goto('/error');
+		return err;
 	}
 }
