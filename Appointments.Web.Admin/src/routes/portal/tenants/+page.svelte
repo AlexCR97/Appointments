@@ -6,6 +6,9 @@
 	import type { SearchConfig } from 'gridjs/dist/src/view/plugin/search/search';
 	import type { PaginationConfig } from 'gridjs/dist/src/view/plugin/pagination';
 	import { GetRequest } from '$lib/api';
+	import type { GenericSortConfig } from 'gridjs/dist/src/view/plugin/sort/sort';
+	import type { TColumnSort } from 'gridjs/dist/src/types';
+	import { UrlBuilder } from '$lib/http';
 
 	const tenantApi = new TenantApi();
 
@@ -35,11 +38,13 @@
 
 	const gridSearch: SearchConfig = {
 		server: {
-			url(url: string, filter: string) {
-				// TODO Build filter
-				const urlObj = new URL(url);
-				urlObj.searchParams.append('filter', filter);
-				return urlObj.toString();
+			url(url: string, search: string) {
+				const { origin, pathname } = new URL(url);
+
+				// TODO Create filter builder
+				const filter = `name.toLower().contains("${search}") or urlId.toLower().contains("${search}")`;
+
+				return new UrlBuilder(origin).withPath(pathname).withQuery({ filter }).build();
 			}
 		}
 	};
@@ -70,6 +75,28 @@
 			};
 		}
 	};
+
+	const gridSort: GenericSortConfig = {
+		multiColumn: false,
+		server: {
+			url(url: string, [column]: TColumnSort[]) {
+				if (column === undefined || column === null) {
+					return url;
+				}
+
+				const { origin, pathname } = new URL(url);
+				const sortProperty = gridColumns[column.index];
+				const sortDirection = column.direction === 1 ? 'asc' : 'desc';
+
+				return new UrlBuilder(origin)
+					.withPath(pathname)
+					.withQuery({
+						sort: `${sortProperty} ${sortDirection}`
+					})
+					.build();
+			}
+		}
+	};
 </script>
 
 <Grid
@@ -77,5 +104,5 @@
 	pagination={gridPagination}
 	search={gridSearch}
 	server={gridServer}
-	sort
+	sort={gridSort}
 />
