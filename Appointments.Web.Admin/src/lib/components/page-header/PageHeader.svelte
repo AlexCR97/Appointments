@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto, afterNavigate } from '$app/navigation';
-	import { Button } from '$lib/components/forms';
+	import { Button } from '$lib/components';
 	import { pageActions, pageTitle, pageSubtitle } from './PageHeaderStore';
 
 	let previousPath: string | undefined;

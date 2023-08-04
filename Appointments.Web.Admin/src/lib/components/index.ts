@@ -1,6 +1,9 @@
 import AppHeader from './AppHeader.svelte';
 export { AppHeader };
 
+import Button from './Button.svelte';
+export { Button };
+
 export { Grid } from './gridjs';
 
 export { PageHeader } from './page-header';

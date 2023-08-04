@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { AuthApi, LoginWithEmailRequest } from '$lib/api/auth';
-	import { Button, Input } from '$lib/components/forms';
+	import { Button } from '$lib/components';
+	import { Input } from '$lib/components/forms';
 
 	const authApi = new AuthApi();
 
