@@ -24,6 +24,10 @@ export class TenantApi {
 		return await this.httpClient.postAsync<TenantCreatedResponse>('/', request);
 	}
 
+	async deleteAsync(id: string): Promise<void> {
+		await this.httpClient.deleteAsync(id);
+	}
+
 	async getAsync(request: GetRequest): Promise<PagedResult<TenantProfile>> {
 		return await this.httpClient.getAsync<PagedResult<TenantProfile>>('/', {
 			query: {

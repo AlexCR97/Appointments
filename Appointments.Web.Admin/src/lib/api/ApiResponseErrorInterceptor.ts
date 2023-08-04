@@ -1,6 +1,7 @@
 import { goto } from '$app/navigation';
 import type { HttpClientError, ResponseErrorInterceptor } from '$lib/http';
 import { message, problemDetails, statusCode } from '$lib/error-page';
+import { ToastItem, toastOutlet } from '$lib/components';
 
 export class ApiResponseErrorInterceptor implements ResponseErrorInterceptor {
 	intercept(err: HttpClientError) {
@@ -38,8 +39,14 @@ export class ApiResponseErrorInterceptor implements ResponseErrorInterceptor {
 	}
 
 	private handleClientSideError(err: HttpClientError) {
-		// TODO Show error notification
-		console.error('TODO Show error notification');
+		toastOutlet.push(
+			new ToastItem({
+				title: `${err.status} ${err.statusText}`,
+				content: err.message,
+				dismissable: true
+			})
+		);
+
 		return err;
 	}
 

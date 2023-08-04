@@ -10,3 +10,5 @@ export { PageHeader } from './page-header';
 
 import Sidebar from './Sidebar.svelte';
 export { Sidebar };
+
+export { Toast, ToastItem, ToastOutlet, toastOutlet } from './toast';

@@ -39,7 +39,7 @@
 					'button',
 					{
 						className: 'btn btn-primary',
-						onClick: async () => {
+						async onClick() {
 							const idCell = row.cell(0);
 							const id = idCell.data?.toString();
 							await goto(`/portal/tenants/${id}`);
@@ -57,7 +57,7 @@
 						id: popoverToggleId,
 						className: 'btn btn-primary',
 						'data-bs-toggle': 'popover',
-						onClick: () => {
+						onClick() {
 							if (popover !== undefined) {
 								return;
 							}
@@ -84,9 +84,14 @@
 											}
 										});
 
-										option1.$on('click', () => {
+										option1.$on('click', async () => {
 											const id = row.cell(0).data?.toString();
-											console.log('id', id);
+
+											if (id === undefined) {
+												throw new Error('Null id');
+											}
+
+											await tenantApi.deleteAsync(id);
 										});
 
 										return btnWrapper;
