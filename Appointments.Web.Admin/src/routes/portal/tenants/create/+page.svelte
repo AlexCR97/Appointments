@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { CreateTenantRequest, TenantApi } from '$lib/api/tenants';
+	import { ToastItem, loader, toastOutlet } from '$lib/components';
 	import { Input } from '$lib/components/forms';
 	import { pageActions, pageTitle } from '$lib/components/page-header';
 
@@ -28,8 +30,19 @@
 
 	async function onSubmit(e: Event) {
 		e.preventDefault();
-		const response = await tenantApi.createAsync(new CreateTenantRequest(name, slogan, urlId));
-		console.log('response', response);
+
+		await loader.load(async () => {
+			await tenantApi.createAsync(new CreateTenantRequest(name, slogan, urlId));
+		});
+
+		toastOutlet.push(
+			new ToastItem({
+				title: 'Successfully created tenant',
+				dismissable: true
+			})
+		);
+
+		await goto('/portal/tenants');
 	}
 </script>
 

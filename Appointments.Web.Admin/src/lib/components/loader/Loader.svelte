@@ -1,25 +1,16 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
-	import type { Unsubscriber } from 'svelte/store';
+	import { onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { loader } from './LoaderStore';
 
 	let show = false;
-	let unsubscribe: Unsubscriber | undefined;
 
-	onMount(() => {
-		console.log('Loader.svelte');
-
-		unsubscribe = loader.subscribe((_show) => {
-			console.log('_show', _show);
-			show = _show;
-		});
+	const unsubscribe = loader.subscribe((_show) => {
+		show = _show;
 	});
 
 	onDestroy(() => {
-		if (unsubscribe) {
-			unsubscribe();
-		}
+		unsubscribe();
 	});
 </script>
 
