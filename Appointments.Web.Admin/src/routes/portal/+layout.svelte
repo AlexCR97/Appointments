@@ -6,7 +6,7 @@
 
 <div class="border" style="width: 100vw; height: 100vh">
 	<div class="d-flex w-100 h-100">
-		<aside class="border-end h-100 overflow-y-auto" style:width={sidebarWidth}>
+		<aside class="border-end h-100 overflow-y-auto" style:min-width={sidebarWidth}>
 			<Sidebar />
 		</aside>
 
@@ -15,11 +15,9 @@
 
 			<PageHeader />
 
-			<div class="w-100 h-100 overflow-auto">
-				<main class="container py-4">
-					<slot />
-				</main>
-			</div>
+			<main class="w-100 h-100 overflow-y-auto">
+				<slot />
+			</main>
 		</div>
 	</div>
 </div>

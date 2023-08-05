@@ -33,8 +33,10 @@
 	}
 </script>
 
-<form id={formId} method="post" on:submit={onSubmit}>
-	<Input class="mb-4" label="Name" placeholder="The company name" bind:value={name} />
-	<Input class="mb-4" label="Slogan" placeholder="The company's slogan" bind:value={slogan} />
-	<Input class="mb-4" label="URL ID" placeholder="https://mycompany.com" bind:value={urlId} />
-</form>
+<div class="container py-4">
+	<form id={formId} method="post" on:submit={onSubmit}>
+		<Input class="mb-4" label="Name" placeholder="The company name" bind:value={name} />
+		<Input class="mb-4" label="Slogan" placeholder="The company's slogan" bind:value={slogan} />
+		<Input class="mb-4" label="URL ID" placeholder="https://mycompany.com" bind:value={urlId} />
+	</form>
+</div>

@@ -2,7 +2,7 @@
 	import { Guid } from '$lib/guid';
 	import { Grid } from 'gridjs';
 	import type { ServerStorageOptions } from 'gridjs/dist/src/storage/server';
-	import type { OneDArray, TColumn, TData } from 'gridjs/dist/src/types';
+	import type { CSSDeclaration, OneDArray, TColumn, TData } from 'gridjs/dist/src/types';
 	import type { PaginationConfig } from 'gridjs/dist/src/view/plugin/pagination';
 	import type { SearchConfig } from 'gridjs/dist/src/view/plugin/search/search';
 	import type { GenericSortConfig } from 'gridjs/dist/src/view/plugin/sort/sort';
@@ -13,6 +13,14 @@
 	export let search: boolean | SearchConfig | undefined = undefined;
 	export let server: ServerStorageOptions | undefined = undefined;
 	export let sort: GenericSortConfig | boolean | undefined = undefined;
+	export let style: Partial<{
+		table: CSSDeclaration;
+		td: CSSDeclaration;
+		th: CSSDeclaration;
+		container: CSSDeclaration;
+		header: CSSDeclaration;
+		footer: CSSDeclaration;
+	}> = {};
 	export let pagination: PaginationConfig | boolean | undefined = undefined;
 
 	const elementId = Guid.random();
@@ -30,7 +38,8 @@
 			pagination,
 			search,
 			server,
-			sort
+			sort,
+			style
 		});
 
 		grid.render(element);

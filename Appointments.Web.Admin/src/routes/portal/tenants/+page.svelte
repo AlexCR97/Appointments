@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { TenantApi, type TenantProfile } from '$lib/api/tenants';
-	import { Button, Grid } from '$lib/components';
+	import { Button, Grid, loader } from '$lib/components';
 	import { pageActions, pageTitle } from '$lib/components/page-header';
 	import type { ServerStorageOptions } from 'gridjs/dist/src/storage/server';
 	import type { SearchConfig } from 'gridjs/dist/src/view/plugin/search/search';
@@ -13,6 +13,7 @@
 	import { tick } from 'svelte';
 	import { Popover } from 'bootstrap';
 	import { goto } from '$app/navigation';
+	import { wait } from '$lib/time';
 
 	const tenantApi = new TenantApi();
 
@@ -147,27 +148,29 @@
 	const gridServer: ServerStorageOptions = {
 		url: tenantApi.url,
 		async data(options: ServerStorageOptions) {
-			const url = new URL(options.url);
+			return await loader.load(async () => {
+				const { searchParams } = new URL(options.url);
 
-			const response = await tenantApi.getAsync(
-				new GetRequest(
-					Number(url.searchParams.get('pageIndex') ?? '0'),
-					Number(url.searchParams.get('pageSize') ?? '10'),
-					url.searchParams.get('sort') ?? undefined,
-					url.searchParams.get('filter') ?? undefined
-				)
-			);
+				const response = await tenantApi.getAsync(
+					new GetRequest(
+						Number(searchParams.get('pageIndex') ?? '0'),
+						Number(searchParams.get('pageSize') ?? '10'),
+						searchParams.get('sort') ?? undefined,
+						searchParams.get('filter') ?? undefined
+					)
+				);
 
-			return {
-				total: response.totalCount,
-				data: response.results.map((tenant) => [
-					tenant.id,
-					tenant.createdAt,
-					tenant.createdBy,
-					tenant.name,
-					tenant.urlId
-				])
-			};
+				return {
+					total: response.totalCount,
+					data: response.results.map((tenant) => [
+						tenant.id,
+						tenant.createdAt,
+						tenant.createdBy,
+						tenant.name,
+						tenant.urlId
+					])
+				};
+			});
 		}
 	};
 
@@ -194,10 +197,12 @@
 	};
 </script>
 
-<Grid
-	columns={gridColumns}
-	pagination={gridPagination}
-	search={gridSearch}
-	server={gridServer}
-	sort={gridSort}
-/>
+<div class="p-4">
+	<Grid
+		columns={gridColumns}
+		pagination={gridPagination}
+		search={gridSearch}
+		server={gridServer}
+		sort={gridSort}
+	/>
+</div>
