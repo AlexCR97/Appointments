@@ -1,8 +1,8 @@
-﻿using Appointments.Application.Repositories.Services;
-using Appointments.Application.Services.Events;
+﻿using Appointments.Application.Services.Events;
 using Appointments.Application.Services.Files;
 using Appointments.Application.Validations.Services;
 using Appointments.Domain.Entities;
+using Appointments.Domain.Models;
 using FluentValidation;
 using MediatR;
 
@@ -12,7 +12,7 @@ public sealed record UploadImagesRequest(
     string? UpdatedBy,
     Guid Id,
     IReadOnlyList<UploadImagesRequest.IndexedImage> Images
-    ): IRequest<IReadOnlyList<IndexedImage>>
+    ): IRequest<IReadOnlyList<IndexedResource>>
 {
     public sealed record IndexedImage(
         int Index,
@@ -20,7 +20,7 @@ public sealed record UploadImagesRequest(
         byte[] File);
 }
 
-internal sealed class UploadImagesRequestHandler : IRequestHandler<UploadImagesRequest, IReadOnlyList<IndexedImage>>
+internal sealed class UploadImagesRequestHandler : IRequestHandler<UploadImagesRequest, IReadOnlyList<IndexedResource>>
 {
     private readonly IEventProcessor _eventProcessor;
     private readonly IFileStorage _fileStorage;
@@ -33,11 +33,11 @@ internal sealed class UploadImagesRequestHandler : IRequestHandler<UploadImagesR
         _serviceRepository = serviceRepository;
     }
 
-    public async Task<IReadOnlyList<IndexedImage>> Handle(UploadImagesRequest request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<IndexedResource>> Handle(UploadImagesRequest request, CancellationToken cancellationToken)
     {
         new UploadImagesRequestValidator().ValidateAndThrow(request);
 
-        var service = await _serviceRepository.GetByIdAsync(request.Id);
+        var service = await _serviceRepository.GetAsync(request.Id);
 
         // TODO Delete images that are no longer references
         // TODO Create only new images, not already existing ones
@@ -59,9 +59,9 @@ internal sealed class UploadImagesRequestHandler : IRequestHandler<UploadImagesR
         return service.Images;
     }
 
-    private async Task<List<IndexedImage>> UploadImagesAsync(IReadOnlyList<UploadImagesRequest.IndexedImage> images, Service service)
+    private async Task<List<IndexedResource>> UploadImagesAsync(IReadOnlyList<UploadImagesRequest.IndexedImage> images, Service service)
     {
-        var indexedImages = new List<IndexedImage>();
+        var indexedImages = new List<IndexedResource>();
 
         foreach (var image in images)
         {
@@ -72,7 +72,7 @@ internal sealed class UploadImagesRequestHandler : IRequestHandler<UploadImagesR
         return indexedImages;
     }
 
-    private async Task<IndexedImage> UploadImageAsync(Service service, UploadImagesRequest.IndexedImage image)
+    private async Task<IndexedResource> UploadImageAsync(Service service, UploadImagesRequest.IndexedImage image)
     {
         var imageRelativePathWithoutFileName = Path.Join("Services", service.Id.ToString());
         await _fileStorage.EnsureDirectoryAsync(imageRelativePathWithoutFileName);
@@ -82,7 +82,7 @@ internal sealed class UploadImagesRequestHandler : IRequestHandler<UploadImagesR
 
         await _fileStorage.WriteAsync(imageRelativePathWithFileName, image.File);
 
-        return new IndexedImage(
+        return new IndexedResource(
             image.Index,
             imageRelativePathWithFileName);
     }

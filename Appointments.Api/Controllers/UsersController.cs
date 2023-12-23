@@ -2,8 +2,6 @@
 using Appointments.Api.Extensions.Files;
 using Appointments.Application.Policies;
 using Appointments.Application.Requests.Users;
-using Appointments.Application.Requests.Users.Login;
-using Appointments.Application.Requests.Users.SignUp;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -45,7 +43,7 @@ public class UsersController : ControllerBase
     [HttpGet("{userId}/profile", Name = nameof(GetUserProfile))]
     public async Task<IActionResult> GetUserProfile([FromRoute] Guid userId)
     {
-        var userProfile = await _mediator.Send(new GetUserProfileRequest(userId));
+        var userProfile = await _mediator.Send(new GetUserRequest(userId));
         return Ok(userProfile);
     }
 
@@ -53,7 +51,7 @@ public class UsersController : ControllerBase
     [Authorize(Roles = UserPolicy.Roles.Owner)]
     public async Task<IActionResult> UpdateUserProfile(
         [FromRoute] Guid userId,
-        [FromBody] UpdateProfileRequest request)
+        [FromBody] UpdateUserProfileRequest request)
     {
         IdMismatchException.ThrowIfMismatch(userId, request.Id);
         await _mediator.Send(request);
@@ -66,7 +64,7 @@ public class UsersController : ControllerBase
         [FromRoute] Guid userId,
         [FromForm] IFormFile image)
     {
-        var profileImagePath = await _mediator.Send(new UploadProfileImageRequest(
+        var profileImagePath = await _mediator.Send(new UploadUserProfileImageRequest(
             userId,
             image.FileName,
             image.GetBytes()));

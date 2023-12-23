@@ -1,20 +1,46 @@
-﻿using Appointments.Application.Repositories.Tenants;
-using Appointments.Application.Services.Events;
-using Appointments.Application.Services.Tenants;
+﻿using Appointments.Application.Services.Events;
+using Appointments.Application.Validations;
 using Appointments.Domain.Entities;
+using FluentValidation;
 using MediatR;
 
 namespace Appointments.Application.Requests.Tenants;
 
 public sealed record CreateTenantRequest(
+    string CreatedBy,
     string Name,
     string? Slogan,
-    string? UrlId,
-    List<SocialMediaContact>? SocialMediaContacts,
-    WeeklySchedule? WeeklySchedule
-    ) : IRequest<Guid>
+    TenantUrlId? UrlId,
+    string? Logo,
+    SocialMediaContact[] Contacts,
+    WeeklySchedule? Schedule)
+    : IRequest<Guid>;
+
+internal sealed class CreateTenantRequestValidator : AbstractValidator<CreateTenantRequest>
 {
-    public string? CreatedBy { get; set; }
+    public CreateTenantRequestValidator()
+    {
+        RuleFor(x => x.CreatedBy)
+            .NotEmpty();
+
+        RuleFor(x => x.Name)
+            .NotEmpty();
+
+        When(x => x.UrlId is not null, () =>
+        {
+            RuleFor(x => x.UrlId)
+                .SetValidator(new TenantUrlIdValidator());
+        });
+
+        RuleForEach(x => x.Contacts)
+            .SetValidator(new SocialMediaContactValidator());
+
+        When(x => x.Schedule is not null, () =>
+        {
+            RuleFor(x => x.Schedule)
+                .SetValidator(new WeeklyScheduleValidator());
+        });
+    }
 }
 
 internal sealed class CreateTenantRequestHandler : IRequestHandler<CreateTenantRequest, Guid>
@@ -30,16 +56,16 @@ internal sealed class CreateTenantRequestHandler : IRequestHandler<CreateTenantR
 
     public async Task<Guid> Handle(CreateTenantRequest request, CancellationToken cancellationToken)
     {
-        // TODO Validate CreateTenantRequest
+        new CreateTenantRequestValidator().ValidateAndThrow(request);
 
         var tenant = Tenant.Create(
             request.CreatedBy,
             request.Name,
             request.Slogan,
-            request.UrlId ?? TenantUrlIdGenerator.Random(),
-            null,
-            request.SocialMediaContacts ?? new List<SocialMediaContact>(),
-            request.WeeklySchedule);
+            request.UrlId ?? TenantUrlId.Random(),
+            request.Logo,
+            request.Contacts,
+            request.Schedule);
 
         if (tenant.HasChanged)
         {

@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Appointments.Application.Validations.Tenants;
 
-internal sealed class UpdateTenantRequestValidator : AbstractValidator<UpdateTenantRequest>
+internal sealed class UpdateTenantRequestValidator : AbstractValidator<UpdateTenantProfileRequest>
 {
     public UpdateTenantRequestValidator()
     {

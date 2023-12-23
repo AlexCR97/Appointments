@@ -1,11 +1,10 @@
 ﻿using Appointments.Application.Mapper.Abstractions;
-using Appointments.Application.Repositories.Services;
 using Appointments.Domain.Entities;
 using Appointments.Domain.Models.Services;
 
 namespace Appointments.Application.Requests.Services;
 
-public sealed record GetServicesRequest : GetPagedRequest<ServiceModel>
+public sealed record GetServicesRequest : FindRequest<ServiceModel>
 {
     public GetServicesRequest(int PageIndex, int PageSize, string? Sort, string? Filter)
         : base(PageIndex, PageSize, Sort, Filter)

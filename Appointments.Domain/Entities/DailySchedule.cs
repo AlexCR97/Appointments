@@ -1,23 +1,32 @@
-﻿namespace Appointments.Domain.Entities;
+﻿using Appointments.Domain.Models;
+using FluentValidation;
 
-public class DailySchedule
+namespace Appointments.Domain.Entities;
+
+public sealed record DailySchedule(
+    List<DateRange> Hours,
+    bool Disabled)
 {
-    public bool Disabled { get; }
-    public List<DateRange> Hours { get; }
-
-    public DailySchedule(bool disabled, List<DateRange>? hours)
+    public static DailySchedule Weekday()
     {
-        Disabled = disabled;
-        Hours = hours ?? new();
+        return new DailySchedule(
+            new List<DateRange> { DateRange.NineToFive() },
+            false);
     }
 
-    public static DailySchedule NineToFive => new(
-        false,
-        new List<DateRange>
-        {
-            new DateRange(
-                new DateTime().AddHours(9),
-                new DateTime().AddHours(17),
-                false),
-        });
+    public static DailySchedule Weekend()
+    {
+        return new DailySchedule(
+            new List<DateRange>(),
+            false);
+    }
+}
+
+public sealed class DailyScheduleValidator : AbstractValidator<DailySchedule>
+{
+    public DailyScheduleValidator()
+    {
+        RuleForEach(x => x.Hours)
+            .SetValidator(new DateRangeValidator());
+    }
 }

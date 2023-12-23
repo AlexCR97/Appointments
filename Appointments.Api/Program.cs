@@ -1,5 +1,6 @@
 using Appointments.Api.Filters.Exceptions;
 using Appointments.Api.Filters.Exceptions.ProblemDetailsFactories;
+using Appointments.Api.Management;
 using Appointments.Application.DependencyInjection;
 using Appointments.Application.Policies;
 using Appointments.Infrastructure.DependencyInjection;
@@ -152,5 +153,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapManagementApi();
 
 app.Run();

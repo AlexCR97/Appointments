@@ -1,6 +1,6 @@
 using Appointments.Application.Mapper.Mapsters.DependencyInjection;
+using Appointments.Application.Requests.Users;
 using Appointments.Application.Services.Jwt;
-using Appointments.Application.Services.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

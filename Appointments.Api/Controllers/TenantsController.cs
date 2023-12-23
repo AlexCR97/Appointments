@@ -37,7 +37,7 @@ public class TenantsController : ControllerBase
         [FromQuery] string? sort = null,
         [FromQuery] string? filter = null)
     {
-        var tenants = await _mediator.Send(new GetTenantsRequest(
+        var tenants = await _mediator.Send(new FindTenantsRequest(
             pageIndex,
             pageSize,
             sort,
@@ -49,7 +49,7 @@ public class TenantsController : ControllerBase
     [HttpGet("{tenantId}", Name = nameof(GetTenantById))]
     public async Task<IActionResult> GetTenantById([FromRoute] Guid tenantId)
     {
-        var tenant = await _mediator.Send(new GetTenantByIdRequest(tenantId));
+        var tenant = await _mediator.Send(new GetTenantRequest(tenantId));
         return Ok(tenant);
     }
 
@@ -57,7 +57,7 @@ public class TenantsController : ControllerBase
     [Authorize(Roles = $"{TenantPolicy.Roles.Owner},{TenantPolicy.Roles.Admin},{TenantPolicy.Roles.Writer}")]
     public async Task<IActionResult> UpdateTenant(
         [FromRoute] Guid tenantId,
-        [FromBody] UpdateTenantRequest request)
+        [FromBody] UpdateTenantProfileRequest request)
     {
         IdMismatchException.ThrowIfMismatch(tenantId, request.Id);
         await _mediator.Send(request);

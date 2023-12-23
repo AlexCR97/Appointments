@@ -1,5 +1,5 @@
 ﻿using Appointments.Application.Mapper.Abstractions;
-using Appointments.Application.Repositories.Abstractions;
+using Appointments.Application.Requests;
 using Appointments.Common.MongoClient.Abstractions;
 using Appointments.Domain.Entities;
 using Appointments.Domain.Models;
@@ -32,7 +32,7 @@ internal class EntityRepository<TEntity, TDocument> : IEntityRepository<TEntity,
         return _mapper.Map<TEntity>(createdDocument);
     }
 
-    public async Task<PagedResult<TEntity>> GetAsync(int pageIndex, int pageSize, string? sort, string? filter)
+    public async Task<PagedResult<TEntity>> FindAsync(int pageIndex, int pageSize, string? sort, string? filter)
     {
         var documents = await _repository.GetAsync(
             pageIndex,
@@ -49,7 +49,7 @@ internal class EntityRepository<TEntity, TDocument> : IEntityRepository<TEntity,
                 .ToList());
     }
 
-    public async Task<TEntity> GetByIdAsync(Guid id)
+    public async Task<TEntity> GetAsync(Guid id)
     {
         try
         {
@@ -65,7 +65,7 @@ internal class EntityRepository<TEntity, TDocument> : IEntityRepository<TEntity,
         }
     }
 
-    public async Task<TEntity?> GetByIdOrDefaultAsync(Guid id)
+    public async Task<TEntity?> GetOrDefaultAsync(Guid id)
     {
         var document = await _repository.GetOneOrDefaultAsync(id);
         

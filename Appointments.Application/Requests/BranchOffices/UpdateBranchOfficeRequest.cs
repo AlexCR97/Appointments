@@ -1,17 +1,17 @@
-﻿using Appointments.Application.Repositories.BranchOffices;
-using Appointments.Application.Services.Events;
+﻿using Appointments.Application.Services.Events;
 using Appointments.Domain.Entities;
+using Appointments.Domain.Models;
 using MediatR;
 
 namespace Appointments.Application.Requests.BranchOffices;
 
 public sealed record UpdateBranchOfficeRequest(
-    string? UpdatedBy,
     Guid Id,
+    string UpdatedBy,
     string Name,
-    Location Location,
-    string Address,
-    List<SocialMediaContact> SocialMediaContacts) : IRequest;
+    Address Address,
+    SocialMediaContact[] Contacts)
+    : IRequest;
 
 internal class UpdateBranchOfficeRequestHandler : IRequestHandler<UpdateBranchOfficeRequest>
 {
@@ -26,14 +26,13 @@ internal class UpdateBranchOfficeRequestHandler : IRequestHandler<UpdateBranchOf
 
     public async Task Handle(UpdateBranchOfficeRequest request, CancellationToken cancellationToken)
     {
-        var branchOffice = await _branchOfficeRepository.GetByIdAsync(request.Id);
+        var branchOffice = await _branchOfficeRepository.GetAsync(request.Id);
 
         branchOffice.Update(
             request.UpdatedBy,
             request.Name,
-            request.Location,
             request.Address,
-            request.SocialMediaContacts);
+            request.Contacts);
 
         if (branchOffice.HasChanged)
         {

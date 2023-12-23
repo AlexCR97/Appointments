@@ -1,4 +1,4 @@
-﻿using Appointments.Application.Requests.Users.SignUp;
+﻿using Appointments.Application.Requests.Users;
 using FluentValidation;
 
 namespace Appointments.Application.Validations.Users;

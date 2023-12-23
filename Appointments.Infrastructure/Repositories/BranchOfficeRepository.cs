@@ -1,5 +1,5 @@
 ﻿using Appointments.Application.Mapper.Abstractions;
-using Appointments.Application.Repositories.BranchOffices;
+using Appointments.Application.Requests.BranchOffices;
 using Appointments.Common.MongoClient.Abstractions;
 using Appointments.Domain.Entities;
 using Appointments.Infrastructure.Mongo.Documents;

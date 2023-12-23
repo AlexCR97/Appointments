@@ -1,6 +1,6 @@
 ﻿using Appointments.Application.Extensions.Normalization;
 using Appointments.Application.Mapper.Abstractions;
-using Appointments.Application.Repositories.Users;
+using Appointments.Application.Requests.Users;
 using Appointments.Common.MongoClient.Abstractions;
 using Appointments.Domain.Entities;
 using Appointments.Infrastructure.Mongo.Documents;

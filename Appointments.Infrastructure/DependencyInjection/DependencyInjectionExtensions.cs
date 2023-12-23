@@ -1,10 +1,9 @@
-using Appointments.Application.Repositories.BranchOffices;
 using Appointments.Application.Repositories.Services;
-using Appointments.Application.Repositories.Tenants;
-using Appointments.Application.Repositories.Users;
+using Appointments.Application.Requests.BranchOffices;
+using Appointments.Application.Requests.Tenants;
+using Appointments.Application.Requests.Users;
 using Appointments.Application.Services.Events;
 using Appointments.Application.Services.Files;
-using Appointments.Application.Services.Users;
 using Appointments.Common.MessageBroker.KafkaMessageBroker;
 using Appointments.Common.MessageBroker.KafkaMessageBroker.DependencyInjection;
 using Appointments.Common.MongoClient.DependencyInjection;

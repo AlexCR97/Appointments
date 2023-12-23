@@ -1,60 +1,76 @@
-﻿using Appointments.Domain.Events.BranchOffices;
+﻿using Appointments.Domain.Models;
 
 namespace Appointments.Domain.Entities;
 
-public class BranchOffice : Entity
+public sealed class BranchOffice : Entity
 {
     public Guid TenantId { get; private set; }
     public string Name { get; private set; }
-    public Location Location { get; private set; }
-    public string Address { get; private set; }
-    public List<SocialMediaContact> SocialMediaContacts { get; private set; }
-    public WeeklySchedule WeeklySchedule { get; private set; }
+    public Address Address { get; private set; }
 
-    public BranchOffice()
+    private readonly List<SocialMediaContact> _contacts = new();
+    public IReadOnlyList<SocialMediaContact> Contacts
     {
-        // Needed for auto-mapping
+        get
+        {
+            return _contacts;
+        }
+        private set
+        {
+            _contacts.Clear();
+            _contacts.AddRange(value);
+        }
     }
+
+    public WeeklySchedule? Schedule { get; private set; }
 
     public BranchOffice(
         Guid id,
         DateTime createdAt,
-        string? createdBy,
+        string createdBy,
         DateTime? updatedAt,
         string? updatedBy,
-        DateTime? deletedAt,
-        string? deletedBy,
-        List<string> tags,
-        Dictionary<string, object?> extensions,
-
         Guid tenantId,
         string name,
-        Location location,
-        string address,
-        List<SocialMediaContact> socialMediaContacts,
-        WeeklySchedule weeklySchedule)
+        Address address,
+        IReadOnlyList<SocialMediaContact> socialMediaContacts,
+        WeeklySchedule? weeklySchedule)
     : base(
         id,
         createdAt,
         createdBy,
         updatedAt,
-        updatedBy,
-        deletedAt,
-        deletedBy,
-        tags,
-        extensions)
+        updatedBy)
     {
         TenantId = tenantId;
         Name = name;
-        Location = location;
         Address = address;
-        SocialMediaContacts = socialMediaContacts;
-        WeeklySchedule = weeklySchedule;
+        Contacts = socialMediaContacts;
+        Schedule = weeklySchedule;
     }
 
-    public static BranchOffice CreateMinimal(
-        string? createdBy,
-        Guid tenantId)
+    public void Update(
+        string updatedBy,
+        string name,
+        Address address,
+        IReadOnlyList<SocialMediaContact> socialMediaContacts)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+        Name = name;
+        Address = address;
+        Contacts = socialMediaContacts;
+
+        // TODO Add event
+    }
+
+    public static BranchOffice Create(
+        string createdBy,
+        Guid tenantId,
+        string name,
+        Address address,
+        IReadOnlyList<SocialMediaContact> socialMediaContacts,
+        WeeklySchedule? weeklySchedule)
     {
         var branchOffice = new BranchOffice(
             Guid.NewGuid(),
@@ -62,50 +78,14 @@ public class BranchOffice : Entity
             createdBy,
             null,
             null,
-            null,
-            null,
-            new(),
-            new(),
-
             tenantId,
-            string.Empty,
-            Location.Empty,
-            string.Empty,
-            new(),
-            WeeklySchedule.NineToFive);
+            name,
+            address,
+            socialMediaContacts,
+            weeklySchedule);
 
-        branchOffice.AddEvent(new MinimalBranchOfficeCreatedEvent(
-            branchOffice.Id,
-            branchOffice.CreatedAt,
-            createdBy,
-            tenantId,
-            Location.Empty,
-            WeeklySchedule.NineToFive));
+        // TODO Add event
 
         return branchOffice;
-    }
-
-    public void Update(
-        string? updatedBy,
-        string name,
-        Location location,
-        string address,
-        List<SocialMediaContact> socialMediaContacts)
-    {
-        UpdatedAt = DateTime.UtcNow;
-        UpdatedBy = updatedBy;
-
-        Name = name;
-        Location = location;
-        Address = address;
-        SocialMediaContacts = socialMediaContacts;
-
-        AddEvent(new BranchOfficeUpdatedEvent(
-            UpdatedAt.Value,
-            updatedBy,
-            name,
-            location,
-            address,
-            socialMediaContacts));
     }
 }

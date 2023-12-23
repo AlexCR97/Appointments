@@ -1,16 +1,35 @@
-﻿using Appointments.Application.Repositories.Tenants;
-using Appointments.Application.Services.Events;
+﻿using Appointments.Application.Services.Events;
 using Appointments.Application.Services.Files;
 using Appointments.Domain.Entities;
+using FluentValidation;
 using MediatR;
 
 namespace Appointments.Application.Requests.Tenants;
 
 public sealed record UploadTenantLogoRequest(
     Guid Id,
+    string UpdatedBy,
     string FileName,
-    byte[] File,
-    string? UpdatedBy) : IRequest<string>;
+    byte[] File)
+    : IRequest<string>;
+
+internal sealed class UploadTenantLogoRequestValidator : AbstractValidator<UploadTenantLogoRequest>
+{
+    public UploadTenantLogoRequestValidator()
+    {
+        RuleFor(x => x.Id)
+            .NotEmpty();
+
+        RuleFor(x => x.UpdatedBy)
+            .NotEmpty();
+
+        RuleFor(x => x.FileName)
+            .NotEmpty();
+
+        RuleFor(x => x.File)
+            .NotEmpty();
+    }
+}
 
 internal sealed class UploadTenantLogoRequestHandler : IRequestHandler<UploadTenantLogoRequest, string>
 {
@@ -27,7 +46,7 @@ internal sealed class UploadTenantLogoRequestHandler : IRequestHandler<UploadTen
 
     public async Task<string> Handle(UploadTenantLogoRequest request, CancellationToken cancellationToken)
     {
-        var tenant = await _tenantRepository.GetByIdAsync(request.Id);
+        var tenant = await _tenantRepository.GetAsync(request.Id);
 
         var imageRelativePathWithoutFileName = Path.Join("Tenants", tenant.Id.ToString());
         await _fileStorage.EnsureDirectoryAsync(imageRelativePathWithoutFileName);
@@ -39,7 +58,7 @@ internal sealed class UploadTenantLogoRequestHandler : IRequestHandler<UploadTen
 
         await _fileStorage.WriteAsync(imageRelativePathWithFileName, request.File);
 
-        tenant.UpdateLogo(
+        tenant.SetLogo(
             request.UpdatedBy,
             imageRelativePathWithFileName);
 

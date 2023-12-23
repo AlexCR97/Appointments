@@ -1,12 +1,15 @@
-﻿using Appointments.Application.Repositories.Tenants;
-using Appointments.Application.Services.Events;
+﻿using Appointments.Application.Services.Events;
+using FluentValidation;
 using MediatR;
 
 namespace Appointments.Application.Requests.Tenants;
 
-public sealed record DeleteTenantRequest(
-    string? DeletedBy,
-    Guid TenantId) : IRequest;
+public sealed record DeleteTenantRequest : DeleteRequest
+{
+    public DeleteTenantRequest(string DeletedBy, Guid Id) : base(DeletedBy, Id)
+    {
+    }
+}
 
 internal sealed class DeleteTenantRequestHandler : IRequestHandler<DeleteTenantRequest>
 {
@@ -21,14 +24,11 @@ internal sealed class DeleteTenantRequestHandler : IRequestHandler<DeleteTenantR
 
     public async Task Handle(DeleteTenantRequest request, CancellationToken cancellationToken)
     {
-        var tenant = await _tenantRepository.GetByIdAsync(request.TenantId);
+        new DeleteRequestValidator().ValidateAndThrow(request);
 
-        tenant.Delete(request.DeletedBy);
-
-        if (tenant.HasChanged)
-        {
-            await _tenantRepository.DeleteAsync(tenant.Id);
-            await _eventProcessor.ProcessAsync(tenant.Events);
-        }
+        var tenant = await _tenantRepository.GetAsync(request.Id);
+        
+        await _tenantRepository.DeleteAsync(tenant.Id);
+        await _eventProcessor.ProcessAsync(tenant.Events);
     }
 }

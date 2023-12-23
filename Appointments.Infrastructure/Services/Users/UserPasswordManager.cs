@@ -1,4 +1,4 @@
-﻿using Appointments.Application.Services.Users;
+﻿using Appointments.Application.Requests.Users;
 using Appointments.Common.Secrets;
 
 namespace Appointments.Infrastructure.Services.Users;

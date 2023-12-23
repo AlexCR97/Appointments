@@ -1,6 +1,6 @@
 ﻿using Appointments.Application.Services.Events;
 using Appointments.Common.MessageBroker.Abstractions;
-using Appointments.Domain.Events.Abstractions;
+using Appointments.Domain.Entities;
 using Appointments.Infrastructure.MessageBroker.Kafka;
 
 namespace Appointments.Infrastructure.Services.Events;
@@ -14,7 +14,7 @@ internal class EventProcessor : IEventProcessor
         _publisher = publisher;
     }
 
-    public async Task ProcessAsync(IEnumerable<IEvent> events)
+    public async Task ProcessAsync(IEnumerable<IDomainEvent> events)
     {
         foreach (var @event in events)
         {

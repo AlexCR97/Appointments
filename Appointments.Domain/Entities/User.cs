@@ -1,177 +1,231 @@
-﻿using Appointments.Domain.Events.Users;
+﻿using Appointments.Domain.Exceptions;
 using Appointments.Domain.Models;
 
 namespace Appointments.Domain.Entities;
 
-public class User : Entity
+public sealed class User : Entity
 {
-    public string Email { get; private set; }
-    public string Password { get; private set; }
-    public bool IsPasswordPlainText { get; private set; }
-    public string? FirstName { get; private set; }
-    public string? LastName { get; private set; }
+    public string FirstName { get; private set; }
+    public string LastName { get; private set; }
     public string? ProfileImage { get; private set; }
 
-    public User()
+    private readonly List<UserLogin> _logins = new();
+    public IReadOnlyList<UserLogin> Logins
     {
-        // Needed for auto-mapping
+        get
+        { 
+            return _logins;
+        }
+        private set
+        {
+            _logins.Clear();
+            _logins.AddRange(value);
+        }
+    }
+
+    private readonly List<UserTenant> _tenants = new();
+    public IReadOnlyList<UserTenant> Tenants
+    {
+        get
+        {
+            return _tenants;
+        }
+        private set
+        {
+            _tenants.Clear();
+            _tenants.AddRange(value);
+        }
+    }
+
+    private readonly List<UserPreference> _preferences = new();
+    public IReadOnlyList<UserPreference> Preferences
+    {
+        get
+        {
+            return _preferences;
+        }
+        private set
+        {
+            _preferences.Clear();
+            _preferences.AddRange(value);
+        }
     }
 
     public User(
         Guid id,
         DateTime createdAt,
-        string? createdBy,
+        string createdBy,
         DateTime? updatedAt,
         string? updatedBy,
-        DateTime? deletedAt,
-        string? deletedBy,
-        List<string> tags,
-        Dictionary<string, object?> extensions,
-        
-        string email,
-        string password,
-        bool isPasswordPlainText,
-        string? firstName,
-        string? lastName,
-        string? profileImage)
+        string firstName,
+        string lastName,
+        string? profileImage,
+        IReadOnlyList<UserLogin> logins,
+        IReadOnlyList<UserTenant> tenants,
+        IReadOnlyList<UserPreference> preferences)
     : base(
         id,
         createdAt,
         createdBy,
         updatedAt,
-        updatedBy,
-        deletedAt,
-        deletedBy,
-        tags,
-        extensions)
+        updatedBy)
     {
-        Email = email;
-        Password = password;
-        IsPasswordPlainText = isPasswordPlainText;
         FirstName = firstName;
         LastName = lastName;
         ProfileImage = profileImage;
+        Logins = logins;
+        Tenants = tenants;
+        Preferences = preferences;
     }
 
-    public static User CreateWithEmailCredentials(
-        Guid id,
-        string? createdBy,
-        string email,
-        string password,
-        bool isPasswordPlainText,
-        string? firstName,
-        string? lastName,
-        string? profileImage)
+    public UserLogin GetLocalLogin()
     {
-        var user = new User(
-            id,
-            DateTime.UtcNow,
-            createdBy,
-            null,
-            null,
-            null,
-            null,
-            new(),
-            new(),
-
-            email,
-            password,
-            isPasswordPlainText,
-            firstName,
-            lastName,
-            profileImage);
-
-        user.AddEvent(new UserCreatedWithEmailEvent(
-            user.Id,
-            user.CreatedAt,
-            user.CreatedBy,
-            user.Email,
-            user.Password,
-            user.IsPasswordPlainText,
-            user.FirstName,
-            user.LastName,
-            user.ProfileImage));
-
-        return user;
+        // TODO Implement
+        throw new NotImplementedException();
     }
 
-    public UserProfile GetProfile() => new(
-        Id,
-        FirstName,
-        LastName,
-        ProfileImage,
-        Extensions);
+    public UserTenant GetTenant(Guid tenantId)
+    {
+        // TODO Implement
+        throw new NotImplementedException();
+    }
+
+    public UserTenant? GetTenantOrDefault(Guid tenantId)
+    {
+        // TODO Implement
+        throw new NotImplementedException();
+    }
 
     public void UpdateProfile(
-        string? updatedBy,
+        string updatedBy,
         string firstName,
         string lastName)
     {
         UpdatedAt = DateTime.UtcNow;
         UpdatedBy = updatedBy;
-
         FirstName = firstName;
         LastName = lastName;
 
-        AddEvent(new UserProfileUpdatedEvent(
-            Id,
-            UpdatedAt.Value,
-            updatedBy,
-            firstName,
-            lastName));
+        // TODO Add event
     }
 
     public void UpdateProfileImage(
-        string? updatedBy,
+        string updatedBy,
         string profileImage)
     {
         UpdatedAt = DateTime.UtcNow;
         UpdatedBy = updatedBy;
-
         ProfileImage = profileImage;
 
-        AddEvent(new UserProfileImageUpdatedEvent(
-            Id,
-            UpdatedAt.Value,
-            updatedBy,
-            profileImage));
+        // TODO Add event
     }
 
-    public void AddTenant(Tenant tenant, string? updatedBy)
+    public static User Create(
+        string createdBy,
+        string firstName,
+        string lastName,
+        string? profileImage,
+        IReadOnlyList<UserLogin> logins,
+        IReadOnlyList<UserTenant> tenants,
+        IReadOnlyList<UserPreference> preferences)
     {
-        var tenants = GetTenants();
+        var user = new User(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
+            createdBy,
+            null,
+            null,
+            firstName,
+            lastName,
+            profileImage,
+            logins,
+            tenants,
+            preferences);
 
-        if (tenants.Contains(tenant.Id))
-            return;
+        // TODO Add event
 
-        tenants.Add(tenant.Id);
-        SetExtension("Tenants", tenants, updatedBy);
+        return user;
     }
 
-    private List<Guid> GetTenants()
+    public static User CreateWithLocalLogin(
+        string createdBy,
+        string firstName,
+        string lastName,
+        Email email,
+        string password,
+        UserTenant tenant)
     {
-        var tenants = Extensions.GetValueOrDefault("Tenants");
+        return Create(
+            createdBy,
+            firstName,
+            lastName,
+            null,
+            new List<UserLogin> { UserLogin.CreateLocalLogin(email, password) },
+            new List<UserTenant> { tenant },
+            new List<UserPreference> { UserPreference.CreateSelectedTenantPreference(tenant.TenantId) });
+    }
+}
 
-        Guid[] tenantsArray = tenants is null
-            ? Array.Empty<Guid>()
-            : (Guid[])tenants;
-
-        return tenantsArray.ToList();
+public sealed record UserLogin(
+    IdentityProvider IdentityProvider,
+    Email? Email,
+    string? Password,
+    string? PhoneNumber)
+{
+    public Email GetEmail()
+    {
+        return Email ?? throw new DomainException("InvalidLogin", "UserLogin does not have an email");
     }
 
-    public void SetSelectedTenant(Tenant tenant, string? updatedBy)
+    public string GetPassword()
     {
-        SetExtension("SelectedTenant", tenant.Id.ToString(), updatedBy);
+        return Password ?? throw new DomainException("InvalidLogin", "UserLogin does not have a password");
     }
 
-    public void Delete(string? deletedBy)
+    public static UserLogin CreateLocalLogin(Email email, string password)
     {
-        DeletedAt = DateTime.UtcNow;
-        DeletedBy = deletedBy;
+        return new UserLogin(IdentityProvider.Local, email, password, null);
+    }
+}
 
-        AddEvent(new UserDeletedEvent(
-            Id,
-            DeletedAt.Value,
-            deletedBy));
+public enum IdentityProvider
+{
+    Local,
+}
+
+public sealed record UserTenant(
+    Guid TenantId,
+    string TenantName);
+
+public struct UserPreference
+{
+    public string Key { get; }
+    public string Value { get; private set; }
+
+    public UserPreference()
+    {
+        Key = string.Empty;
+        Value = string.Empty;
+    }
+
+    public UserPreference(string key, string value)
+    {
+        Key = key;
+        Value = value;
+    }
+
+    public void Update(string value)
+    {
+        Value = value;
+    }
+
+    public static class CommonCodes
+    {
+        public const string SelectedTenant = "selectedTenant";
+    }
+
+    public static UserPreference CreateSelectedTenantPreference(Guid tenantId)
+    {
+        return new UserPreference(CommonCodes.SelectedTenant, tenantId.ToString());
     }
 }

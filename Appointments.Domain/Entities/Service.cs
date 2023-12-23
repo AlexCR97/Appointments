@@ -1,14 +1,42 @@
-﻿using Appointments.Domain.Events.Services;
-using Appointments.Domain.Events.Tenants;
+﻿using Appointments.Domain.Exceptions;
+using Appointments.Domain.Models;
 
 namespace Appointments.Domain.Entities;
 
-public class Service : Entity
+public sealed class Service : Entity
 {
     public Guid TenantId { get; private set; }
     public string Name { get; private set; }
-    public decimal Price { get; private set; }
     public string? Description { get; private set; }
+    public decimal Price { get; private set; }
+
+    private readonly List<IndexedResource> _images = new();
+    public IReadOnlyList<IndexedResource> Images
+    {
+        get
+        {
+            return _images;
+        }
+        private set
+        {
+            _images.Clear();
+            _images.AddRange(value);
+        }
+    }
+
+    private readonly List<string> _termsAndConditions = new();
+    public IReadOnlyList<string> TermsAndConditions
+    {
+        get
+        {
+            return _termsAndConditions;
+        }
+        private set
+        {
+            _termsAndConditions.Clear();
+            _termsAndConditions.AddRange(value);
+        }
+    }
     public string? Notes { get; private set; }
 
     /// <summary>
@@ -21,59 +49,119 @@ public class Service : Entity
     /// </summary>
     public TimeSpan? CalendarDuration { get; private set; }
     
-    public List<IndexedImage> Images { get; private set; }
-    public List<string> TermsAndConditions { get; private set; }
-
-    public Service()
-    {
-        // Needed for auto-mapping
-    }
-
     public Service(
         Guid id,
         DateTime createdAt,
-        string? createdBy,
+        string createdBy,
         DateTime? updatedAt,
         string? updatedBy,
-        DateTime? deletedAt,
-        string? deletedBy,
-        List<string> tags,
-        Dictionary<string, object?> extensions,
-
         Guid tenantId,
         string name,
-        decimal price,
         string? description,
+        decimal price,
+        IReadOnlyList<IndexedResource> images,
+        IReadOnlyList<string> termsAndConditions,
         string? notes,
         TimeSpan? customerDuration,
-        TimeSpan? calendarDuration,
-        List<IndexedImage> images,
-        List<string> termsAndConditions)
+        TimeSpan? calendarDuration)
     : base(
         id,
         createdAt,
         createdBy,
         updatedAt,
-        updatedBy,
-        deletedAt,
-        deletedBy,
-        tags,
-        extensions)
+        updatedBy)
     {
         TenantId = tenantId;
         Name = name;
-        Price = price;
         Description = description;
+        Price = price;
+        Images = images;
+        TermsAndConditions = termsAndConditions;
         Notes = notes;
         CustomerDuration = customerDuration;
         CalendarDuration = calendarDuration;
-        Images = images;
-        TermsAndConditions = termsAndConditions;
     }
 
-    public static Service CreateMinimal(
-        string? createdBy,
-        Guid tenantId)
+    public void AddImage(string updatedBy, IndexedResource image)
+    {
+        _images.Add(image);
+
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+
+        // TODO Add event
+    }
+
+    public IndexedResource GetImage(int index)
+    {
+        var imageIndex = _images.FindIndex(x => x.Index == index);
+
+        return imageIndex == -1
+            ? throw new NotFoundException(nameof(IndexedResource), nameof(IndexedResource.Index), index.ToString())
+            : _images[imageIndex];
+    }
+
+    public void RemoveImage(string updatedBy, int index)
+    {
+        var listIndex = _images.FindIndex(x => x.Index == index);
+
+        if (listIndex != -1)
+        {
+            _images.RemoveAt(listIndex);
+
+            UpdatedAt = DateTime.UtcNow;
+            UpdatedBy = updatedBy;
+            // TODO Add event
+        }
+    }
+
+    public void Update(
+        string updatedBy,
+        string name,
+        string? description,
+        decimal price,
+        IReadOnlyList<IndexedResource> images,
+        IReadOnlyList<string> termsAndConditions,
+        string? notes,
+        TimeSpan? customerDuration,
+        TimeSpan? calendarDuration)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+        Name = name;
+        Description = description;
+        Price = price;
+        Images = images;
+        TermsAndConditions = termsAndConditions;
+        Notes = notes;
+        CustomerDuration = customerDuration;
+        CalendarDuration = calendarDuration;
+
+        // TODO Add event
+    }
+
+    public void UpdateImages(
+        string updatedBy,
+        List<IndexedResource> images)
+    {
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+        Images = images;
+
+        // TODO Add event
+    }
+
+    public static Service Create(
+        string createdBy,
+        Guid tenantId,
+        string name,
+        string? description,
+        decimal price,
+        IReadOnlyList<IndexedResource> images,
+        IReadOnlyList<string> termsAndConditions,
+        string? notes,
+        TimeSpan? customerDuration,
+        TimeSpan? calendarDuration)
     {
         var service = new Service(
             Guid.NewGuid(),
@@ -81,41 +169,18 @@ public class Service : Entity
             createdBy,
             null,
             null,
-            null,
-            null,
-            new(),
-            new(),
-
             tenantId,
-            string.Empty,
-            0,
-            null,
-            null,
-            null,
-            null,
-            new List<IndexedImage>(),
-            new List<string>());
+            name,
+            description,
+            price,
+            images,
+            termsAndConditions,
+            notes,
+            customerDuration,
+            calendarDuration);
 
-        service.AddEvent(new MinimalServiceCreatedEvent(
-            service.Id,
-            createdBy,
-            tenantId));
+        // TODO Add event
 
         return service;
-    }
-
-    public void UpdateImages(
-        string? updatedBy,
-        List<IndexedImage> images)
-    {
-        UpdatedAt = DateTime.UtcNow;
-        UpdatedBy = updatedBy;
-        Images = images;
-
-        AddEvent(new ServiceImagesUpdatedEvent(
-            Id,
-            UpdatedAt.Value,
-            updatedBy,
-            images));
     }
 }

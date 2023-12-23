@@ -1,8 +1,8 @@
-﻿using Appointments.Domain.Events.Abstractions;
+﻿using Appointments.Domain.Entities;
 
 namespace Appointments.Application.Services.Events;
 
 public interface IEventProcessor
 {
-    Task ProcessAsync(IEnumerable<IEvent> events);
+    Task ProcessAsync(IEnumerable<IDomainEvent> events);
 }

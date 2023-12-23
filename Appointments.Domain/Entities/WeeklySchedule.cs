@@ -1,32 +1,39 @@
-﻿namespace Appointments.Domain.Entities;
+﻿using FluentValidation;
 
-public class WeeklySchedule
+namespace Appointments.Domain.Entities;
+
+public sealed record WeeklySchedule(
+    DailySchedule Monday,
+    DailySchedule Tuesday,
+    DailySchedule Wednesday,
+    DailySchedule Thursday,
+    DailySchedule Friday,
+    DailySchedule Saturday,
+    DailySchedule Sunday)
 {
-    public DailySchedule Monday { get; }
-    public DailySchedule Tuesday { get; }
-    public DailySchedule Wednesday { get; }
-    public DailySchedule Thursday { get; }
-    public DailySchedule Friday { get; }
-    public DailySchedule Saturday { get; }
-    public DailySchedule Sunday { get; }
-
-    public WeeklySchedule(DailySchedule monday, DailySchedule tuesday, DailySchedule wednesday, DailySchedule thursday, DailySchedule friday, DailySchedule saturday, DailySchedule sunday)
+    public static WeeklySchedule Default()
     {
-        Monday = monday;
-        Tuesday = tuesday;
-        Wednesday = wednesday;
-        Thursday = thursday;
-        Friday = friday;
-        Saturday = saturday;
-        Sunday = sunday;
+        return new WeeklySchedule(
+            DailySchedule.Weekday(),
+            DailySchedule.Weekday(),
+            DailySchedule.Weekday(),
+            DailySchedule.Weekday(),
+            DailySchedule.Weekday(),
+            DailySchedule.Weekend(),
+            DailySchedule.Weekend());
     }
+}
 
-    public static WeeklySchedule NineToFive => new(
-        DailySchedule.NineToFive,
-        DailySchedule.NineToFive,
-        DailySchedule.NineToFive,
-        DailySchedule.NineToFive,
-        DailySchedule.NineToFive,
-        new DailySchedule(true, null),
-        new DailySchedule(true, null));
+public sealed class WeeklyScheduleValidator : AbstractValidator<WeeklySchedule>
+{
+    public WeeklyScheduleValidator()
+    {
+        RuleFor(x => x.Monday).SetValidator(new DailyScheduleValidator());
+        RuleFor(x => x.Tuesday).SetValidator(new DailyScheduleValidator());
+        RuleFor(x => x.Wednesday).SetValidator(new DailyScheduleValidator());
+        RuleFor(x => x.Thursday).SetValidator(new DailyScheduleValidator());
+        RuleFor(x => x.Friday).SetValidator(new DailyScheduleValidator());
+        RuleFor(x => x.Saturday).SetValidator(new DailyScheduleValidator());
+        RuleFor(x => x.Sunday).SetValidator(new DailyScheduleValidator());
+    }
 }
