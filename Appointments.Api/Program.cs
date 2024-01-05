@@ -1,9 +1,10 @@
 using Appointments.Api.Filters.Exceptions;
 using Appointments.Api.Filters.Exceptions.ProblemDetailsFactories;
-using Appointments.Api.Management;
-using Appointments.Application.DependencyInjection;
-using Appointments.Application.Policies;
-using Appointments.Infrastructure.DependencyInjection;
+using Appointments.Api.Tenant.DependencyInjection;
+using Appointments.Assets.DependencyInjection;
+using Appointments.Core.Application.DependencyInjection;
+using Appointments.Core.DependencyInjection;
+using Appointments.Core.Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -13,10 +14,12 @@ const string DefaultCorsPolicy = "DefaultCorsPolicy";
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers(config =>
-{
-    config.Filters.Add(typeof(ExceptionFilter));
-});
+builder.Services
+    .AddControllers(config =>
+    {
+        config.Filters.Add(typeof(ExceptionFilter));
+    })
+    .AddTenantApi();
 
 builder.Services.AddCors(options =>
 {
@@ -61,45 +64,7 @@ builder.Services
 
 builder.Services.AddAuthorization(config =>
 {
-    config
-        .AddPolicy(UserPolicy.PolicyName, policy => policy
-            .RequireRole(new string[]
-            {
-                UserPolicy.Roles.Owner,
-                UserPolicy.Roles.Admin,
-                UserPolicy.Roles.Writer,
-                UserPolicy.Roles.Reader,
-            }));
-
-    config
-        .AddPolicy(TenantPolicy.PolicyName, policy => policy
-            .RequireRole(new string[]
-            {
-                TenantPolicy.Roles.Owner,
-                TenantPolicy.Roles.Admin,
-                TenantPolicy.Roles.Writer,
-                TenantPolicy.Roles.Reader,
-            }));
-
-    config
-        .AddPolicy(ServicePolicy.PolicyName, policy => policy
-            .RequireRole(new string[]
-            {
-                ServicePolicy.Roles.Owner,
-                ServicePolicy.Roles.Admin,
-                ServicePolicy.Roles.Writer,
-                ServicePolicy.Roles.Reader,
-            }));
-
-    config
-        .AddPolicy(BranchOfficePolicy.PolicyName, policy => policy
-            .RequireRole(new string[]
-            {
-                BranchOfficePolicy.Roles.Owner,
-                BranchOfficePolicy.Roles.Admin,
-                BranchOfficePolicy.Roles.Writer,
-                BranchOfficePolicy.Roles.Reader,
-            }));
+    config.AddTenantApiPolicies();
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -132,9 +97,13 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services
     .AddHttpContextAccessor()
-    .AddScoped<IProblemDetailsFactory<Exception>, ExceptionProblemDetailsFactory>()
-    .AddApplication(builder.Configuration)
-    .AddInfrastructure(builder.Configuration);
+    .AddScoped<IProblemDetailsFactory<Exception>, ExceptionProblemDetailsFactory>();
+
+builder.Services
+    .AddCoreModule(builder.Configuration)
+    // TODO Enable Assets module
+    //.AddAssetsModule(builder.Configuration)
+    ;
 
 var app = builder.Build();
 
@@ -153,7 +122,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapManagementApi();
 
 app.Run();

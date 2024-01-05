@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 
-namespace Appointments.Infrastructure.DependencyInjection;
+namespace Appointments.Core.Infrastructure.DependencyInjection;
 
 public static class ConfigurationExtensions
 {

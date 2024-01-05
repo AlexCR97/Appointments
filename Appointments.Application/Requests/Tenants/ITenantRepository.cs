@@ -1,6 +1,7 @@
-﻿using Appointments.Domain.Entities;
+﻿using Appointments.Common.Application;
+using Appointments.Core.Domain.Entities;
 
-namespace Appointments.Application.Requests.Tenants;
+namespace Appointments.Core.Application.Requests.Tenants;
 
 public interface ITenantRepository : IRepository<Tenant>
 {

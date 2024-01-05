@@ -1,9 +1,9 @@
-﻿using Appointments.Application.Services.Events;
-using Appointments.Domain.Entities;
-using Appointments.Domain.Models;
+﻿using Appointments.Common.Domain;
+using Appointments.Common.Domain.Models;
+using Appointments.Core.Domain.Entities;
 using MediatR;
 
-namespace Appointments.Application.Requests.BranchOffices;
+namespace Appointments.Core.Application.Requests.BranchOffices;
 
 public sealed record UpdateBranchOfficeRequest(
     Guid Id,

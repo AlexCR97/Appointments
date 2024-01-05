@@ -1,8 +1,9 @@
-﻿using Appointments.Application.Services.Events;
+﻿using Appointments.Common.Application;
+using Appointments.Common.Domain;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.BranchOffices;
+namespace Appointments.Core.Application.Requests.BranchOffices;
 
 public sealed record DeleteBranchOfficeRequest : DeleteRequest
 {
@@ -27,7 +28,7 @@ internal sealed class DeleteBranchOfficeRequestHandler : IRequestHandler<DeleteB
         new DeleteRequestValidator().ValidateAndThrow(request);
 
         var branchOffice = await _branchOfficeRepository.GetAsync(request.Id);
-        
+
         await _branchOfficeRepository.DeleteAsync(branchOffice.Id);
         await _eventProcessor.ProcessAsync(branchOffice.Events);
     }

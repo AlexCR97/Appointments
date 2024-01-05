@@ -1,6 +1,6 @@
 ﻿using RestSharp;
 
-namespace Appointments.Infrastructure.Services.Geo;
+namespace Appointments.Core.Infrastructure.Services.Geo;
 
 public interface IGeoService
 {
@@ -38,7 +38,7 @@ internal class GeoService : IGeoService
 
         if (!response.IsSuccessful)
             throw new HttpRequestException("HTTP request failed");
-        
+
         if (response.Data is null)
             throw new HttpRequestException("HTTP response did not contain any data");
 

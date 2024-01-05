@@ -1,8 +1,9 @@
-﻿using Appointments.Domain.Entities;
+﻿using Appointments.Common.Application;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Tenants;
+namespace Appointments.Core.Application.Requests.Tenants;
 
 public sealed record GetTenantRequest : GetRequest<Tenant>
 {

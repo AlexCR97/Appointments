@@ -1,10 +1,11 @@
-﻿using Appointments.Domain.Entities;
+﻿using Appointments.Common.Domain.Models;
+using Appointments.Core.Domain.Entities;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Core.Application.Requests.Users;
 
 public interface IUserService
 {
-    Task<User> LoginWithEmailAsync(string email, string password);
+    Task<User> LoginWithEmailAsync(Email email, string password);
 }
 
 internal sealed class UserService : IUserService
@@ -18,7 +19,7 @@ internal sealed class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public async Task<User> LoginWithEmailAsync(string email, string password)
+    public async Task<User> LoginWithEmailAsync(Email email, string password)
     {
         var user = await _userRepository.GetByEmailOrDefaultAsync(email)
             ?? throw new InvalidCredentialsException();

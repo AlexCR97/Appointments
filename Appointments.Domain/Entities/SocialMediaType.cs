@@ -1,4 +1,4 @@
-﻿namespace Appointments.Domain.Entities;
+﻿namespace Appointments.Core.Domain.Entities;
 
 public enum SocialMediaType
 {

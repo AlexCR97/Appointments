@@ -1,6 +1,7 @@
-﻿using Appointments.Domain.Models;
+﻿using Appointments.Common.Domain;
+using Appointments.Common.Domain.Models;
 
-namespace Appointments.Domain.Entities;
+namespace Appointments.Core.Domain.Entities;
 
 public sealed class BranchOffice : Entity
 {

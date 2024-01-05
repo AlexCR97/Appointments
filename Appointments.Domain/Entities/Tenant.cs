@@ -1,6 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using Appointments.Common.Domain;
 
-namespace Appointments.Domain.Entities;
+namespace Appointments.Core.Domain.Entities;
 
 public sealed class Tenant : Entity
 {
@@ -116,57 +116,6 @@ public sealed class Tenant : Entity
         // TODO Add event
 
         return tenant;
-    }
-}
-
-public readonly struct TenantUrlId
-{
-    public const int MinLength = 1;
-    public const int DefaultLength = 8;
-    public const int MaxLength = 32;
-
-    public readonly string Value;
-
-    public TenantUrlId()
-    {
-        Value = string.Empty;
-    }
-
-    public TenantUrlId(string value)
-    {
-        Value = value;
-    }
-
-    public override string ToString()
-    {
-        return Value;
-    }
-
-    public static TenantUrlId Random()
-    {
-        var randomKey = GenerateRandomKey(DefaultLength);
-        return new TenantUrlId(randomKey);
-    }
-
-    private static string GenerateRandomKey(int length)
-    {
-        const string charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        var bytes = new byte[length];
-
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(bytes);
-
-        var result = new char[length];
-        var cursor = 0;
-
-        for (var i = 0; i < length; i++)
-        {
-            cursor += bytes[i];
-            result[i] = charset[cursor % charset.Length];
-        }
-
-        return new string(result);
     }
 }
 

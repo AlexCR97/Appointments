@@ -1,4 +1,5 @@
-﻿using Appointments.Infrastructure.DependencyInjection;
+﻿using Appointments.Common.Domain.Exceptions;
+using Appointments.Core.Infrastructure.DependencyInjection;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,8 +41,8 @@ internal class ExceptionProblemDetailsFactory : IProblemDetailsFactory<Exception
         if (exception is ValidationException validationException)
             OverrideWith(builder, validationException);
 
-        if (exception is Application.Exceptions.ApplicationException applicationException)
-            OverrideWith(builder, applicationException);
+        if (exception is DomainException domainException)
+            OverrideWith(builder, domainException);
 
         return builder.Build();
     }
@@ -61,18 +62,18 @@ internal class ExceptionProblemDetailsFactory : IProblemDetailsFactory<Exception
             }));
     }
 
-    private void OverrideWith(ProblemDetailsBuilder builder, Application.Exceptions.ApplicationException exception)
+    private void OverrideWith(ProblemDetailsBuilder builder, DomainException exception)
     {
         builder
             .WithType($"{ErrorDocsUrl}#{exception.Code}")
             .WithTitle(exception.Code)
             .WithStatus(StatusCodes.Status400BadRequest);
 
-        if (exception is Application.Exceptions.NotFoundException notFoundException)
+        if (exception is NotFoundException notFoundException)
             OverrideWith(builder, notFoundException);
     }
 
-    private void OverrideWith(ProblemDetailsBuilder builder, Application.Exceptions.NotFoundException exception)
+    private void OverrideWith(ProblemDetailsBuilder builder, NotFoundException exception)
     {
         builder
             .WithStatus(StatusCodes.Status404NotFound);

@@ -1,7 +1,8 @@
-﻿using Appointments.Domain.Exceptions;
-using Appointments.Domain.Models;
+﻿using Appointments.Common.Domain;
+using Appointments.Common.Domain.Exceptions;
+using Appointments.Common.Domain.Models;
 
-namespace Appointments.Domain.Entities;
+namespace Appointments.Core.Domain.Entities;
 
 public sealed class User : Entity
 {
@@ -13,7 +14,7 @@ public sealed class User : Entity
     public IReadOnlyList<UserLogin> Logins
     {
         get
-        { 
+        {
             return _logins;
         }
         private set

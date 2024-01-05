@@ -1,6 +1,6 @@
 ﻿using Appointments.Common.MessageBroker.KafkaMessageBroker;
 
-namespace Appointments.Infrastructure.MessageBroker.Kafka;
+namespace Appointments.Core.Infrastructure.MessageBroker.Kafka;
 
 internal interface IEventsQueue : IKafkaTopic
 {

@@ -1,6 +1,7 @@
-﻿using Appointments.Domain.Models;
+﻿using Appointments.Common.Domain;
+using Appointments.Common.Domain.Models;
 
-namespace Appointments.Domain.Entities;
+namespace Appointments.Core.Domain.Entities;
 
 public sealed class Customer : Entity
 {
@@ -36,7 +37,7 @@ public sealed class Customer : Entity
         string updatedBy,
         string firstName,
         string lastName,
-        string? email,
+        Email? email,
         string? phoneNumber)
     {
         UpdatedAt = DateTime.UtcNow;

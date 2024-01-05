@@ -1,11 +1,10 @@
-﻿using Appointments.Application.Services.Events;
-using Appointments.Application.Validations;
-using Appointments.Domain.Entities;
-using Appointments.Domain.Models;
+﻿using Appointments.Common.Domain;
+using Appointments.Common.Domain.Models;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.BranchOffices;
+namespace Appointments.Core.Application.Requests.BranchOffices;
 
 public sealed record CreateBranchOfficeRequest(
     string CreatedBy,
@@ -31,12 +30,15 @@ internal sealed class CreateBranchOfficeRequestValidator : AbstractValidator<Cre
 
         RuleFor(x => x.Address)
             .SetValidator(new AddressValidator());
-        
+
         RuleForEach(x => x.Contacts)
             .SetValidator(new SocialMediaContactValidator());
 
-        RuleFor(x => x.Schedule)
-            .SetValidator(new WeeklyScheduleValidator());
+        When(x => x.Schedule is not null, () =>
+        {
+            RuleFor(x => x.Schedule!)
+                .SetValidator(new WeeklyScheduleValidator());
+        });
     }
 }
 

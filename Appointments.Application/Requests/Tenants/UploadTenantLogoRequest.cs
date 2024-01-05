@@ -1,10 +1,9 @@
-﻿using Appointments.Application.Services.Events;
-using Appointments.Application.Services.Files;
-using Appointments.Domain.Entities;
+﻿using Appointments.Common.Domain;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Tenants;
+namespace Appointments.Core.Application.Requests.Tenants;
 
 public sealed record UploadTenantLogoRequest(
     Guid Id,
@@ -33,57 +32,60 @@ internal sealed class UploadTenantLogoRequestValidator : AbstractValidator<Uploa
 
 internal sealed class UploadTenantLogoRequestHandler : IRequestHandler<UploadTenantLogoRequest, string>
 {
-    private readonly IEventProcessor _eventProcessor;
-    private readonly IFileStorage _fileStorage;
-    private readonly ITenantRepository _tenantRepository;
+    //private readonly IEventProcessor _eventProcessor;
+    //private readonly IFileStorage _fileStorage;
+    //private readonly ITenantRepository _tenantRepository;
 
-    public UploadTenantLogoRequestHandler(IEventProcessor eventProcessor, IFileStorage fileStorage, ITenantRepository tenantRepository)
-    {
-        _eventProcessor = eventProcessor;
-        _fileStorage = fileStorage;
-        _tenantRepository = tenantRepository;
-    }
+    //public UploadTenantLogoRequestHandler(IEventProcessor eventProcessor, IFileStorage fileStorage, ITenantRepository tenantRepository)
+    //{
+    //    _eventProcessor = eventProcessor;
+    //    _fileStorage = fileStorage;
+    //    _tenantRepository = tenantRepository;
+    //}
 
     public async Task<string> Handle(UploadTenantLogoRequest request, CancellationToken cancellationToken)
     {
-        var tenant = await _tenantRepository.GetAsync(request.Id);
+        // TODO Implement
+        throw new NotImplementedException();
 
-        var imageRelativePathWithoutFileName = Path.Join("Tenants", tenant.Id.ToString());
-        await _fileStorage.EnsureDirectoryAsync(imageRelativePathWithoutFileName);
+        //var tenant = await _tenantRepository.GetAsync(request.Id);
 
-        var imageName = $"Logo.{ExtractFileExtension(request.FileName)}";
-        var imageRelativePathWithFileName = Path.Join("Tenants", tenant.Id.ToString(), imageName);
+        //var imageRelativePathWithoutFileName = Path.Join("Tenants", tenant.Id.ToString());
+        //await _fileStorage.EnsureDirectoryAsync(imageRelativePathWithoutFileName);
 
-        await TryDeletePreviousProfileImageAsync(tenant);
+        //var imageName = $"Logo.{ExtractFileExtension(request.FileName)}";
+        //var imageRelativePathWithFileName = Path.Join("Tenants", tenant.Id.ToString(), imageName);
 
-        await _fileStorage.WriteAsync(imageRelativePathWithFileName, request.File);
+        //await TryDeletePreviousProfileImageAsync(tenant);
 
-        tenant.SetLogo(
-            request.UpdatedBy,
-            imageRelativePathWithFileName);
+        //await _fileStorage.WriteAsync(imageRelativePathWithFileName, request.File);
 
-        if (tenant.HasChanged)
-        {
-            await _tenantRepository.UpdateAsync(tenant);
-            await _eventProcessor.ProcessAsync(tenant.Events);
-        }
+        //tenant.SetLogo(
+        //    request.UpdatedBy,
+        //    imageRelativePathWithFileName);
 
-        return imageRelativePathWithFileName;
+        //if (tenant.HasChanged)
+        //{
+        //    await _tenantRepository.UpdateAsync(tenant);
+        //    await _eventProcessor.ProcessAsync(tenant.Events);
+        //}
+
+        //return imageRelativePathWithFileName;
     }
 
-    private static string ExtractFileExtension(string fileName)
-    {
-        return fileName
-            .Split('.')
-            .Last();
-    }
+    //private static string ExtractFileExtension(string fileName)
+    //{
+    //    return fileName
+    //        .Split('.')
+    //        .Last();
+    //}
 
-    private async Task TryDeletePreviousProfileImageAsync(Tenant tenant)
-    {
-        if (string.IsNullOrWhiteSpace(tenant.Logo))
-            return;
+    //private async Task TryDeletePreviousProfileImageAsync(Tenant tenant)
+    //{
+    //    if (string.IsNullOrWhiteSpace(tenant.Logo))
+    //        return;
 
-        if (await _fileStorage.ExistsAsync(tenant.Logo))
-            await _fileStorage.DeleteAsync(tenant.Logo);
-    }
+    //    if (await _fileStorage.ExistsAsync(tenant.Logo))
+    //        await _fileStorage.DeleteAsync(tenant.Logo);
+    //}
 }

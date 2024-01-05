@@ -1,10 +1,9 @@
-using Appointments.Application.Mapper.Mapsters.DependencyInjection;
-using Appointments.Application.Requests.Users;
-using Appointments.Application.Services.Jwt;
+using Appointments.Core.Application.Jwt;
+using Appointments.Core.Application.Requests.Users;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Appointments.Application.DependencyInjection;
+namespace Appointments.Core.Application.DependencyInjection;
 
 public static class DependencyInjectionExtensions
 {
@@ -13,7 +12,6 @@ public static class DependencyInjectionExtensions
         return services
             .AddCqrs()
             .AddJwtService(configuration)
-            .AddMapper()
             .AddOtherServices();
     }
 
@@ -35,12 +33,6 @@ public static class DependencyInjectionExtensions
         return services
             .AddSingleton<IJwtOptions>(jwtOptions)
             .AddScoped<IJwtService, JwtService>();
-    }
-
-    private static IServiceCollection AddMapper(this IServiceCollection services)
-    {
-        return services
-            .AddMapsterMapper();
     }
 
     private static IServiceCollection AddOtherServices(this IServiceCollection services)

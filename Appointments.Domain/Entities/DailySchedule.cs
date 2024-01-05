@@ -1,7 +1,7 @@
-﻿using Appointments.Domain.Models;
+﻿using Appointments.Common.Domain.Models;
 using FluentValidation;
 
-namespace Appointments.Domain.Entities;
+namespace Appointments.Core.Domain.Entities;
 
 public sealed record DailySchedule(
     List<DateRange> Hours,

@@ -1,4 +1,4 @@
-﻿namespace Appointments.Application.Requests.Users;
+﻿namespace Appointments.Core.Application.Requests.Users;
 
 public interface IUserPasswordManager
 {

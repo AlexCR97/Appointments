@@ -1,4 +1,4 @@
-﻿namespace Appointments.Application.DependencyInjection;
+﻿namespace Appointments.Core.Application.DependencyInjection;
 
 internal interface IApplicationMarker
 {

@@ -1,8 +1,9 @@
-﻿using Appointments.Application.Services.Events;
+﻿using Appointments.Common.Application;
+using Appointments.Common.Domain;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Tenants;
+namespace Appointments.Core.Application.Requests.Tenants;
 
 public sealed record DeleteTenantRequest : DeleteRequest
 {
@@ -27,7 +28,7 @@ internal sealed class DeleteTenantRequestHandler : IRequestHandler<DeleteTenantR
         new DeleteRequestValidator().ValidateAndThrow(request);
 
         var tenant = await _tenantRepository.GetAsync(request.Id);
-        
+
         await _tenantRepository.DeleteAsync(tenant.Id);
         await _eventProcessor.ProcessAsync(tenant.Events);
     }

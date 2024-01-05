@@ -1,8 +1,25 @@
-﻿namespace Appointments.Infrastructure.Mongo.Documents;
+﻿using Appointments.Common.Domain.Models;
 
-internal class DateRangeDocument
+namespace Appointments.Infrastructure.Mongo.Documents;
+
+internal sealed record DateRangeDocument(
+    DateTime StartDate,
+    DateTime EndDate,
+    bool Disabled)
 {
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public bool Disabled { get; set; }
+    internal static DateRangeDocument From(DateRange dateRange)
+    {
+        return new DateRangeDocument(
+            dateRange.StartDate,
+            dateRange.EndDate,
+            dateRange.Disabled);
+    }
+
+    internal DateRange ToModel()
+    {
+        return new DateRange(
+            StartDate,
+            EndDate,
+            Disabled);
+    }
 }

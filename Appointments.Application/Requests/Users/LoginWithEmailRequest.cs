@@ -1,13 +1,13 @@
-﻿using Appointments.Application.Services.Jwt;
-using Appointments.Domain.Entities;
-using Appointments.Domain.Models;
+﻿using Appointments.Common.Domain.Models;
+using Appointments.Core.Application.Jwt;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Core.Application.Requests.Users;
 
 public sealed record LoginWithEmailRequest(
-    string Email,
+    Email Email,
     string Password,
     string? Scope,
     Guid? TenantId)
@@ -18,7 +18,7 @@ internal sealed class LoginWithEmailRequestValidator : AbstractValidator<LoginWi
     public LoginWithEmailRequestValidator()
     {
         RuleFor(x => x.Email)
-            .EmailAddress();
+            .SetValidator(new EmailValidator());
 
         RuleFor(x => x.Password)
             .NotEmpty();
@@ -53,7 +53,7 @@ internal sealed class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEm
         var userEmail = user
             .GetLocalLogin()
             .GetEmail();
-        
+
         var userTenant = request.TenantId is null
             ? null
             : user.GetTenantOrDefault(request.TenantId.Value)
@@ -69,12 +69,12 @@ internal sealed class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEm
     }
 
     private string GenerateIdToken(
-        string email,
+        Email email,
         User user)
     {
         var userClaims = new IdTokenClaims(
             user.Id,
-            email,
+            email.Value,
             user.FirstName,
             user.LastName,
             user.ProfileImage);
@@ -83,12 +83,12 @@ internal sealed class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEm
     }
 
     private string GenerateAccessToken(
-        string email,
+        Email email,
         string? scope,
         UserTenant? userTenant)
     {
         var userClaims = new AccessTokenClaims(
-            email,
+            email.Value,
             scope,
             userTenant?.TenantId);
 
@@ -96,12 +96,12 @@ internal sealed class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEm
     }
 
     private string GenerateRefreshToken(
-        string email,
+        Email email,
         string? scope,
         UserTenant? userTenant)
     {
         var refreshClaims = new RefreshTokenClaims(
-            email,
+            email.Value,
             scope,
             userTenant?.TenantId);
 

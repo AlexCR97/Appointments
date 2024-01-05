@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Core.Application.Requests.Users;
 
 internal sealed record IdTokenClaims(
     Guid Id,

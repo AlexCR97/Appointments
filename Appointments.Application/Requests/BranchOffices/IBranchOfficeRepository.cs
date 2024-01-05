@@ -1,6 +1,7 @@
-﻿using Appointments.Domain.Entities;
+﻿using Appointments.Common.Application;
+using Appointments.Core.Domain.Entities;
 
-namespace Appointments.Application.Requests.BranchOffices;
+namespace Appointments.Core.Application.Requests.BranchOffices;
 
 public interface IBranchOfficeRepository : IRepository<BranchOffice>
 {

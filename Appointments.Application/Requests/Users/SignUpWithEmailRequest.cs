@@ -1,14 +1,14 @@
-﻿using Appointments.Application.Exceptions;
-using Appointments.Application.Requests.BranchOffices;
-using Appointments.Application.Requests.Services;
-using Appointments.Application.Requests.Tenants;
-using Appointments.Application.Services.Events;
-using Appointments.Domain.Entities;
-using Appointments.Domain.Models;
+﻿using Appointments.Common.Domain;
+using Appointments.Common.Domain.Exceptions;
+using Appointments.Common.Domain.Models;
+using Appointments.Core.Application.Requests.BranchOffices;
+using Appointments.Core.Application.Requests.Services;
+using Appointments.Core.Application.Requests.Tenants;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Core.Application.Requests.Users;
 
 public sealed record SignUpWithEmailRequest(
     string FirstName,
@@ -72,7 +72,7 @@ internal sealed class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWith
         new SignUpWithEmailRequestValidator().ValidateAndThrow(request);
 
         if (await _userRepository.ExistsByEmailAsync(request.Email))
-            throw new AlreadyExistsException<User>("Email", request.Email);
+            throw new AlreadyExistsException(nameof(User), "Email", request.Email.Value);
 
         var tenant = await CreateTenantAsync(request.CompanyName);
         var user = await CreateUserAsync(request.FirstName, request.LastName, request.Email, request.PasswordConfirm, tenant);

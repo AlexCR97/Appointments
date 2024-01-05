@@ -1,9 +1,9 @@
-﻿using Appointments.Application.Services.Events;
-using Appointments.Domain.Entities;
+﻿using Appointments.Common.Domain;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Tenants;
+namespace Appointments.Core.Application.Requests.Tenants;
 
 public sealed record UpdateTenantScheduleRequest(
     Guid Id,
@@ -23,7 +23,7 @@ internal sealed class UpdateTenantScheduleRequestValidator : AbstractValidator<U
 
         When(x => x.WeeklySchedule is not null, () =>
         {
-            RuleFor(x => x.WeeklySchedule)
+            RuleFor(x => x.WeeklySchedule!)
                 .SetValidator(new WeeklyScheduleValidator());
         });
     }

@@ -1,8 +1,9 @@
-﻿using Appointments.Application.Services.Events;
+﻿using Appointments.Common.Application;
+using Appointments.Common.Domain;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Core.Application.Requests.Users;
 
 public sealed record DeleteUserRequest : DeleteRequest
 {
@@ -27,7 +28,7 @@ internal sealed class DeleteUserRequestHandler : IRequestHandler<DeleteUserReque
         new DeleteRequestValidator().ValidateAndThrow(request);
 
         var user = await _userRepository.GetAsync(request.Id);
-        
+
         await _userRepository.DeleteAsync(user.Id);
         await _eventProcessor.ProcessAsync(user.Events);
     }

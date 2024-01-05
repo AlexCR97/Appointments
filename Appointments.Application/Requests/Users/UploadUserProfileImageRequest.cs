@@ -1,10 +1,9 @@
-﻿using Appointments.Application.Services.Events;
-using Appointments.Application.Services.Files;
-using Appointments.Domain.Entities;
+﻿using Appointments.Common.Domain;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Core.Application.Requests.Users;
 
 public sealed record UploadUserProfileImageRequest(
     Guid Id,
@@ -33,62 +32,64 @@ internal sealed class UploadUserProfileImageRequestValidator : AbstractValidator
 
 internal sealed class UploadUserProfileImageRequestHandler : IRequestHandler<UploadUserProfileImageRequest, string>
 {
-    private readonly IEventProcessor _eventProcessor;
-    private readonly IFileStorage _fileStorage;
-    private readonly IUserRepository _userRepository;
+    //private readonly IEventProcessor _eventProcessor;
+    //private readonly IFileStorage _fileStorage;
+    //private readonly IUserRepository _userRepository;
 
-    public UploadUserProfileImageRequestHandler(IEventProcessor eventProcessor, IFileStorage fileStorage, IUserRepository userRepository)
-    {
-        _eventProcessor = eventProcessor;
-        _fileStorage = fileStorage;
-        _userRepository = userRepository;
-    }
+    //public UploadUserProfileImageRequestHandler(IEventProcessor eventProcessor, IFileStorage fileStorage, IUserRepository userRepository)
+    //{
+    //    _eventProcessor = eventProcessor;
+    //    _fileStorage = fileStorage;
+    //    _userRepository = userRepository;
+    //}
 
     public async Task<string> Handle(UploadUserProfileImageRequest request, CancellationToken cancellationToken)
     {
-        // TODO Validate request
-        new UploadUserProfileImageRequestValidator().ValidateAndThrow(request);
+        // TODO Implement
+        throw new NotImplementedException();
 
-        var user = await _userRepository.GetAsync(request.Id);
+        //new UploadUserProfileImageRequestValidator().ValidateAndThrow(request);
 
-        var imageRelativePathWithoutFileName = Path.Join("Users", user.Id.ToString());
-        await _fileStorage.EnsureDirectoryAsync(imageRelativePathWithoutFileName);
+        //var user = await _userRepository.GetAsync(request.Id);
 
-        var imageName = GetImageName(request);
-        var imageRelativePathWithFileName = Path.Join(imageRelativePathWithoutFileName, imageName);
-        
-        await TryDeletePreviousProfileImageAsync(user);
+        //var imageRelativePathWithoutFileName = Path.Join("Users", user.Id.ToString());
+        //await _fileStorage.EnsureDirectoryAsync(imageRelativePathWithoutFileName);
 
-        await _fileStorage.WriteAsync(imageRelativePathWithFileName, request.File);
+        //var imageName = GetImageName(request);
+        //var imageRelativePathWithFileName = Path.Join(imageRelativePathWithoutFileName, imageName);
 
-        user.UpdateProfileImage(
-            request.UpdatedBy,
-            imageRelativePathWithFileName);
+        //await TryDeletePreviousProfileImageAsync(user);
 
-        if (user.HasChanged)
-        {
-            await _userRepository.UpdateAsync(user);
-            await _eventProcessor.ProcessAsync(user.Events);
-        }
+        //await _fileStorage.WriteAsync(imageRelativePathWithFileName, request.File);
 
-        return imageRelativePathWithFileName;
+        //user.UpdateProfileImage(
+        //    request.UpdatedBy,
+        //    imageRelativePathWithFileName);
+
+        //if (user.HasChanged)
+        //{
+        //    await _userRepository.UpdateAsync(user);
+        //    await _eventProcessor.ProcessAsync(user.Events);
+        //}
+
+        //return imageRelativePathWithFileName;
     }
 
-    private static string GetImageName(UploadUserProfileImageRequest request)
-    {
-        var fileExtension = request.FileName
-            .Split('.')
-            .Last();
+    //private static string GetImageName(UploadUserProfileImageRequest request)
+    //{
+    //    var fileExtension = request.FileName
+    //        .Split('.')
+    //        .Last();
 
-        return $"ProfileImage.{fileExtension}";
-    }
+    //    return $"ProfileImage.{fileExtension}";
+    //}
 
-    private async Task TryDeletePreviousProfileImageAsync(User user)
-    {
-        if (string.IsNullOrWhiteSpace(user.ProfileImage))
-            return;
+    //private async Task TryDeletePreviousProfileImageAsync(User user)
+    //{
+    //    if (string.IsNullOrWhiteSpace(user.ProfileImage))
+    //        return;
 
-        if (await _fileStorage.ExistsAsync(user.ProfileImage))
-            await _fileStorage.DeleteAsync(user.ProfileImage);
-    }
+    //    if (await _fileStorage.ExistsAsync(user.ProfileImage))
+    //        await _fileStorage.DeleteAsync(user.ProfileImage);
+    //}
 }

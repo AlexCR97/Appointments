@@ -1,11 +1,10 @@
-﻿using Appointments.Application.Services.Events;
-using Appointments.Application.Validations;
-using Appointments.Domain.Entities;
-using Appointments.Domain.Models;
+﻿using Appointments.Common.Domain;
+using Appointments.Common.Domain.Models;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Customers;
+namespace Appointments.Core.Application.Requests.Customers;
 
 public sealed record CreateCustomerRequest(
     string CreatedBy,

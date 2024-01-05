@@ -1,11 +1,9 @@
-﻿using Appointments.Application.Services.Events;
-using Appointments.Application.Validations;
-using Appointments.Application.Validations.Tenants;
-using Appointments.Domain.Entities;
+﻿using Appointments.Common.Domain;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Tenants;
+namespace Appointments.Core.Application.Requests.Tenants;
 
 public sealed record UpdateTenantProfileRequest(
     string UpdatedBy,
@@ -47,7 +45,7 @@ internal sealed class UpdateTenantRequestHandler : IRequestHandler<UpdateTenantP
 
     public async Task Handle(UpdateTenantProfileRequest request, CancellationToken cancellationToken)
     {
-        new UpdateTenantRequestValidator().ValidateAndThrow(request);
+        new UpdateTenantProfileRequestValidator().ValidateAndThrow(request);
 
         var tenant = await _tenantRepository.GetAsync(request.Id);
 

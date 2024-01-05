@@ -1,4 +1,4 @@
-﻿namespace Appointments.Application;
+﻿namespace Appointments.Core.Application;
 
 internal static class Constants
 {

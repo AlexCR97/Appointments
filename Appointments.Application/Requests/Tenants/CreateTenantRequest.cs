@@ -1,10 +1,9 @@
-﻿using Appointments.Application.Services.Events;
-using Appointments.Application.Validations;
-using Appointments.Domain.Entities;
+﻿using Appointments.Common.Domain;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Tenants;
+namespace Appointments.Core.Application.Requests.Tenants;
 
 public sealed record CreateTenantRequest(
     string CreatedBy,
@@ -28,18 +27,15 @@ internal sealed class CreateTenantRequestValidator : AbstractValidator<CreateTen
 
         When(x => x.UrlId is not null, () =>
         {
-            RuleFor(x => x.UrlId)
+            RuleFor(x => x.UrlId!.Value)
                 .SetValidator(new TenantUrlIdValidator());
         });
 
         RuleForEach(x => x.Contacts)
             .SetValidator(new SocialMediaContactValidator());
 
-        When(x => x.Schedule is not null, () =>
-        {
-            RuleFor(x => x.Schedule)
-                .SetValidator(new WeeklyScheduleValidator());
-        });
+        When(x => x.Schedule is not null, () => RuleFor(x => x.Schedule!)
+            .SetValidator(new WeeklyScheduleValidator()));
     }
 }
 

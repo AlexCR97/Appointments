@@ -1,7 +1,26 @@
-﻿namespace Appointments.Infrastructure.Mongo.Documents;
+﻿using Appointments.Core.Domain.Entities;
 
-internal class DailyScheduleDocument
+namespace Appointments.Infrastructure.Mongo.Documents;
+
+internal sealed record DailyScheduleDocument(
+    DateRangeDocument[] Hours,
+    bool Disabled)
 {
-    public bool Disabled { get; set; }
-    public List<DateRangeDocument> Hours { get; set; } = null!;
+    internal static DailyScheduleDocument From(DailySchedule schedule)
+    {
+        return new DailyScheduleDocument(
+            schedule.Hours
+                .Select(DateRangeDocument.From)
+                .ToArray(),
+            schedule.Disabled);
+    }
+
+    internal DailySchedule ToModel()
+    {
+        return new DailySchedule(
+            Hours
+                .Select(x => x.ToModel())
+                .ToList(),
+            Disabled);
+    }
 }

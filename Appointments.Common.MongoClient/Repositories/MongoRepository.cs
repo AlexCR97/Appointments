@@ -142,15 +142,6 @@ internal class MongoRepository<TDocument> : IMongoRepository<TDocument>
     public async Task DeleteAsync(Guid id)
     {
         var document = await GetOneAsync(id);
-        
-        if (document.DeletedAt == default)
-            document.DeletedAt = DateTime.UtcNow;
-
-        await _collection.FindOneAndReplaceAsync(x => x.Id == document.Id, document);
-    }
-
-    public async Task PurgeAsync(Guid id)
-    {
-        await _collection.FindOneAndDeleteAsync(x => x.Id == id);
+        await _collection.FindOneAndDeleteAsync(x => x.Id == document.Id);
     }
 }

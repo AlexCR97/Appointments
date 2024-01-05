@@ -1,7 +1,8 @@
-﻿using Appointments.Domain.Exceptions;
-using Appointments.Domain.Models;
+﻿using Appointments.Common.Domain;
+using Appointments.Common.Domain.Exceptions;
+using Appointments.Common.Domain.Models;
 
-namespace Appointments.Domain.Entities;
+namespace Appointments.Core.Domain.Entities;
 
 public sealed class Service : Entity
 {
@@ -48,7 +49,7 @@ public sealed class Service : Entity
     /// The amount of time the service occupies in the calendar.
     /// </summary>
     public TimeSpan? CalendarDuration { get; private set; }
-    
+
     public Service(
         Guid id,
         DateTime createdAt,

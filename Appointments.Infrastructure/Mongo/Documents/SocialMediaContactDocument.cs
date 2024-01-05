@@ -1,8 +1,25 @@
-﻿namespace Appointments.Infrastructure.Mongo.Documents;
+﻿using Appointments.Core.Domain.Entities;
 
-internal class SocialMediaContactDocument
+namespace Appointments.Infrastructure.Mongo.Documents;
+
+internal sealed record SocialMediaContactDocument(
+    string Type,
+    string? OtherType,
+    string Contact)
 {
-    public string Contact { get; set; } = null!;
-    public string Type { get; set; } = null!;
-    public string? OtherType { get; set; }
+    internal static SocialMediaContactDocument From(SocialMediaContact contact)
+    {
+        return new SocialMediaContactDocument(
+            contact.Type.ToString(),
+            contact.OtherType,
+            contact.Contact);
+    }
+
+    internal SocialMediaContact ToEntity()
+    {
+        return new SocialMediaContact(
+            Enum.Parse<SocialMediaType>(Type),
+            OtherType,
+            Contact);
+    }
 }

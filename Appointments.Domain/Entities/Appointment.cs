@@ -1,4 +1,6 @@
-﻿namespace Appointments.Domain.Entities;
+﻿using Appointments.Common.Domain;
+
+namespace Appointments.Core.Domain.Entities;
 
 public sealed class Appointment : Entity
 {
@@ -31,7 +33,7 @@ public sealed class Appointment : Entity
     /// <summary>
     /// A user friendly code that the customer and tenant can use to identify the appointment.
     /// </summary>
-    public string AppointmentCode { get; }
+    public AppointmentCode AppointmentCode { get; }
 
     /// <summary>
     /// A snapshot of the customer who made the appointment.
@@ -51,7 +53,7 @@ public sealed class Appointment : Entity
         string createdBy,
         DateTime? updatedAt,
         string? updatedBy,
-        Guid tenantId, Guid branchOfficeId, Guid serviceId, Guid? serviceProviderId, DateTime appointmentDate, string appointmentCode, AppointmentCustomer customer, string? notes, AppointmentStatus status)
+        Guid tenantId, Guid branchOfficeId, Guid serviceId, Guid? serviceProviderId, DateTime appointmentDate, AppointmentCode appointmentCode, AppointmentCustomer customer, string? notes, AppointmentStatus status)
     : base(
         id,
         createdAt,
@@ -75,7 +77,7 @@ public sealed class Appointment : Entity
         Status = status;
         UpdatedAt = DateTime.UtcNow;
         UpdatedBy = updatedBy;
-        
+
         // TODO Add event
     }
 
@@ -91,20 +93,40 @@ public sealed class Appointment : Entity
 
         // TODO Add event
     }
-}
 
-/// <param name="CustomerId">
-/// The ID of the customer if they are signed into the system.
-/// If this value is null, then the customer is not signed into
-/// the system and will be considered as an "anonymous" customer.
-/// </param>
-public record AppointmentCustomer(
-    Guid? CustomerId,
-    string FirstName,
-    string LastName,
-    string? Email,
-    string? PhoneNumber,
-    string? ProfileImage);
+    public static Appointment Create(
+        string createdBy,
+        Guid tenantId,
+        Guid branchOfficeId,
+        Guid serviceId,
+        Guid? serviceProviderId,
+        DateTime appointmentDate,
+        AppointmentCode appointmentCode,
+        AppointmentCustomer customer,
+        string? notes,
+        AppointmentStatus status)
+    {
+        var appointment = new Appointment(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
+            createdBy,
+            null,
+            null,
+            tenantId,
+            branchOfficeId,
+            serviceId,
+            serviceProviderId,
+            appointmentDate,
+            appointmentCode,
+            customer,
+            notes,
+            status);
+
+        // TODO Add event
+
+        return appointment;
+    }
+}
 
 public enum AppointmentStatus
 {

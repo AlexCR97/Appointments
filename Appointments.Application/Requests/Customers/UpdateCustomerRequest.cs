@@ -1,18 +1,17 @@
-﻿using Appointments.Application.Services.Events;
-using Appointments.Application.Validations;
-using Appointments.Domain.Entities;
+﻿using Appointments.Common.Domain;
+using Appointments.Common.Domain.Models;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Customers;
+namespace Appointments.Core.Application.Requests.Customers;
 
 public sealed record UpdateCustomerProfileRequest(
     string UpdatedBy,
     Guid Id,
-    string Name,
-    string? Slogan,
-    CustomerUrlId UrlId,
-    SocialMediaContact[] Contacts)
+    string FirstName,
+    string LastName,
+    Email? Email,
+    string? PhoneNumber)
     : IRequest;
 
 internal sealed class UpdateCustomerProfileRequestValidator : AbstractValidator<UpdateCustomerProfileRequest>
@@ -22,23 +21,35 @@ internal sealed class UpdateCustomerProfileRequestValidator : AbstractValidator<
         RuleFor(x => x.UpdatedBy)
             .NotEmpty();
 
-        RuleFor(x => x.Name)
+        RuleFor(x => x.Id)
             .NotEmpty();
 
-        RuleFor(x => x.UrlId)
-            .SetValidator(new CustomerUrlIdValidator());
+        RuleFor(x => x.FirstName)
+            .NotEmpty();
 
-        RuleForEach(x => x.Contacts)
-            .SetValidator(new SocialMediaContactValidator());
+        RuleFor(x => x.LastName)
+            .NotEmpty();
+
+        When(x => x.Email is not null, () =>
+        {
+            RuleFor(x => x.Email!.Value)
+                .SetValidator(new EmailValidator());
+        });
+
+        When(x => x.PhoneNumber is not null, () =>
+        {
+            RuleFor(x => x.PhoneNumber)
+                .NotEmpty();
+        });
     }
 }
 
-internal sealed class UpdateCustomerRequestHandler : IRequestHandler<UpdateCustomerProfileRequest>
+internal sealed class UpdateCustomerProfileRequestHandler : IRequestHandler<UpdateCustomerProfileRequest>
 {
     private readonly IEventProcessor _eventProcessor;
     private readonly ICustomerRepository _customerRepository;
 
-    public UpdateCustomerRequestHandler(IEventProcessor eventProcessor, ICustomerRepository customerRepository)
+    public UpdateCustomerProfileRequestHandler(IEventProcessor eventProcessor, ICustomerRepository customerRepository)
     {
         _eventProcessor = eventProcessor;
         _customerRepository = customerRepository;
@@ -46,16 +57,16 @@ internal sealed class UpdateCustomerRequestHandler : IRequestHandler<UpdateCusto
 
     public async Task Handle(UpdateCustomerProfileRequest request, CancellationToken cancellationToken)
     {
-        new UpdateCustomerRequestValidator().ValidateAndThrow(request);
+        new UpdateCustomerProfileRequestValidator().ValidateAndThrow(request);
 
         var customer = await _customerRepository.GetAsync(request.Id);
 
-        customer.UpdateProfile(
+        customer.Update(
             request.UpdatedBy,
-            request.Name,
-            request.Slogan,
-            request.UrlId,
-            request.Contacts);
+            request.FirstName,
+            request.LastName,
+            request.Email,
+            request.PhoneNumber);
 
         if (customer.HasChanged)
         {

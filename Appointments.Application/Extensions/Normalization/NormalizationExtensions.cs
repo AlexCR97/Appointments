@@ -1,4 +1,4 @@
-﻿namespace Appointments.Application.Extensions.Normalization;
+﻿namespace Appointments.Core.Application.Extensions.Normalization;
 
 public static class NormalizationExtensions
 {

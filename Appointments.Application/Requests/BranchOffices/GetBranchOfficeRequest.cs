@@ -1,8 +1,9 @@
-﻿using Appointments.Domain.Entities;
+﻿using Appointments.Common.Application;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.BranchOffices;
+namespace Appointments.Core.Application.Requests.BranchOffices;
 
 public sealed record GetBranchOfficeRequest : GetRequest<BranchOffice>
 {

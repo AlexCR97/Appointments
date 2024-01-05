@@ -1,9 +1,10 @@
-﻿using Appointments.Domain.Entities;
-using Appointments.Domain.Models;
+﻿using Appointments.Common.Application;
+using Appointments.Common.Domain.Models;
+using Appointments.Core.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace Appointments.Application.Requests.Customers;
+namespace Appointments.Core.Application.Requests.Customers;
 
 public sealed record FindCustomersRequest : FindRequest<Customer>
 {

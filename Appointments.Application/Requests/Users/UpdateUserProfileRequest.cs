@@ -1,7 +1,7 @@
-﻿using Appointments.Application.Services.Events;
+﻿using Appointments.Common.Domain;
 using MediatR;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Core.Application.Requests.Users;
 
 public sealed record UpdateUserProfileRequest(
     Guid Id,

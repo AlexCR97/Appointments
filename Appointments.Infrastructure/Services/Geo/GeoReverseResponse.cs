@@ -1,4 +1,4 @@
-﻿namespace Appointments.Infrastructure.Services.Geo;
+﻿namespace Appointments.Core.Infrastructure.Services.Geo;
 
 public class GeoReverseResponse
 {

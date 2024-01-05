@@ -1,11 +1,10 @@
-﻿using Appointments.Application.Services.Events;
+﻿using Appointments.Common.Domain;
 using Appointments.Common.MessageBroker.Abstractions;
-using Appointments.Domain.Entities;
-using Appointments.Infrastructure.MessageBroker.Kafka;
+using Appointments.Core.Infrastructure.MessageBroker.Kafka;
 
-namespace Appointments.Infrastructure.Services.Events;
+namespace Appointments.Core.Infrastructure.Services.Events;
 
-internal class EventProcessor : IEventProcessor
+internal sealed class EventProcessor : IEventProcessor
 {
     private readonly IPublisher<IEventsQueue> _publisher;
 

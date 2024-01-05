@@ -1,9 +1,9 @@
-﻿using Appointments.Application.Requests.Users;
-using Appointments.Common.Secrets;
+﻿using Appointments.Common.Secrets;
+using Appointments.Core.Application.Requests.Users;
 
-namespace Appointments.Infrastructure.Services.Users;
+namespace Appointments.Core.Infrastructure.Services.Users;
 
-internal class UserPasswordManager : IUserPasswordManager
+internal sealed class UserPasswordManager : IUserPasswordManager
 {
     private const string _userPasswordPrefix = "UserPassword";
 
@@ -14,15 +14,15 @@ internal class UserPasswordManager : IUserPasswordManager
         _secretManager = secretManager;
     }
 
-    public async Task<string> GetAsync(Guid userId)
+    public async Task<string> GetAsync(string email)
     {
-        var key = BuildKey(_userPasswordPrefix, userId.ToString());
+        var key = BuildKey(_userPasswordPrefix, email);
         return await _secretManager.GetAsync(key);
     }
 
-    public async Task<string> SetAsync(Guid userId, string password)
+    public async Task<string> SetAsync(string email, string password)
     {
-        var key = BuildKey(_userPasswordPrefix, userId.ToString());
+        var key = BuildKey(_userPasswordPrefix, email);
         await _secretManager.SetAsync(key, password);
         return key;
     }

@@ -1,12 +1,37 @@
-﻿namespace Appointments.Infrastructure.Mongo.Documents;
+﻿using Appointments.Core.Domain.Entities;
 
-internal class WeeklyScheduleDocument
+namespace Appointments.Infrastructure.Mongo.Documents;
+
+internal sealed record WeeklyScheduleDocument(
+    DailyScheduleDocument Monday,
+    DailyScheduleDocument Tuesday,
+    DailyScheduleDocument Wednesday,
+    DailyScheduleDocument Thursday,
+    DailyScheduleDocument Friday,
+    DailyScheduleDocument Saturday,
+    DailyScheduleDocument Sunday)
 {
-    public DailyScheduleDocument Monday { get; set; }
-    public DailyScheduleDocument Tuesday { get; set; }
-    public DailyScheduleDocument Wednesday { get; set; }
-    public DailyScheduleDocument Thursday { get; set; }
-    public DailyScheduleDocument Friday { get; set; }
-    public DailyScheduleDocument Saturday { get; set; }
-    public DailyScheduleDocument Sunday { get; set; }
+    internal static WeeklyScheduleDocument From(WeeklySchedule schedule)
+    {
+        return new WeeklyScheduleDocument(
+            DailyScheduleDocument.From(schedule.Monday),
+            DailyScheduleDocument.From(schedule.Tuesday),
+            DailyScheduleDocument.From(schedule.Wednesday),
+            DailyScheduleDocument.From(schedule.Thursday),
+            DailyScheduleDocument.From(schedule.Friday),
+            DailyScheduleDocument.From(schedule.Saturday),
+            DailyScheduleDocument.From(schedule.Sunday));
+    }
+
+    internal WeeklySchedule ToEntity()
+    {
+        return new WeeklySchedule(
+            Monday.ToModel(),
+            Tuesday.ToModel(),
+            Wednesday.ToModel(),
+            Thursday.ToModel(),
+            Friday.ToModel(),
+            Saturday.ToModel(),
+            Sunday.ToModel());
+    }
 }

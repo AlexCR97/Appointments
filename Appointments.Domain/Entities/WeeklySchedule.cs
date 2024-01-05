@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Appointments.Domain.Entities;
+namespace Appointments.Core.Domain.Entities;
 
 public sealed record WeeklySchedule(
     DailySchedule Monday,

@@ -1,6 +1,6 @@
-﻿using Appointments.Domain.Exceptions;
+﻿using Appointments.Common.Domain.Exceptions;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Core.Application.Requests.Users;
 
 public class InvalidCredentialsException : DomainException
 {

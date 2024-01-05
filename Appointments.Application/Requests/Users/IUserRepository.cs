@@ -1,7 +1,8 @@
-﻿using Appointments.Domain.Entities;
-using Appointments.Domain.Models;
+﻿using Appointments.Common.Application;
+using Appointments.Common.Domain.Models;
+using Appointments.Core.Domain.Entities;
 
-namespace Appointments.Application.Requests.Users;
+namespace Appointments.Core.Application.Requests.Users;
 
 public interface IUserRepository : IRepository<User>
 {
