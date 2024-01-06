@@ -66,6 +66,12 @@ internal sealed class UserRepository : IUserRepository
         }
     }
 
+    public async Task<User> GetByEmailAsync(Email email)
+    {
+        return await GetByEmailOrDefaultAsync(email)
+            ?? throw new NotFoundException("User", "Email", email.Value);
+    }
+
     public async Task<User?> GetByEmailOrDefaultAsync(Email email)
     {
         var emailValue = email.Value;

@@ -1,7 +1,5 @@
-﻿using Appointments.Api.Tenant.Exceptions;
-using Appointments.Api.Tenant.Models;
+﻿using Appointments.Api.Tenant.Models;
 using Appointments.Common.Domain.Exceptions;
-using Appointments.Core.Application.Requests.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +22,9 @@ public class MeController : ControllerBase
     [HttpGet]
     public async Task<OkObjectResult> GetMyProfile()
     {
-        var userId = GetUserId();
+        var username = GetUsername();
         var tenantId = GetTenantIdOrDefault();
-        var user = await _sender.Send(new GetUserRequest(userId));
+        var user = await _sender.Send(new GetUserByEmailRequest(username).ToApplicationRequest());
 
         if (tenantId is null)
             return Ok(UserProfileResponse.From(user));
@@ -37,16 +35,15 @@ public class MeController : ControllerBase
     [HttpPut]
     public async Task<NoContentResult> UpdateMyProfile([FromBody] UpdateUserProfileRequest request)
     {
-        Guid userId = GetUserId();
-        IdMismatchException.ThrowIfMismatch(userId.ToString(), request.Id.ToString());
-        await _sender.Send(request);
+        var username = GetUsername();
+        var user = await _sender.Send(new GetUserByEmailRequest(username).ToApplicationRequest());
+        await _sender.Send(request.ToApplicationRequest(user.Id, username));
         return NoContent();
     }
 
-    private Guid GetUserId()
+    private string GetUsername()
     {
-        var userId = GetClaimValue("id");
-        return Guid.Parse(userId);
+        return GetClaimValue("username");
     }
 
     private Guid? GetTenantIdOrDefault()

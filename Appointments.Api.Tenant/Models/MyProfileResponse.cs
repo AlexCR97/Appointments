@@ -11,9 +11,9 @@ public sealed record MyProfileResponse(
     string FirstName,
     string LastName,
     string? ProfileImage,
-    UserLogin[] Logins,
-    UserTenant Tenant,
-    UserPreference[] Preferences)
+    UserLoginResponse[] Logins,
+    UserTenantResponse Tenant,
+    UserPreferenceResponse[] Preferences)
 {
     internal static MyProfileResponse From(User user, Guid tenantId)
     {
@@ -26,8 +26,8 @@ public sealed record MyProfileResponse(
             user.FirstName,
             user.LastName,
             user.ProfileImage,
-            user.Logins.ToArray(),
-            user.GetTenant(tenantId),
-            user.Preferences.ToArray());
+            user.Logins.Select(UserLoginResponse.From).ToArray(),
+            UserTenantResponse.From(user.GetTenant(tenantId)),
+            user.Preferences.Select(UserPreferenceResponse.From).ToArray());
     }
 }
