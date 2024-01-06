@@ -2,7 +2,7 @@
 
 namespace Appointments.Api.Tenant.Exceptions;
 
-internal class IdMismatchException : DomainException
+public class IdMismatchException : DomainException
 {
     public IdMismatchException()
         : base("IdMismatch", "The ID in the request payload must match the ID in the URL")

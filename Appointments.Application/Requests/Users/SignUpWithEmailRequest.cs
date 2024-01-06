@@ -109,12 +109,14 @@ internal sealed class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWith
         string password,
         Tenant tenant)
     {
+        var passwordSecret = await _userPasswordManager.SetAsync(email.Value, password);
+
         var user = User.CreateWithLocalLogin(
             Constants.CreatedBy.EmailSignUp,
             firstName,
             lastName,
             email,
-            password,
+            passwordSecret,
             new UserTenant(tenant.Id, tenant.Name));
 
         if (user.HasChanged)

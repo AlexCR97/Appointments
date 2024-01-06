@@ -38,7 +38,8 @@ public class Entity : IEntity
     private readonly List<IDomainEvent> _events = new();
     public IReadOnlyList<IDomainEvent> Events => _events;
 
-    public bool HasChanged => _events.Count > 0;
+    //public bool HasChanged => _events.Count > 0;
+    public bool HasChanged => true; // TODO Calculate based on events
 
     protected void AddEvent(IDomainEvent @event)
         => _events.Add(@event);

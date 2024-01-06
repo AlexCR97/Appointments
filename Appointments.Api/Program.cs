@@ -1,3 +1,4 @@
+using Appointments.Api.Connect.DependencyInjection;
 using Appointments.Api.Filters.Exceptions;
 using Appointments.Api.Filters.Exceptions.ProblemDetailsFactories;
 using Appointments.Api.Tenant.DependencyInjection;
@@ -19,7 +20,8 @@ builder.Services
     {
         config.Filters.Add(typeof(ExceptionFilter));
     })
-    .AddTenantApi();
+    .AddTenantApi()
+    .AddConnectApi();
 
 builder.Services.AddCors(options =>
 {

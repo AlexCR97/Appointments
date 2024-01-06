@@ -56,8 +56,7 @@ internal sealed class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEm
 
         var userTenant = request.TenantId is null
             ? null
-            : user.GetTenantOrDefault(request.TenantId.Value)
-                ?? throw new InvalidUserTenantException(request.TenantId.Value);
+            : user.GetTenant(request.TenantId.Value);
 
         return new OAuthToken(
             GenerateAccessToken(userEmail, request.Scope, userTenant),
@@ -72,14 +71,14 @@ internal sealed class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEm
         Email email,
         User user)
     {
-        var userClaims = new IdTokenClaims(
+        var claims = new IdTokenClaims(
             user.Id,
             email.Value,
             user.FirstName,
             user.LastName,
             user.ProfileImage);
 
-        return _jwtService.GenerateJwt(userClaims.ToClaims());
+        return _jwtService.GenerateJwt(claims.ToClaims());
     }
 
     private string GenerateAccessToken(
@@ -87,12 +86,12 @@ internal sealed class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEm
         string? scope,
         UserTenant? userTenant)
     {
-        var userClaims = new AccessTokenClaims(
+        var claims = new AccessTokenClaims(
             email.Value,
             scope,
             userTenant?.TenantId);
 
-        return _jwtService.GenerateJwt(userClaims.ToClaims());
+        return _jwtService.GenerateJwt(claims.ToClaims());
     }
 
     private string GenerateRefreshToken(
@@ -100,11 +99,11 @@ internal sealed class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEm
         string? scope,
         UserTenant? userTenant)
     {
-        var refreshClaims = new RefreshTokenClaims(
+        var claims = new RefreshTokenClaims(
             email.Value,
             scope,
             userTenant?.TenantId);
 
-        return _jwtService.GenerateJwt(refreshClaims.ToClaims());
+        return _jwtService.GenerateJwt(claims.ToClaims());
     }
 }

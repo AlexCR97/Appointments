@@ -81,20 +81,19 @@ public sealed class User : Entity
 
     public UserLogin GetLocalLogin()
     {
-        // TODO Implement
-        throw new NotImplementedException();
+        return Logins.FirstOrDefault(x => x.IdentityProvider == IdentityProvider.Local)
+            ?? throw new OwnershipException("User", Id.ToString(), "Login", IdentityProvider.Local.ToString());
     }
 
     public UserTenant GetTenant(Guid tenantId)
     {
-        // TODO Implement
-        throw new NotImplementedException();
+        return GetTenantOrDefault(tenantId)
+            ?? throw new OwnershipException("User", Id.ToString(), "Tenant", tenantId.ToString());
     }
 
     public UserTenant? GetTenantOrDefault(Guid tenantId)
     {
-        // TODO Implement
-        throw new NotImplementedException();
+        return Tenants.FirstOrDefault(x => x.TenantId == tenantId);
     }
 
     public void UpdateProfile(
