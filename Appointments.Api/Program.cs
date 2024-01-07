@@ -1,3 +1,4 @@
+using Appointments.Api.Assets.DependencyInjection;
 using Appointments.Api.Connect.DependencyInjection;
 using Appointments.Api.Filters.Exceptions;
 using Appointments.Api.Filters.Exceptions.ProblemDetailsFactories;
@@ -20,8 +21,9 @@ builder.Services
     {
         config.Filters.Add(typeof(ExceptionFilter));
     })
+    .AddConnectApi()
     .AddTenantApi()
-    .AddConnectApi();
+    .AddAssetsApi();
 
 builder.Services.AddCors(options =>
 {
@@ -103,9 +105,7 @@ builder.Services
 
 builder.Services
     .AddCoreModule(builder.Configuration)
-    // TODO Enable Assets module
-    //.AddAssetsModule(builder.Configuration)
-    ;
+    .AddAssetsModule(builder.Configuration);
 
 var app = builder.Build();
 

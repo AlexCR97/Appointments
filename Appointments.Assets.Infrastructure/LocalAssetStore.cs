@@ -73,8 +73,12 @@ internal sealed class LocalAssetStore : IAssetStore
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (!Directory.Exists(absolutePath))
-            Directory.CreateDirectory(absolutePath);
+        var absolutePathParts = absolutePath.Split('\\'); // TODO Ensure cross platform
+        var absolutePathPartsWithoutFileName = absolutePathParts.Take(absolutePathParts.Length - 1).ToArray();
+        var absolutePathWithoutFileName = Path.Join(absolutePathPartsWithoutFileName);
+
+        if (!Directory.Exists(absolutePathWithoutFileName))
+            Directory.CreateDirectory(absolutePathWithoutFileName);
 
         return Task.CompletedTask;
     }

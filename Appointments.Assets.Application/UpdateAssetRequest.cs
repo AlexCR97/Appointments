@@ -8,7 +8,8 @@ namespace Appointments.Assets.Application;
 public sealed record UpdateAssetProfileRequest(
     string UpdatedBy,
     Guid Id,
-    AssetPath Path)
+    AssetPath Path,
+    string ContentType)
     : IRequest;
 
 internal sealed class UpdateAssetProfileRequestValidator : AbstractValidator<UpdateAssetProfileRequest>
@@ -23,6 +24,9 @@ internal sealed class UpdateAssetProfileRequestValidator : AbstractValidator<Upd
 
         RuleFor(x => x.Path)
             .SetValidator(new AssetPathValidator());
+
+        RuleFor(x => x.ContentType)
+            .NotEmpty();
     }
 }
 
@@ -50,7 +54,8 @@ internal sealed class UpdateAssetProfileRequestHandler : IRequestHandler<UpdateA
 
         asset.Update(
             request.UpdatedBy,
-            request.Path);
+            request.Path,
+            request.ContentType);
 
         if (asset.HasChanged)
         {

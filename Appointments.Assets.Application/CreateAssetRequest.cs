@@ -8,8 +8,13 @@ namespace Appointments.Assets.Application;
 
 public sealed record CreateAssetRequest(
     string CreatedBy,
-    AssetPath Path)
-    : IRequest<Guid>;
+    AssetPath Path,
+    string ContentType)
+    : IRequest<AssetCreatedResult>;
+
+public sealed record AssetCreatedResult(
+    Guid Id,
+    string TransactionCode);
 
 internal sealed class CreateAssetRequestValidator : AbstractValidator<CreateAssetRequest>
 {
@@ -20,10 +25,13 @@ internal sealed class CreateAssetRequestValidator : AbstractValidator<CreateAsse
 
         RuleFor(x => x.Path)
             .SetValidator(new AssetPathValidator());
+
+        RuleFor(x => x.ContentType)
+            .NotEmpty();
     }
 }
 
-internal sealed class CreateAssetRequestHandler : IRequestHandler<CreateAssetRequest, Guid>
+internal sealed class CreateAssetRequestHandler : IRequestHandler<CreateAssetRequest, AssetCreatedResult>
 {
     private readonly IAssetRepository _assetRepository;
     private readonly IEventProcessor _eventProcessor;
@@ -34,7 +42,7 @@ internal sealed class CreateAssetRequestHandler : IRequestHandler<CreateAssetReq
         _eventProcessor = eventProcessor;
     }
 
-    public async Task<Guid> Handle(CreateAssetRequest request, CancellationToken cancellationToken)
+    public async Task<AssetCreatedResult> Handle(CreateAssetRequest request, CancellationToken cancellationToken)
     {
         new CreateAssetRequestValidator().ValidateAndThrow(request);
 
@@ -45,7 +53,8 @@ internal sealed class CreateAssetRequestHandler : IRequestHandler<CreateAssetReq
 
         var asset = Asset.Create(
             request.CreatedBy,
-            request.Path);
+            request.Path,
+            request.ContentType);
 
         if (asset.HasChanged)
         {
@@ -53,6 +62,8 @@ internal sealed class CreateAssetRequestHandler : IRequestHandler<CreateAssetReq
             await _eventProcessor.ProcessAsync(asset.Events);
         }
 
-        return asset.Id;
+        return new AssetCreatedResult(
+            asset.Id,
+            asset.Transaction.Code);
     }
 }

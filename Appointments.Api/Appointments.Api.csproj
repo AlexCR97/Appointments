@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Appointments.Api.Assets\Appointments.Api.Assets.csproj" />
     <ProjectReference Include="..\Appointments.Api.Connect\Appointments.Api.Connect.csproj" />
     <ProjectReference Include="..\Appointments.Api.Tenant\Appointments.Api.Tenant.csproj" />
     <ProjectReference Include="..\Appointments.Assets\Appointments.Assets.csproj" />
