@@ -4,11 +4,11 @@ public sealed record UpdateUserProfileRequest(
     string FirstName,
     string LastName)
 {
-    public Core.Application.Requests.Users.UpdateUserProfileRequest ToApplicationRequest(
+    public Appointments.Core.Application.Requests.Users.UpdateUserProfileRequest ToApplicationRequest(
         Guid id,
         string updatedBy)
     {
-        return new Core.Application.Requests.Users.UpdateUserProfileRequest(
+        return new Appointments.Core.Application.Requests.Users.UpdateUserProfileRequest(
             id,
             updatedBy,
             FirstName,

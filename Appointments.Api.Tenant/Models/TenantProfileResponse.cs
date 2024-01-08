@@ -15,7 +15,7 @@ public sealed record TenantProfileResponse(
     SocialMediaContact[] Contacts,
     WeeklySchedule? Schedule)
 {
-    internal static TenantProfileResponse From(Core.Domain.Entities.Tenant tenant)
+    internal static TenantProfileResponse From(Appointments.Core.Domain.Entities.Tenant tenant)
     {
         return new TenantProfileResponse(
             tenant.Id,

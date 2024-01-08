@@ -66,10 +66,9 @@ builder.Services
         };
     });
 
-builder.Services.AddAuthorization(config =>
-{
-    config.AddTenantApiPolicies();
-});
+builder.Services.AddAuthorization(config => config
+    .AddTenantApiPolicies()
+    .AddAssetsApiPolicies());
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

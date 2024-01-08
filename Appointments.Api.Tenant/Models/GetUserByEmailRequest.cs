@@ -4,9 +4,9 @@ namespace Appointments.Api.Tenant.Models;
 
 public sealed record GetUserByEmailRequest(string Email)
 {
-    internal Core.Application.Requests.Users.GetUserByEmailRequest ToApplicationRequest()
+    internal Appointments.Core.Application.Requests.Users.GetUserByEmailRequest ToApplicationRequest()
     {
-        return new Core.Application.Requests.Users.GetUserByEmailRequest(
+        return new Appointments.Core.Application.Requests.Users.GetUserByEmailRequest(
             new Email(Email));
     }
 }

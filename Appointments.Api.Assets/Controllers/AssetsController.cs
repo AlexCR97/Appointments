@@ -1,7 +1,9 @@
 ﻿using Appointments.Api.Assets.Extensions.Files;
 using Appointments.Api.Assets.Models;
+using Appointments.Api.Core.User;
 using Appointments.Assets.Domain;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +12,7 @@ namespace Appointments.Api.Assets.Controllers;
 [ApiController]
 [Route("api/assets")]
 [ApiVersion("1.0")]
+[Authorize(Policy = AssetsApiPolicy.Assets.Scope)]
 public class AssetsController : ControllerBase
 {
     private readonly ISender _sender;
@@ -23,8 +26,7 @@ public class AssetsController : ControllerBase
     public async Task<AssetCreatedResponse> CreateAsset([FromBody] CreateAssetRequest request)
     {
         var result = await _sender.Send(request.ToApplicationRequest(
-            "Unknown" // TODO Map username
-            ));
+            User.GetAccessToken().Username));
 
         return new AssetCreatedResponse(
             result.Id,
@@ -66,7 +68,7 @@ public class AssetsController : ControllerBase
         Asset asset = await _sender.Send(new Appointments.Assets.Application.GetAssetByPathRequest(new AssetPath(path)));
 
         await _sender.Send(new Appointments.Assets.Application.DeleteAssetRequest(
-            "Unknown", // TODO Map username
+            User.GetAccessToken().Username,
             asset.Id));
 
         return NoContent();
