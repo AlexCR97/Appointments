@@ -15,7 +15,7 @@ public sealed record UserProfileResponse(
     UserTenantResponse[] Tenants,
     UserPreferenceResponse[] Preferences)
 {
-    internal static UserProfileResponse From(User user)
+    internal static UserProfileResponse From(User user, Guid? tenantId = null)
     {
         return new UserProfileResponse(
             user.Id,
@@ -27,7 +27,14 @@ public sealed record UserProfileResponse(
             user.LastName,
             user.ProfileImage,
             user.Logins.Select(UserLoginResponse.From).ToArray(),
-            user.Tenants.Select(UserTenantResponse.From).ToArray(),
+            tenantId is null
+                ? user.Tenants
+                    .Select(UserTenantResponse.From)
+                    .ToArray()
+                : user.Tenants
+                    .Select(UserTenantResponse.From)
+                    .Where(x => x.TenantId == tenantId.Value)
+                    .ToArray(),
             user.Preferences.Select(UserPreferenceResponse.From).ToArray());
     }
 }

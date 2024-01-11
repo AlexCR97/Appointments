@@ -10,6 +10,7 @@ namespace Appointments.Api.Tenant.Controllers;
 [ApiController]
 [Route("api/tenant/tenants")]
 [ApiVersion("1.0")]
+[Produces("application/json")]
 [Authorize(Policy = TenantApiPolicy.Tenants.Scope)]
 public class TenantsController : ControllerBase
 {
@@ -22,14 +23,14 @@ public class TenantsController : ControllerBase
 
     #region Tenants
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = nameof(GetTenant))]
     public async Task<TenantProfileResponse> GetTenant([FromRoute] Guid id)
     {
         var tenant = await _sender.Send(new GetTenantRequest(id));
         return TenantProfileResponse.From(tenant);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id}", Name = nameof(UpdateTenantProfile))]
     public async Task<NoContentResult> UpdateTenantProfile(
         [FromRoute] Guid id,
         [FromBody] UpdateTenantProfileRequest request)

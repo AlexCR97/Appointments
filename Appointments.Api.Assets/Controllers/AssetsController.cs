@@ -12,6 +12,7 @@ namespace Appointments.Api.Assets.Controllers;
 [ApiController]
 [Route("api/assets")]
 [ApiVersion("1.0")]
+[Produces("application/json")]
 [Authorize(Policy = AssetsApiPolicy.Assets.Scope)]
 public class AssetsController : ControllerBase
 {
@@ -22,7 +23,7 @@ public class AssetsController : ControllerBase
         _sender = sender;
     }
 
-    [HttpPost]
+    [HttpPost(Name = nameof(CreateAsset))]
     public async Task<AssetCreatedResponse> CreateAsset([FromBody] CreateAssetRequest request)
     {
         var result = await _sender.Send(request.ToApplicationRequest(
@@ -33,14 +34,14 @@ public class AssetsController : ControllerBase
             result.TransactionCode);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = nameof(GetAsset))]
     public async Task<AssetResponse> GetAsset([FromRoute] Guid id)
     {
         var asset = await _sender.Send(new Appointments.Assets.Application.GetAssetRequest(id));
         return AssetResponse.From(asset);
     }
 
-    [HttpPost("blob/{path}")]
+    [HttpPost("blob/{path}", Name = nameof(UploadAsset))]
     public async Task<AssetUploadResponse> UploadAsset(
         [FromRoute] string path,
         [FromForm] IFormFile file,
@@ -54,7 +55,7 @@ public class AssetsController : ControllerBase
         return new AssetUploadResponse(transactionStatus.ToString());
     }
 
-    [HttpGet("blob/{path}")]
+    [HttpGet("blob/{path}", Name = nameof(ServeAsset))]
     public async Task<FileContentResult> ServeAsset([FromRoute] string path)
     {
         var asset = await _sender.Send(new Appointments.Assets.Application.GetAssetByPathRequest(new AssetPath(path)));
@@ -62,7 +63,7 @@ public class AssetsController : ControllerBase
         return File(assetContents, asset.ContentType);
     }
 
-    [HttpDelete("blob/{path}")]
+    [HttpDelete("blob/{path}", Name = nameof(DeleteAsset))]
     public async Task<NoContentResult> DeleteAsset([FromRoute] string path)
     {
         Asset asset = await _sender.Send(new Appointments.Assets.Application.GetAssetByPathRequest(new AssetPath(path)));

@@ -1,4 +1,5 @@
 ﻿using Appointments.Api.Connect.Models;
+using Appointments.Common.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace Appointments.Api.Connect.Controllers;
 [ApiController]
 [Route("api/connect")]
 [ApiVersion("1.0")]
+[Produces("application/json")]
 public class ConnectController : ControllerBase
 {
     private readonly ISender _sender;
@@ -16,17 +18,15 @@ public class ConnectController : ControllerBase
         _sender = sender;
     }
 
-    [HttpPost("sign-up/email")]
-    public async Task<OkObjectResult> SignUpWithEmail([FromBody] SignUpWithEmailRequest request)
+    [HttpPost("sign-up/email", Name = nameof(SignUpWithEmail))]
+    public async Task<Core.Application.Requests.Users.UserSignedUpResult> SignUpWithEmail([FromBody] SignUpWithEmailRequest request)
     {
-        var result = await _sender.Send(request.ToApplicationRequest());
-        return Ok(result);
+        return await _sender.Send(request.ToApplicationRequest());
     }
 
-    [HttpPost("login/email")]
-    public async Task<OkObjectResult> LoginWithEmail([FromBody] LoginWithEmailRequest request)
+    [HttpPost("login/email", Name = nameof(LoginWithEmail))]
+    public async Task<OAuthToken> LoginWithEmail([FromBody] LoginWithEmailRequest request)
     {
-        var result = await _sender.Send(request.ToApplicationRequest());
-        return Ok(result);
+        return await _sender.Send(request.ToApplicationRequest());
     }
 }
