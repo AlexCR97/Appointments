@@ -1,0 +1,18 @@
+{
+  "name": "@appointments/api-client",
+  "description": "Appointments API Client",
+  "author": "Pablo Castillo",
+  "license": "ISC",
+  "scripts": {
+    "build": "del dist /s /q && tsc -b && tsc-alias",
+    "package": "node ./dist/package.js",
+    "link": "cd ./dist && npm link"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "tsc-alias": "^1.8.6",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^4.9.5"
+  }
+}

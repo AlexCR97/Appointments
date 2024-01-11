@@ -10,9 +10,9 @@ public sealed record SignUpWithEmailRequest(
     string PasswordConfirm,
     string CompanyName)
 {
-    public Core.Application.Requests.Users.SignUpWithEmailRequest ToApplicationRequest()
+    public Appointments.Core.Application.Requests.Users.SignUpWithEmailRequest ToApplicationRequest()
     {
-        return new Core.Application.Requests.Users.SignUpWithEmailRequest(
+        return new Appointments.Core.Application.Requests.Users.SignUpWithEmailRequest(
             FirstName,
             LastName,
             new Email(Email),

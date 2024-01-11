@@ -19,7 +19,7 @@ public class ConnectController : ControllerBase
     }
 
     [HttpPost("sign-up/email", Name = nameof(SignUpWithEmail))]
-    public async Task<Core.Application.Requests.Users.UserSignedUpResult> SignUpWithEmail([FromBody] SignUpWithEmailRequest request)
+    public async Task<Appointments.Core.Application.Requests.Users.UserSignedUpResult> SignUpWithEmail([FromBody] SignUpWithEmailRequest request)
     {
         return await _sender.Send(request.ToApplicationRequest());
     }
