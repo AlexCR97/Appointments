@@ -30,7 +30,13 @@ internal sealed class ApiClientGenerator : IApiClientGenerator
 
         if (result.IsFailure)
             throw new InvalidOperationException("Script failed");
+    }
+}
 
-        //await File.WriteAllTextAsync("./src/index.ts", "export { AppointmentsApiClient } from './AppointmentsApiClient", cancellationToken);
+internal static class ApiClientGeneratorExtensions
+{
+    internal static IServiceCollection AddApiClientGenerator(this IServiceCollection services)
+    {
+        return services.AddSingleton<IApiClientGenerator, ApiClientGenerator>();
     }
 }

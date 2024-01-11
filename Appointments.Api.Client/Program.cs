@@ -22,15 +22,10 @@ builder.Services
 
 builder.Services
     .AddPowerShell(builder.Configuration)
-    .AddSingleton<IApiClientGenerator, ApiClientGenerator>();
+    .AddApiClientGenerator();
 
-var app = builder.Build();
-
-app.UseCore();
-
-app.Services
+builder.Services
+    .BuildServiceProvider()
     .GetRequiredService<IApiClientGenerator>()
     .GenerateAsync()
     .Wait();
-
-app.StopAsync().Wait();
