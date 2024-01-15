@@ -8,7 +8,7 @@ public sealed record LoginWithEmailRequest(
     string? Scope,
     Guid? TenantId)
 {
-    public Appointments.Core.Application.Requests.Users.LoginWithEmailRequest ToApplicationRequest()
+    internal Appointments.Core.Application.Requests.Users.LoginWithEmailRequest ToApplicationRequest()
     {
         return new Appointments.Core.Application.Requests.Users.LoginWithEmailRequest(
             new Email(Email),

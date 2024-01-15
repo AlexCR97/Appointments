@@ -10,7 +10,7 @@ public sealed record SignUpWithEmailRequest(
     string PasswordConfirm,
     string CompanyName)
 {
-    public Appointments.Core.Application.Requests.Users.SignUpWithEmailRequest ToApplicationRequest()
+    internal Appointments.Core.Application.Requests.Users.SignUpWithEmailRequest ToApplicationRequest()
     {
         return new Appointments.Core.Application.Requests.Users.SignUpWithEmailRequest(
             FirstName,

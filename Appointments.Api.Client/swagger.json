@@ -251,7 +251,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserSignedUpResult"
+                  "$ref": "#/components/schemas/UserSignedUpResponse"
                 }
               }
             }
@@ -290,7 +290,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OAuthToken"
+                  "$ref": "#/components/schemas/OAuthTokenResponse"
                 }
               }
             }
@@ -1788,7 +1788,7 @@
         },
         "additionalProperties": false
       },
-      "OAuthToken": {
+      "OAuthTokenResponse": {
         "type": "object",
         "properties": {
           "access_token": {
@@ -2403,7 +2403,7 @@
         },
         "additionalProperties": false
       },
-      "UserSignedUpResult": {
+      "UserSignedUpResponse": {
         "type": "object",
         "properties": {
           "userId": {

@@ -249,7 +249,7 @@ export interface LoginWithEmailRequest {
   tenantId?: string | null;
 }
 
-export interface OAuthToken {
+export interface OAuthTokenResponse {
   access_token?: string | null;
   token_type?: string | null;
   /** @format int32 */
@@ -459,7 +459,7 @@ export interface UserProfileResponse {
   preferences?: UserPreferenceResponse[] | null;
 }
 
-export interface UserSignedUpResult {
+export interface UserSignedUpResponse {
   /** @format uuid */
   userId?: string;
   /** @format uuid */
@@ -818,7 +818,7 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      * @secure
      */
     signUpWithEmail: (data: SignUpWithEmailRequest, params: RequestParams = {}) =>
-      this.request<UserSignedUpResult, any>({
+      this.request<UserSignedUpResponse, any>({
         path: `/api/connect/sign-up/email`,
         method: "POST",
         body: data,
@@ -837,7 +837,7 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      * @secure
      */
     loginWithEmail: (data: LoginWithEmailRequest, params: RequestParams = {}) =>
-      this.request<OAuthToken, any>({
+      this.request<OAuthTokenResponse, any>({
         path: `/api/connect/login/email`,
         method: "POST",
         body: data,
