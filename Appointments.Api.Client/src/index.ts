@@ -9,6 +9,11 @@
  * ---------------------------------------------------------------
  */
 
+export interface AddressModel {
+  coordinates?: CoordinatesModel;
+  description?: string | null;
+}
+
 export interface AssetCreatedResponse {
   /** @format uuid */
   id?: string;
@@ -40,13 +45,79 @@ export interface AssetUploadResponse {
   transactionStatus?: string | null;
 }
 
+export interface BranchOfficeCreatedResponse {
+  /** @format uuid */
+  branchOfficeId?: string;
+}
+
+export interface BranchOfficeListResponse {
+  /** @format uuid */
+  id?: string;
+  /** @format date-time */
+  createdAt?: string;
+  createdBy?: string | null;
+  /** @format date-time */
+  updatedAt?: string | null;
+  updatedBy?: string | null;
+  /** @format uuid */
+  tenantId?: string;
+  name?: string | null;
+  address?: AddressModel;
+}
+
+export interface BranchOfficeListResponsePagedResult {
+  /** @format int32 */
+  pageIndex?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int64 */
+  totalCount?: number;
+  results?: BranchOfficeListResponse[] | null;
+}
+
+export interface BranchOfficeProfileResponse {
+  /** @format uuid */
+  id?: string;
+  /** @format date-time */
+  createdAt?: string;
+  createdBy?: string | null;
+  /** @format date-time */
+  updatedAt?: string | null;
+  updatedBy?: string | null;
+  /** @format uuid */
+  tenantId?: string;
+  name?: string | null;
+  address?: AddressModel;
+  contacts?: SocialMediaContactModel[] | null;
+  schedule?: WeeklyScheduleModel;
+}
+
+export interface CoordinatesModel {
+  /** @format int32 */
+  longitude?: number;
+  /** @format int32 */
+  latitude?: number;
+}
+
 export interface CreateAssetRequest {
   path?: string | null;
   contentType?: string | null;
 }
 
+export interface CreateBranchOfficeRequest {
+  name?: string | null;
+  address?: AddressModel;
+  contacts?: SocialMediaContactModel[] | null;
+  schedule?: WeeklyScheduleModel;
+}
+
 export interface DailySchedule {
   hours?: DateRange[] | null;
+  disabled?: boolean;
+}
+
+export interface DailyScheduleModel {
+  hours?: DateRangeModel[] | null;
   disabled?: boolean;
 }
 
@@ -56,6 +127,14 @@ export interface DateRange {
   /** @format date-time */
   readonly endDate?: string;
   readonly disabled?: boolean;
+}
+
+export interface DateRangeModel {
+  /** @format date-time */
+  startDate?: string;
+  /** @format date-time */
+  endDate?: string;
+  disabled?: boolean;
 }
 
 export interface LoginWithEmailRequest {
@@ -91,6 +170,12 @@ export interface SocialMediaContact {
   contact?: string | null;
 }
 
+export interface SocialMediaContactModel {
+  type?: string | null;
+  otherType?: string | null;
+  contact?: string | null;
+}
+
 /** @format int32 */
 export type SocialMediaType = 0 | 1 | 2 | 3 | 4;
 
@@ -113,6 +198,13 @@ export interface TenantProfileResponse {
 
 export interface TenantUrlId {
   readonly value?: string | null;
+}
+
+export interface UpdateBranchOfficeRequest {
+  name?: string | null;
+  address?: AddressModel;
+  contacts?: SocialMediaContactModel[] | null;
+  schedule?: WeeklyScheduleModel;
 }
 
 export interface UpdateTenantProfileRequest {
@@ -179,6 +271,16 @@ export interface WeeklySchedule {
   friday?: DailySchedule;
   saturday?: DailySchedule;
   sunday?: DailySchedule;
+}
+
+export interface WeeklyScheduleModel {
+  monday?: DailyScheduleModel;
+  tuesday?: DailyScheduleModel;
+  wednesday?: DailyScheduleModel;
+  thursday?: DailyScheduleModel;
+  friday?: DailyScheduleModel;
+  saturday?: DailyScheduleModel;
+  sunday?: DailyScheduleModel;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -605,6 +707,116 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name CreateBranchOffice
+     * @request POST:/api/tenant/tenants/{id}/branch-offices
+     * @secure
+     */
+    createBranchOffice: (id: string, data: CreateBranchOfficeRequest, params: RequestParams = {}) =>
+      this.request<BranchOfficeCreatedResponse, any>({
+        path: `/api/tenant/tenants/${id}/branch-offices`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name FindBranchOffices
+     * @request GET:/api/tenant/tenants/{id}/branch-offices
+     * @secure
+     */
+    findBranchOffices: (
+      id: string,
+      query?: {
+        /**
+         * @format int32
+         * @default 0
+         */
+        pageIndex?: number;
+        /**
+         * @format int32
+         * @default 10
+         */
+        pageSize?: number;
+        sort?: string;
+        filter?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<BranchOfficeListResponsePagedResult, any>({
+        path: `/api/tenant/tenants/${id}/branch-offices`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name GetBranchOffice
+     * @request GET:/api/tenant/tenants/{id}/branch-offices/{branchOfficeId}
+     * @secure
+     */
+    getBranchOffice: (id: string, branchOfficeId: string, params: RequestParams = {}) =>
+      this.request<BranchOfficeProfileResponse, any>({
+        path: `/api/tenant/tenants/${id}/branch-offices/${branchOfficeId}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name UpdateBranchOffice
+     * @request PUT:/api/tenant/tenants/{id}/branch-offices/{branchOfficeId}
+     * @secure
+     */
+    updateBranchOffice: (
+      id: string,
+      branchOfficeId: string,
+      data: UpdateBranchOfficeRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/tenant/tenants/${id}/branch-offices/${branchOfficeId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name DeleteBranchOffice
+     * @request DELETE:/api/tenant/tenants/{id}/branch-offices/{branchOfficeId}
+     * @secure
+     */
+    deleteBranchOffice: (id: string, branchOfficeId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/tenant/tenants/${id}/branch-offices/${branchOfficeId}`,
+        method: "DELETE",
+        secure: true,
         ...params,
       }),
   };
