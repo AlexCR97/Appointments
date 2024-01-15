@@ -29,19 +29,19 @@ public class TenantsController : ControllerBase
 
     #region Tenants
 
-    [HttpGet("{id}", Name = nameof(GetTenant))]
-    public async Task<TenantProfileResponse> GetTenant([FromRoute] Guid id)
+    [HttpGet("{tenantId}", Name = nameof(GetTenant))]
+    public async Task<TenantProfileResponse> GetTenant([FromRoute] Guid tenantId)
     {
-        var tenant = await _sender.Send(new GetTenantRequest(id));
+        var tenant = await _sender.Send(new GetTenantRequest(tenantId));
         return TenantProfileResponse.From(tenant);
     }
 
-    [HttpPut("{id}", Name = nameof(UpdateTenantProfile))]
+    [HttpPut("{tenantId}", Name = nameof(UpdateTenantProfile))]
     public async Task<NoContentResult> UpdateTenantProfile(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromBody] UpdateTenantProfileRequest request)
     {
-        IdMismatchException.ThrowIfMismatch(id.ToString(), request.Id.ToString());
+        IdMismatchException.ThrowIfMismatch(tenantId.ToString(), request.Id.ToString());
         await _sender.Send(request);
         return NoContent();
     }
@@ -50,21 +50,21 @@ public class TenantsController : ControllerBase
 
     #region Branch Offices
 
-    [HttpPost("{id}/branch-offices", Name = nameof(CreateBranchOffice))]
+    [HttpPost("{tenantId}/branch-offices", Name = nameof(CreateBranchOffice))]
     public async Task<BranchOfficeCreatedResponse> CreateBranchOffice(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromBody] CreateBranchOfficeRequest request)
     {
         var branchOfficeId = await _sender.Send(request.ToApplicationRequest(
             User.GetAccessToken().Username,
-            id));
+            tenantId));
 
         return new BranchOfficeCreatedResponse(branchOfficeId);
     }
 
-    [HttpGet("{id}/branch-offices", Name = nameof(FindBranchOffices))]
+    [HttpGet("{tenantId}/branch-offices", Name = nameof(FindBranchOffices))]
     public async Task<PagedResult<BranchOfficeListResponse>> FindBranchOffices(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromQuery] int pageIndex = 0,
         [FromQuery] int pageSize = FindRequest.PageSize.Default,
         [FromQuery] string? sort = null,
@@ -75,35 +75,35 @@ public class TenantsController : ControllerBase
             pageSize,
             sort,
             new FilterBuilder(filter)
-                .And(@$"tenantId == ""{id}""")
+                .And(@$"tenantId == ""{tenantId}""")
                 .ToString()));
 
         return pagedResult.Map(BranchOfficeListResponse.From);
     }
 
-    [HttpGet("{id}/branch-offices/{branchOfficeId}", Name = nameof(GetBranchOffice))]
+    [HttpGet("{tenantId}/branch-offices/{branchOfficeId}", Name = nameof(GetBranchOffice))]
     public async Task<BranchOfficeProfileResponse> GetBranchOffice(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromRoute] Guid branchOfficeId)
     {
         var branchOffice = await _sender.Send(new Appointments.Core.Application.Requests.BranchOffices.GetBranchOfficeRequest(branchOfficeId));
 
-        if (branchOffice.TenantId != id)
-            throw new OwnershipException("Tenant", id.ToString(), nameof(BranchOffice), branchOfficeId.ToString());
+        if (branchOffice.TenantId != tenantId)
+            throw new OwnershipException("Tenant", tenantId.ToString(), nameof(BranchOffice), branchOfficeId.ToString());
 
         return BranchOfficeProfileResponse.From(branchOffice);
     }
 
-    [HttpPut("{id}/branch-offices/{branchOfficeId}", Name = nameof(UpdateBranchOffice))]
+    [HttpPut("{tenantId}/branch-offices/{branchOfficeId}", Name = nameof(UpdateBranchOffice))]
     public async Task<NoContentResult> UpdateBranchOffice(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromRoute] Guid branchOfficeId,
         [FromBody] UpdateBranchOfficeRequest request)
     {
         var branchOffice = await _sender.Send(new Appointments.Core.Application.Requests.BranchOffices.GetBranchOfficeRequest(branchOfficeId));
 
-        if (branchOffice.TenantId != id)
-            throw new OwnershipException("Tenant", id.ToString(), nameof(BranchOffice), branchOfficeId.ToString());
+        if (branchOffice.TenantId != tenantId)
+            throw new OwnershipException("Tenant", tenantId.ToString(), nameof(BranchOffice), branchOfficeId.ToString());
 
         await _sender.Send(request.ToApplicationRequest(
             branchOffice.Id,
@@ -112,15 +112,15 @@ public class TenantsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}/branch-offices/{branchOfficeId}", Name = nameof(DeleteBranchOffice))]
+    [HttpDelete("{tenantId}/branch-offices/{branchOfficeId}", Name = nameof(DeleteBranchOffice))]
     public async Task<NoContentResult> DeleteBranchOffice(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromRoute] Guid branchOfficeId)
     {
         var branchOffice = await _sender.Send(new Appointments.Core.Application.Requests.BranchOffices.GetBranchOfficeRequest(branchOfficeId));
 
-        if (branchOffice.TenantId != id)
-            throw new OwnershipException("Tenant", id.ToString(), nameof(BranchOffice), branchOfficeId.ToString());
+        if (branchOffice.TenantId != tenantId)
+            throw new OwnershipException("Tenant", tenantId.ToString(), nameof(BranchOffice), branchOfficeId.ToString());
 
         await _sender.Send(new Appointments.Core.Application.Requests.BranchOffices.DeleteBranchOfficeRequest(
             User.GetAccessToken().Username,
@@ -133,21 +133,21 @@ public class TenantsController : ControllerBase
 
     #region Services
 
-    [HttpPost("{id}/services", Name = nameof(CreateService))]
+    [HttpPost("{tenantId}/services", Name = nameof(CreateService))]
     public async Task<ServiceCreatedResponse> CreateService(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromBody] CreateServiceRequest request)
     {
         var serviceId = await _sender.Send(request.ToApplicationRequest(
             User.GetAccessToken().Username,
-            id));
+            tenantId));
 
         return new ServiceCreatedResponse(serviceId);
     }
 
-    [HttpGet("{id}/services", Name = nameof(FindServices))]
+    [HttpGet("{tenantId}/services", Name = nameof(FindServices))]
     public async Task<PagedResult<ServiceListResponse>> FindServices(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromQuery] int pageIndex = 0,
         [FromQuery] int pageSize = FindRequest.PageSize.Default,
         [FromQuery] string? sort = null,
@@ -158,35 +158,35 @@ public class TenantsController : ControllerBase
             pageSize,
             sort,
             new FilterBuilder(filter)
-                .And(@$"tenantId == ""{id}""")
+                .And(@$"tenantId == ""{tenantId}""")
                 .ToString()));
 
         return pagedResult.Map(ServiceListResponse.From);
     }
 
-    [HttpGet("{id}/services/{serviceId}", Name = nameof(GetService))]
+    [HttpGet("{tenantId}/services/{serviceId}", Name = nameof(GetService))]
     public async Task<ServiceProfileResponse> GetService(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromRoute] Guid serviceId)
     {
         var service = await _sender.Send(new Appointments.Core.Application.Requests.Services.GetServiceRequest(serviceId));
 
-        if (service.TenantId != id)
-            throw new OwnershipException("Tenant", id.ToString(), nameof(Service), serviceId.ToString());
+        if (service.TenantId != tenantId)
+            throw new OwnershipException("Tenant", tenantId.ToString(), nameof(Service), serviceId.ToString());
 
         return ServiceProfileResponse.From(service);
     }
 
-    [HttpPut("{id}/services/{serviceId}", Name = nameof(UpdateService))]
+    [HttpPut("{tenantId}/services/{serviceId}", Name = nameof(UpdateService))]
     public async Task<NoContentResult> UpdateService(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromRoute] Guid serviceId,
         [FromBody] UpdateServiceRequest request)
     {
         var service = await _sender.Send(new Appointments.Core.Application.Requests.Services.GetServiceRequest(serviceId));
 
-        if (service.TenantId != id)
-            throw new OwnershipException("Tenant", id.ToString(), nameof(Service), serviceId.ToString());
+        if (service.TenantId != tenantId)
+            throw new OwnershipException("Tenant", tenantId.ToString(), nameof(Service), serviceId.ToString());
 
         await _sender.Send(request.ToApplicationRequest(
             User.GetAccessToken().Username,
@@ -196,15 +196,15 @@ public class TenantsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}/services/{serviceId}", Name = nameof(DeleteService))]
+    [HttpDelete("{tenantId}/services/{serviceId}", Name = nameof(DeleteService))]
     public async Task<NoContentResult> DeleteService(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromRoute] Guid serviceId)
     {
         var service = await _sender.Send(new Appointments.Core.Application.Requests.Services.GetServiceRequest(serviceId));
 
-        if (service.TenantId != id)
-            throw new OwnershipException("Tenant", id.ToString(), nameof(Service), serviceId.ToString());
+        if (service.TenantId != tenantId)
+            throw new OwnershipException("Tenant", tenantId.ToString(), nameof(Service), serviceId.ToString());
 
         await _sender.Send(new Appointments.Core.Application.Requests.Services.DeleteServiceRequest(
             User.GetAccessToken().Username,
@@ -217,21 +217,21 @@ public class TenantsController : ControllerBase
 
     #region Appointments
 
-    [HttpPost("{id}/appointments", Name = nameof(CreateAppointment))]
+    [HttpPost("{tenantId}/appointments", Name = nameof(CreateAppointment))]
     public async Task<AppointmentCreatedResponse> CreateAppointment(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromBody] CreateAppointmentRequest request)
     {
         var appointmentId = await _sender.Send(request.ToApplicationRequest(
             User.GetAccessToken().Username,
-            id));
+            tenantId));
 
         return new AppointmentCreatedResponse(appointmentId);
     }
 
-    [HttpGet("{id}/appointments", Name = nameof(FindAppointments))]
+    [HttpGet("{tenantId}/appointments", Name = nameof(FindAppointments))]
     public async Task<PagedResult<AppointmentListResponse>> FindAppointments(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromQuery] int pageIndex = 0,
         [FromQuery] int pageSize = FindRequest.PageSize.Default,
         [FromQuery] string? sort = null,
@@ -242,35 +242,35 @@ public class TenantsController : ControllerBase
             pageSize,
             sort,
             new FilterBuilder(filter)
-                .And(@$"tenantId == ""{id}""")
+                .And(@$"tenantId == ""{tenantId}""")
                 .ToString()));
 
         return pagedResult.Map(AppointmentListResponse.From);
     }
 
-    [HttpGet("{id}/appointments/{appointmentId}", Name = nameof(GetAppointment))]
+    [HttpGet("{tenantId}/appointments/{appointmentId}", Name = nameof(GetAppointment))]
     public async Task<AppointmentProfileResponse> GetAppointment(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromRoute] Guid appointmentId)
     {
         var appointment = await _sender.Send(new Appointments.Core.Application.Requests.Appointments.GetAppointmentRequest(appointmentId));
 
-        if (appointment.TenantId != id)
-            throw new OwnershipException("Tenant", id.ToString(), nameof(Appointment), appointmentId.ToString());
+        if (appointment.TenantId != tenantId)
+            throw new OwnershipException("Tenant", tenantId.ToString(), nameof(Appointment), appointmentId.ToString());
 
         return AppointmentProfileResponse.From(appointment);
     }
 
-    [HttpPut("{id}/appointments/{appointmentId}/status", Name = nameof(SetAppointmentStatus))]
+    [HttpPut("{tenantId}/appointments/{appointmentId}/status", Name = nameof(SetAppointmentStatus))]
     public async Task<NoContentResult> SetAppointmentStatus(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromRoute] Guid appointmentId,
         [FromBody] SetAppointmentStatusRequest request)
     {
         var appointment = await _sender.Send(new Appointments.Core.Application.Requests.Appointments.GetAppointmentRequest(appointmentId));
 
-        if (appointment.TenantId != id)
-            throw new OwnershipException("Tenant", id.ToString(), nameof(Appointment), appointmentId.ToString());
+        if (appointment.TenantId != tenantId)
+            throw new OwnershipException("Tenant", tenantId.ToString(), nameof(Appointment), appointmentId.ToString());
 
         await _sender.Send(request.ToApplicationRequest(
             User.GetAccessToken().Username,
@@ -279,15 +279,15 @@ public class TenantsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}/appointments/{appointmentId}", Name = nameof(DeleteAppointment))]
+    [HttpDelete("{tenantId}/appointments/{appointmentId}", Name = nameof(DeleteAppointment))]
     public async Task<NoContentResult> DeleteAppointment(
-        [FromRoute] Guid id,
+        [FromRoute] Guid tenantId,
         [FromRoute] Guid appointmentId)
     {
         var appointment = await _sender.Send(new Appointments.Core.Application.Requests.Appointments.GetAppointmentRequest(appointmentId));
 
-        if (appointment.TenantId != id)
-            throw new OwnershipException("Tenant", id.ToString(), nameof(Appointment), appointmentId.ToString());
+        if (appointment.TenantId != tenantId)
+            throw new OwnershipException("Tenant", tenantId.ToString(), nameof(Appointment), appointmentId.ToString());
 
         await _sender.Send(new Appointments.Core.Application.Requests.Appointments.DeleteAppointmentRequest(
             User.GetAccessToken().Username,

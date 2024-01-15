@@ -889,12 +889,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name GetTenant
-     * @request GET:/api/tenant/tenants/{id}
+     * @request GET:/api/tenant/tenants/{tenantId}
      * @secure
      */
-    getTenant: (id: string, params: RequestParams = {}) =>
+    getTenant: (tenantId: string, params: RequestParams = {}) =>
       this.request<TenantProfileResponse, any>({
-        path: `/api/tenant/tenants/${id}`,
+        path: `/api/tenant/tenants/${tenantId}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -906,12 +906,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name UpdateTenantProfile
-     * @request PUT:/api/tenant/tenants/{id}
+     * @request PUT:/api/tenant/tenants/{tenantId}
      * @secure
      */
-    updateTenantProfile: (id: string, data: UpdateTenantProfileRequest, params: RequestParams = {}) =>
+    updateTenantProfile: (tenantId: string, data: UpdateTenantProfileRequest, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/api/tenant/tenants/${id}`,
+        path: `/api/tenant/tenants/${tenantId}`,
         method: "PUT",
         body: data,
         secure: true,
@@ -924,12 +924,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name CreateBranchOffice
-     * @request POST:/api/tenant/tenants/{id}/branch-offices
+     * @request POST:/api/tenant/tenants/{tenantId}/branch-offices
      * @secure
      */
-    createBranchOffice: (id: string, data: CreateBranchOfficeRequest, params: RequestParams = {}) =>
+    createBranchOffice: (tenantId: string, data: CreateBranchOfficeRequest, params: RequestParams = {}) =>
       this.request<BranchOfficeCreatedResponse, any>({
-        path: `/api/tenant/tenants/${id}/branch-offices`,
+        path: `/api/tenant/tenants/${tenantId}/branch-offices`,
         method: "POST",
         body: data,
         secure: true,
@@ -943,11 +943,11 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name FindBranchOffices
-     * @request GET:/api/tenant/tenants/{id}/branch-offices
+     * @request GET:/api/tenant/tenants/{tenantId}/branch-offices
      * @secure
      */
     findBranchOffices: (
-      id: string,
+      tenantId: string,
       query?: {
         /**
          * @format int32
@@ -965,7 +965,7 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
       params: RequestParams = {},
     ) =>
       this.request<BranchOfficeListResponsePagedResult, any>({
-        path: `/api/tenant/tenants/${id}/branch-offices`,
+        path: `/api/tenant/tenants/${tenantId}/branch-offices`,
         method: "GET",
         query: query,
         secure: true,
@@ -978,12 +978,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name GetBranchOffice
-     * @request GET:/api/tenant/tenants/{id}/branch-offices/{branchOfficeId}
+     * @request GET:/api/tenant/tenants/{tenantId}/branch-offices/{branchOfficeId}
      * @secure
      */
-    getBranchOffice: (id: string, branchOfficeId: string, params: RequestParams = {}) =>
+    getBranchOffice: (tenantId: string, branchOfficeId: string, params: RequestParams = {}) =>
       this.request<BranchOfficeProfileResponse, any>({
-        path: `/api/tenant/tenants/${id}/branch-offices/${branchOfficeId}`,
+        path: `/api/tenant/tenants/${tenantId}/branch-offices/${branchOfficeId}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -995,17 +995,17 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name UpdateBranchOffice
-     * @request PUT:/api/tenant/tenants/{id}/branch-offices/{branchOfficeId}
+     * @request PUT:/api/tenant/tenants/{tenantId}/branch-offices/{branchOfficeId}
      * @secure
      */
     updateBranchOffice: (
-      id: string,
+      tenantId: string,
       branchOfficeId: string,
       data: UpdateBranchOfficeRequest,
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/api/tenant/tenants/${id}/branch-offices/${branchOfficeId}`,
+        path: `/api/tenant/tenants/${tenantId}/branch-offices/${branchOfficeId}`,
         method: "PUT",
         body: data,
         secure: true,
@@ -1018,12 +1018,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name DeleteBranchOffice
-     * @request DELETE:/api/tenant/tenants/{id}/branch-offices/{branchOfficeId}
+     * @request DELETE:/api/tenant/tenants/{tenantId}/branch-offices/{branchOfficeId}
      * @secure
      */
-    deleteBranchOffice: (id: string, branchOfficeId: string, params: RequestParams = {}) =>
+    deleteBranchOffice: (tenantId: string, branchOfficeId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/api/tenant/tenants/${id}/branch-offices/${branchOfficeId}`,
+        path: `/api/tenant/tenants/${tenantId}/branch-offices/${branchOfficeId}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -1034,12 +1034,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name CreateService
-     * @request POST:/api/tenant/tenants/{id}/services
+     * @request POST:/api/tenant/tenants/{tenantId}/services
      * @secure
      */
-    createService: (id: string, data: CreateServiceRequest, params: RequestParams = {}) =>
+    createService: (tenantId: string, data: CreateServiceRequest, params: RequestParams = {}) =>
       this.request<ServiceCreatedResponse, any>({
-        path: `/api/tenant/tenants/${id}/services`,
+        path: `/api/tenant/tenants/${tenantId}/services`,
         method: "POST",
         body: data,
         secure: true,
@@ -1053,11 +1053,11 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name FindServices
-     * @request GET:/api/tenant/tenants/{id}/services
+     * @request GET:/api/tenant/tenants/{tenantId}/services
      * @secure
      */
     findServices: (
-      id: string,
+      tenantId: string,
       query?: {
         /**
          * @format int32
@@ -1075,7 +1075,7 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
       params: RequestParams = {},
     ) =>
       this.request<ServiceListResponsePagedResult, any>({
-        path: `/api/tenant/tenants/${id}/services`,
+        path: `/api/tenant/tenants/${tenantId}/services`,
         method: "GET",
         query: query,
         secure: true,
@@ -1088,12 +1088,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name GetService
-     * @request GET:/api/tenant/tenants/{id}/services/{serviceId}
+     * @request GET:/api/tenant/tenants/{tenantId}/services/{serviceId}
      * @secure
      */
-    getService: (id: string, serviceId: string, params: RequestParams = {}) =>
+    getService: (tenantId: string, serviceId: string, params: RequestParams = {}) =>
       this.request<ServiceProfileResponse, any>({
-        path: `/api/tenant/tenants/${id}/services/${serviceId}`,
+        path: `/api/tenant/tenants/${tenantId}/services/${serviceId}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -1105,12 +1105,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name UpdateService
-     * @request PUT:/api/tenant/tenants/{id}/services/{serviceId}
+     * @request PUT:/api/tenant/tenants/{tenantId}/services/{serviceId}
      * @secure
      */
-    updateService: (id: string, serviceId: string, data: UpdateServiceRequest, params: RequestParams = {}) =>
+    updateService: (tenantId: string, serviceId: string, data: UpdateServiceRequest, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/api/tenant/tenants/${id}/services/${serviceId}`,
+        path: `/api/tenant/tenants/${tenantId}/services/${serviceId}`,
         method: "PUT",
         body: data,
         secure: true,
@@ -1123,12 +1123,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name DeleteService
-     * @request DELETE:/api/tenant/tenants/{id}/services/{serviceId}
+     * @request DELETE:/api/tenant/tenants/{tenantId}/services/{serviceId}
      * @secure
      */
-    deleteService: (id: string, serviceId: string, params: RequestParams = {}) =>
+    deleteService: (tenantId: string, serviceId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/api/tenant/tenants/${id}/services/${serviceId}`,
+        path: `/api/tenant/tenants/${tenantId}/services/${serviceId}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -1139,12 +1139,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name CreateAppointment
-     * @request POST:/api/tenant/tenants/{id}/appointments
+     * @request POST:/api/tenant/tenants/{tenantId}/appointments
      * @secure
      */
-    createAppointment: (id: string, data: CreateAppointmentRequest, params: RequestParams = {}) =>
+    createAppointment: (tenantId: string, data: CreateAppointmentRequest, params: RequestParams = {}) =>
       this.request<AppointmentCreatedResponse, any>({
-        path: `/api/tenant/tenants/${id}/appointments`,
+        path: `/api/tenant/tenants/${tenantId}/appointments`,
         method: "POST",
         body: data,
         secure: true,
@@ -1158,11 +1158,11 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name FindAppointments
-     * @request GET:/api/tenant/tenants/{id}/appointments
+     * @request GET:/api/tenant/tenants/{tenantId}/appointments
      * @secure
      */
     findAppointments: (
-      id: string,
+      tenantId: string,
       query?: {
         /**
          * @format int32
@@ -1180,7 +1180,7 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
       params: RequestParams = {},
     ) =>
       this.request<AppointmentListResponsePagedResult, any>({
-        path: `/api/tenant/tenants/${id}/appointments`,
+        path: `/api/tenant/tenants/${tenantId}/appointments`,
         method: "GET",
         query: query,
         secure: true,
@@ -1193,12 +1193,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name GetAppointment
-     * @request GET:/api/tenant/tenants/{id}/appointments/{appointmentId}
+     * @request GET:/api/tenant/tenants/{tenantId}/appointments/{appointmentId}
      * @secure
      */
-    getAppointment: (id: string, appointmentId: string, params: RequestParams = {}) =>
+    getAppointment: (tenantId: string, appointmentId: string, params: RequestParams = {}) =>
       this.request<AppointmentProfileResponse, any>({
-        path: `/api/tenant/tenants/${id}/appointments/${appointmentId}`,
+        path: `/api/tenant/tenants/${tenantId}/appointments/${appointmentId}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -1210,12 +1210,12 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name DeleteAppointment
-     * @request DELETE:/api/tenant/tenants/{id}/appointments/{appointmentId}
+     * @request DELETE:/api/tenant/tenants/{tenantId}/appointments/{appointmentId}
      * @secure
      */
-    deleteAppointment: (id: string, appointmentId: string, params: RequestParams = {}) =>
+    deleteAppointment: (tenantId: string, appointmentId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/api/tenant/tenants/${id}/appointments/${appointmentId}`,
+        path: `/api/tenant/tenants/${tenantId}/appointments/${appointmentId}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -1226,17 +1226,17 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
      *
      * @tags Tenants
      * @name SetAppointmentStatus
-     * @request PUT:/api/tenant/tenants/{id}/appointments/{appointmentId}/status
+     * @request PUT:/api/tenant/tenants/{tenantId}/appointments/{appointmentId}/status
      * @secure
      */
     setAppointmentStatus: (
-      id: string,
+      tenantId: string,
       appointmentId: string,
       data: SetAppointmentStatusRequest,
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/api/tenant/tenants/${id}/appointments/${appointmentId}/status`,
+        path: `/api/tenant/tenants/${tenantId}/appointments/${appointmentId}/status`,
         method: "PUT",
         body: data,
         secure: true,

@@ -348,7 +348,7 @@
         }
       }
     },
-    "/api/tenant/tenants/{id}": {
+    "/api/tenant/tenants/{tenantId}": {
       "get": {
         "tags": [
           "Tenants"
@@ -356,7 +356,7 @@
         "operationId": "GetTenant",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -386,7 +386,7 @@
         "operationId": "UpdateTenantProfile",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -422,7 +422,7 @@
         }
       }
     },
-    "/api/tenant/tenants/{id}/branch-offices": {
+    "/api/tenant/tenants/{tenantId}/branch-offices": {
       "post": {
         "tags": [
           "Tenants"
@@ -430,7 +430,7 @@
         "operationId": "CreateBranchOffice",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -479,7 +479,7 @@
         "operationId": "FindBranchOffices",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -539,7 +539,7 @@
         }
       }
     },
-    "/api/tenant/tenants/{id}/branch-offices/{branchOfficeId}": {
+    "/api/tenant/tenants/{tenantId}/branch-offices/{branchOfficeId}": {
       "get": {
         "tags": [
           "Tenants"
@@ -547,7 +547,7 @@
         "operationId": "GetBranchOffice",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -587,7 +587,7 @@
         "operationId": "UpdateBranchOffice",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -639,7 +639,7 @@
         "operationId": "DeleteBranchOffice",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -666,7 +666,7 @@
         }
       }
     },
-    "/api/tenant/tenants/{id}/services": {
+    "/api/tenant/tenants/{tenantId}/services": {
       "post": {
         "tags": [
           "Tenants"
@@ -674,7 +674,7 @@
         "operationId": "CreateService",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -723,7 +723,7 @@
         "operationId": "FindServices",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -783,7 +783,7 @@
         }
       }
     },
-    "/api/tenant/tenants/{id}/services/{serviceId}": {
+    "/api/tenant/tenants/{tenantId}/services/{serviceId}": {
       "get": {
         "tags": [
           "Tenants"
@@ -791,7 +791,7 @@
         "operationId": "GetService",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -831,7 +831,7 @@
         "operationId": "UpdateService",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -883,7 +883,7 @@
         "operationId": "DeleteService",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -910,7 +910,7 @@
         }
       }
     },
-    "/api/tenant/tenants/{id}/appointments": {
+    "/api/tenant/tenants/{tenantId}/appointments": {
       "post": {
         "tags": [
           "Tenants"
@@ -918,7 +918,7 @@
         "operationId": "CreateAppointment",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -967,7 +967,7 @@
         "operationId": "FindAppointments",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -1027,7 +1027,7 @@
         }
       }
     },
-    "/api/tenant/tenants/{id}/appointments/{appointmentId}": {
+    "/api/tenant/tenants/{tenantId}/appointments/{appointmentId}": {
       "get": {
         "tags": [
           "Tenants"
@@ -1035,7 +1035,7 @@
         "operationId": "GetAppointment",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -1075,7 +1075,7 @@
         "operationId": "DeleteAppointment",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -1102,7 +1102,7 @@
         }
       }
     },
-    "/api/tenant/tenants/{id}/appointments/{appointmentId}/status": {
+    "/api/tenant/tenants/{tenantId}/appointments/{appointmentId}/status": {
       "put": {
         "tags": [
           "Tenants"
@@ -1110,7 +1110,7 @@
         "operationId": "SetAppointmentStatus",
         "parameters": [
           {
-            "name": "id",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "style": "simple",
