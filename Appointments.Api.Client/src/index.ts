@@ -111,6 +111,18 @@ export interface CreateBranchOfficeRequest {
   schedule?: WeeklyScheduleModel;
 }
 
+export interface CreateServiceRequest {
+  name?: string | null;
+  description?: string | null;
+  /** @format double */
+  price?: number;
+  images?: IndexedResourceModel[] | null;
+  termsAndConditions?: string[] | null;
+  notes?: string | null;
+  customerDuration?: TimeSpan;
+  calendarDuration?: TimeSpan;
+}
+
 export interface DailySchedule {
   hours?: DateRange[] | null;
   disabled?: boolean;
@@ -137,6 +149,12 @@ export interface DateRangeModel {
   disabled?: boolean;
 }
 
+export interface IndexedResourceModel {
+  /** @format int32 */
+  index?: number;
+  path?: string | null;
+}
+
 export interface LoginWithEmailRequest {
   email?: string | null;
   password?: string | null;
@@ -153,6 +171,62 @@ export interface OAuthToken {
   scope?: string | null;
   id_token?: string | null;
   refresh_token?: string | null;
+}
+
+export interface ServiceCreatedResponse {
+  /** @format uuid */
+  serviceId?: string;
+}
+
+export interface ServiceListResponse {
+  /** @format uuid */
+  id?: string;
+  /** @format date-time */
+  createdAt?: string;
+  createdBy?: string | null;
+  /** @format date-time */
+  updatedAt?: string | null;
+  updatedBy?: string | null;
+  /** @format uuid */
+  tenantId?: string;
+  name?: string | null;
+  description?: string | null;
+  /** @format double */
+  price?: number;
+  customerDuration?: TimeSpan;
+  calendarDuration?: TimeSpan;
+}
+
+export interface ServiceListResponsePagedResult {
+  /** @format int32 */
+  pageIndex?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int64 */
+  totalCount?: number;
+  results?: ServiceListResponse[] | null;
+}
+
+export interface ServiceProfileResponse {
+  /** @format uuid */
+  id?: string;
+  /** @format date-time */
+  createdAt?: string;
+  createdBy?: string | null;
+  /** @format date-time */
+  updatedAt?: string | null;
+  updatedBy?: string | null;
+  /** @format uuid */
+  tenantId?: string;
+  name?: string | null;
+  description?: string | null;
+  /** @format double */
+  price?: number;
+  images?: IndexedResourceModel[] | null;
+  termsAndConditions?: string[] | null;
+  notes?: string | null;
+  customerDuration?: TimeSpan;
+  calendarDuration?: TimeSpan;
 }
 
 export interface SignUpWithEmailRequest {
@@ -200,11 +274,56 @@ export interface TenantUrlId {
   readonly value?: string | null;
 }
 
+export interface TimeSpan {
+  /** @format int64 */
+  ticks?: number;
+  /** @format int32 */
+  readonly days?: number;
+  /** @format int32 */
+  readonly hours?: number;
+  /** @format int32 */
+  readonly milliseconds?: number;
+  /** @format int32 */
+  readonly microseconds?: number;
+  /** @format int32 */
+  readonly nanoseconds?: number;
+  /** @format int32 */
+  readonly minutes?: number;
+  /** @format int32 */
+  readonly seconds?: number;
+  /** @format double */
+  readonly totalDays?: number;
+  /** @format double */
+  readonly totalHours?: number;
+  /** @format double */
+  readonly totalMilliseconds?: number;
+  /** @format double */
+  readonly totalMicroseconds?: number;
+  /** @format double */
+  readonly totalNanoseconds?: number;
+  /** @format double */
+  readonly totalMinutes?: number;
+  /** @format double */
+  readonly totalSeconds?: number;
+}
+
 export interface UpdateBranchOfficeRequest {
   name?: string | null;
   address?: AddressModel;
   contacts?: SocialMediaContactModel[] | null;
   schedule?: WeeklyScheduleModel;
+}
+
+export interface UpdateServiceRequest {
+  name?: string | null;
+  description?: string | null;
+  /** @format double */
+  price?: number;
+  images?: IndexedResourceModel[] | null;
+  termsAndConditions?: string[] | null;
+  notes?: string | null;
+  customerDuration?: TimeSpan;
+  calendarDuration?: TimeSpan;
 }
 
 export interface UpdateTenantProfileRequest {
@@ -815,6 +934,111 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
     deleteBranchOffice: (id: string, branchOfficeId: string, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/api/tenant/tenants/${id}/branch-offices/${branchOfficeId}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name CreateService
+     * @request POST:/api/tenant/tenants/{id}/services
+     * @secure
+     */
+    createService: (id: string, data: CreateServiceRequest, params: RequestParams = {}) =>
+      this.request<ServiceCreatedResponse, any>({
+        path: `/api/tenant/tenants/${id}/services`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name FindServices
+     * @request GET:/api/tenant/tenants/{id}/services
+     * @secure
+     */
+    findServices: (
+      id: string,
+      query?: {
+        /**
+         * @format int32
+         * @default 0
+         */
+        pageIndex?: number;
+        /**
+         * @format int32
+         * @default 10
+         */
+        pageSize?: number;
+        sort?: string;
+        filter?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ServiceListResponsePagedResult, any>({
+        path: `/api/tenant/tenants/${id}/services`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name GetService
+     * @request GET:/api/tenant/tenants/{id}/services/{serviceId}
+     * @secure
+     */
+    getService: (id: string, serviceId: string, params: RequestParams = {}) =>
+      this.request<ServiceProfileResponse, any>({
+        path: `/api/tenant/tenants/${id}/services/${serviceId}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name UpdateService
+     * @request PUT:/api/tenant/tenants/{id}/services/{serviceId}
+     * @secure
+     */
+    updateService: (id: string, serviceId: string, data: UpdateServiceRequest, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/tenant/tenants/${id}/services/${serviceId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name DeleteService
+     * @request DELETE:/api/tenant/tenants/{id}/services/{serviceId}
+     * @secure
+     */
+    deleteService: (id: string, serviceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/tenant/tenants/${id}/services/${serviceId}`,
         method: "DELETE",
         secure: true,
         ...params,
