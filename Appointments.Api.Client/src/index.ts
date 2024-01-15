@@ -14,6 +14,79 @@ export interface AddressModel {
   description?: string | null;
 }
 
+export interface AppointmentCreatedResponse {
+  /** @format uuid */
+  appointmentId?: string;
+}
+
+export interface AppointmentCustomerModel {
+  /** @format uuid */
+  customerId?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+  phoneNumber?: string | null;
+  profileImage?: string | null;
+}
+
+export interface AppointmentListResponse {
+  /** @format uuid */
+  id?: string;
+  /** @format date-time */
+  createdAt?: string;
+  createdBy?: string | null;
+  /** @format date-time */
+  updatedAt?: string | null;
+  updatedBy?: string | null;
+  /** @format uuid */
+  tenantId?: string;
+  /** @format uuid */
+  branchOfficeId?: string;
+  /** @format uuid */
+  serviceId?: string;
+  /** @format uuid */
+  serviceProviderId?: string | null;
+  /** @format date-time */
+  appointmentDate?: string;
+  appointmentCode?: string | null;
+  status?: string | null;
+}
+
+export interface AppointmentListResponsePagedResult {
+  /** @format int32 */
+  pageIndex?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int64 */
+  totalCount?: number;
+  results?: AppointmentListResponse[] | null;
+}
+
+export interface AppointmentProfileResponse {
+  /** @format uuid */
+  id?: string;
+  /** @format date-time */
+  createdAt?: string;
+  createdBy?: string | null;
+  /** @format date-time */
+  updatedAt?: string | null;
+  updatedBy?: string | null;
+  /** @format uuid */
+  tenantId?: string;
+  /** @format uuid */
+  branchOfficeId?: string;
+  /** @format uuid */
+  serviceId?: string;
+  /** @format uuid */
+  serviceProviderId?: string | null;
+  /** @format date-time */
+  appointmentDate?: string;
+  appointmentCode?: string | null;
+  customer?: AppointmentCustomerModel;
+  notes?: string | null;
+  status?: string | null;
+}
+
 export interface AssetCreatedResponse {
   /** @format uuid */
   id?: string;
@@ -97,6 +170,19 @@ export interface CoordinatesModel {
   longitude?: number;
   /** @format int32 */
   latitude?: number;
+}
+
+export interface CreateAppointmentRequest {
+  /** @format uuid */
+  branchOfficeId?: string;
+  /** @format uuid */
+  serviceId?: string;
+  /** @format uuid */
+  serviceProviderId?: string | null;
+  /** @format date-time */
+  appointmentDate?: string;
+  customer?: AppointmentCustomerModel;
+  notes?: string | null;
 }
 
 export interface CreateAssetRequest {
@@ -227,6 +313,10 @@ export interface ServiceProfileResponse {
   notes?: string | null;
   customerDuration?: TimeSpan;
   calendarDuration?: TimeSpan;
+}
+
+export interface SetAppointmentStatusRequest {
+  status?: string | null;
 }
 
 export interface SignUpWithEmailRequest {
@@ -1041,6 +1131,116 @@ export class AppointmentsApiClient<SecurityDataType extends unknown> extends Htt
         path: `/api/tenant/tenants/${id}/services/${serviceId}`,
         method: "DELETE",
         secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name CreateAppointment
+     * @request POST:/api/tenant/tenants/{id}/appointments
+     * @secure
+     */
+    createAppointment: (id: string, data: CreateAppointmentRequest, params: RequestParams = {}) =>
+      this.request<AppointmentCreatedResponse, any>({
+        path: `/api/tenant/tenants/${id}/appointments`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name FindAppointments
+     * @request GET:/api/tenant/tenants/{id}/appointments
+     * @secure
+     */
+    findAppointments: (
+      id: string,
+      query?: {
+        /**
+         * @format int32
+         * @default 0
+         */
+        pageIndex?: number;
+        /**
+         * @format int32
+         * @default 10
+         */
+        pageSize?: number;
+        sort?: string;
+        filter?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<AppointmentListResponsePagedResult, any>({
+        path: `/api/tenant/tenants/${id}/appointments`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name GetAppointment
+     * @request GET:/api/tenant/tenants/{id}/appointments/{appointmentId}
+     * @secure
+     */
+    getAppointment: (id: string, appointmentId: string, params: RequestParams = {}) =>
+      this.request<AppointmentProfileResponse, any>({
+        path: `/api/tenant/tenants/${id}/appointments/${appointmentId}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name DeleteAppointment
+     * @request DELETE:/api/tenant/tenants/{id}/appointments/{appointmentId}
+     * @secure
+     */
+    deleteAppointment: (id: string, appointmentId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/tenant/tenants/${id}/appointments/${appointmentId}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tenants
+     * @name SetAppointmentStatus
+     * @request PUT:/api/tenant/tenants/{id}/appointments/{appointmentId}/status
+     * @secure
+     */
+    setAppointmentStatus: (
+      id: string,
+      appointmentId: string,
+      data: SetAppointmentStatusRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/tenant/tenants/${id}/appointments/${appointmentId}/status`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
   };

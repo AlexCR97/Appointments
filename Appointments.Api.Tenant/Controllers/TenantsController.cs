@@ -214,4 +214,87 @@ public class TenantsController : ControllerBase
     }
 
     #endregion
+
+    #region Appointments
+
+    [HttpPost("{id}/appointments", Name = nameof(CreateAppointment))]
+    public async Task<AppointmentCreatedResponse> CreateAppointment(
+        [FromRoute] Guid id,
+        [FromBody] CreateAppointmentRequest request)
+    {
+        var appointmentId = await _sender.Send(request.ToApplicationRequest(
+            User.GetAccessToken().Username,
+            id));
+
+        return new AppointmentCreatedResponse(appointmentId);
+    }
+
+    [HttpGet("{id}/appointments", Name = nameof(FindAppointments))]
+    public async Task<PagedResult<AppointmentListResponse>> FindAppointments(
+        [FromRoute] Guid id,
+        [FromQuery] int pageIndex = 0,
+        [FromQuery] int pageSize = FindRequest.PageSize.Default,
+        [FromQuery] string? sort = null,
+        [FromQuery] string? filter = null)
+    {
+        var pagedResult = await _sender.Send(new Appointments.Core.Application.Requests.Appointments.FindAppointmentsRequest(
+            pageIndex,
+            pageSize,
+            sort,
+            new FilterBuilder(filter)
+                .And(@$"tenantId == ""{id}""")
+                .ToString()));
+
+        return pagedResult.Map(AppointmentListResponse.From);
+    }
+
+    [HttpGet("{id}/appointments/{appointmentId}", Name = nameof(GetAppointment))]
+    public async Task<AppointmentProfileResponse> GetAppointment(
+        [FromRoute] Guid id,
+        [FromRoute] Guid appointmentId)
+    {
+        var appointment = await _sender.Send(new Appointments.Core.Application.Requests.Appointments.GetAppointmentRequest(appointmentId));
+
+        if (appointment.TenantId != id)
+            throw new OwnershipException("Tenant", id.ToString(), nameof(Appointment), appointmentId.ToString());
+
+        return AppointmentProfileResponse.From(appointment);
+    }
+
+    [HttpPut("{id}/appointments/{appointmentId}/status", Name = nameof(SetAppointmentStatus))]
+    public async Task<NoContentResult> SetAppointmentStatus(
+        [FromRoute] Guid id,
+        [FromRoute] Guid appointmentId,
+        [FromBody] SetAppointmentStatusRequest request)
+    {
+        var appointment = await _sender.Send(new Appointments.Core.Application.Requests.Appointments.GetAppointmentRequest(appointmentId));
+
+        if (appointment.TenantId != id)
+            throw new OwnershipException("Tenant", id.ToString(), nameof(Appointment), appointmentId.ToString());
+
+        await _sender.Send(request.ToApplicationRequest(
+            User.GetAccessToken().Username,
+            appointment.Id));
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}/appointments/{appointmentId}", Name = nameof(DeleteAppointment))]
+    public async Task<NoContentResult> DeleteAppointment(
+        [FromRoute] Guid id,
+        [FromRoute] Guid appointmentId)
+    {
+        var appointment = await _sender.Send(new Appointments.Core.Application.Requests.Appointments.GetAppointmentRequest(appointmentId));
+
+        if (appointment.TenantId != id)
+            throw new OwnershipException("Tenant", id.ToString(), nameof(Appointment), appointmentId.ToString());
+
+        await _sender.Send(new Appointments.Core.Application.Requests.Appointments.DeleteAppointmentRequest(
+            User.GetAccessToken().Username,
+            appointment.Id));
+
+        return NoContent();
+    }
+
+    #endregion
 }
