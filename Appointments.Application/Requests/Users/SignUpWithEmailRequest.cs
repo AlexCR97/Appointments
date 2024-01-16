@@ -41,7 +41,8 @@ internal sealed class SignUpWithEmailRequestValidator : AbstractValidator<SignUp
 
         RuleFor(x => x.PasswordConfirm)
             .NotEmpty()
-            .Must((request, passwordConfirm) => passwordConfirm == request.Password);
+            .Must((request, passwordConfirm) => passwordConfirm == request.Password)
+            .WithMessage("PasswordConfirm must match Password");
 
         RuleFor(x => x.CompanyName)
             .NotEmpty();

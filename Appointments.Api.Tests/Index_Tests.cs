@@ -2,28 +2,21 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Text.Json.Nodes;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Appointments.Api.Tests;
 
-public class Index_Tests : IClassFixture<WebApplicationFactory<Program>>
+public sealed class Index_Tests : IntegrationTest
 {
-    private readonly WebApplicationFactory<Program> _factory;
-
-    public Index_Tests(WebApplicationFactory<Program> factory)
+    public Index_Tests(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper) : base(factory, testOutputHelper)
     {
-        _factory = factory;
     }
 
     [Fact]
     public async Task CanGetSwaggerScheme()
     {
-        // Arrange
-        var client = _factory.CreateClient();
+        var response = await HttpClient.GetAsync("swagger/v1/swagger.json");
 
-        // Act
-        var response = await client.GetAsync("swagger/v1/swagger.json");
-
-        // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
 
         var responseContent = await response.Content.ReadAsStringAsync();
