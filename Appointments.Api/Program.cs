@@ -31,3 +31,6 @@ var app = builder.Build();
 app.UseCore();
 
 app.Run();
+
+// For integration testing
+public partial class Program { }
