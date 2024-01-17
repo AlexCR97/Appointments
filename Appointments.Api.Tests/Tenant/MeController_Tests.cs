@@ -1,9 +1,7 @@
-﻿using Appointments.Api.Connect.Models;
-using Appointments.Api.Tenant;
+﻿using Appointments.Api.Tenant;
 using Appointments.Api.Tenant.Models;
 using Appointments.Common.Domain.Http;
 using Appointments.Common.Domain.Json;
-using Appointments.Common.Domain.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
@@ -60,54 +58,4 @@ public sealed class MeController_Tests : IntegrationTest
         userProfileResponse.FirstName.Should().Be(updateUserProfileRequest.FirstName);
         userProfileResponse.LastName.Should().Be(updateUserProfileRequest.LastName);
     }
-
-    private async Task<User> AuthenticateAsync(
-        string? scope = null)
-    {
-        var firstName = Faker.Name.FirstName();
-        var lastName = Faker.Name.LastName();
-        var email = new Email(Faker.Internet.Email(firstName: firstName, lastName: lastName));
-        var password = Faker.Internet.Password();
-
-        var signUpWithEmailRequest = new SignUpWithEmailRequest(
-            firstName,
-            lastName,
-            email.Value,
-            password,
-            password,
-            Faker.Company.CompanyName());
-
-        var signUpResponse = await HttpClient.PostAsync(
-            "api/connect/sign-up/email",
-            signUpWithEmailRequest.ToJsonContent());
-
-        var userSignedUpResponse = await signUpResponse.Content.DeserializeJsonAsync<UserSignedUpResponse>();
-
-        var loginResponse = await HttpClient.PostAsync(
-            "api/connect/login/email",
-            new LoginWithEmailRequest(
-                email.Value,
-                password,
-                scope,
-                null)
-            .ToJsonContent());
-
-        var oAuthTokenResponse = await loginResponse.Content.DeserializeJsonAsync<OAuthTokenResponse>();
-
-        return new User(
-            userSignedUpResponse.TenantId,
-            userSignedUpResponse.UserId,
-            email,
-            oAuthTokenResponse.access_token,
-            firstName,
-            lastName);
-    }
 }
-
-internal sealed record User(
-    Guid TenantId,
-    Guid UserId,
-    Email Email,
-    string AccessToken,
-    string FirstName,
-    string LastName);

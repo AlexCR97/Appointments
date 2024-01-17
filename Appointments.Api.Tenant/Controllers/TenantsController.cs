@@ -5,7 +5,6 @@ using Appointments.Api.Tenant.Models;
 using Appointments.Common.Application;
 using Appointments.Common.Domain.Exceptions;
 using Appointments.Common.Domain.Models;
-using Appointments.Core.Application.Requests.Tenants;
 using Appointments.Core.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +17,7 @@ namespace Appointments.Api.Tenant.Controllers;
 [ApiVersion("1.0")]
 [Produces("application/json")]
 [Authorize(Policy = TenantApiPolicy.Tenants.Scope)]
+[AuthorizeTenant]
 public class TenantsController : ControllerBase
 {
     private readonly ISender _sender;
@@ -32,7 +32,7 @@ public class TenantsController : ControllerBase
     [HttpGet("{tenantId}", Name = nameof(GetTenant))]
     public async Task<TenantProfileResponse> GetTenant([FromRoute] Guid tenantId)
     {
-        var tenant = await _sender.Send(new GetTenantRequest(tenantId));
+        var tenant = await _sender.Send(new Appointments.Core.Application.Requests.Tenants.GetTenantRequest(tenantId));
         return TenantProfileResponse.From(tenant);
     }
 
@@ -41,8 +41,10 @@ public class TenantsController : ControllerBase
         [FromRoute] Guid tenantId,
         [FromBody] UpdateTenantProfileRequest request)
     {
-        IdMismatchException.ThrowIfMismatch(tenantId.ToString(), request.Id.ToString());
-        await _sender.Send(request);
+        await _sender.Send(request.ToApplicationRequest(
+            User.GetAccessToken().Username,
+            tenantId));
+
         return NoContent();
     }
 
