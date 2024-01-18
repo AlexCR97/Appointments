@@ -28,6 +28,8 @@ public sealed class TenantsController_Tests : IntegrationTest
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
 
+    #region Tenants
+
     [Fact]
     public async Task CanGetTenantProfile()
     {
@@ -71,4 +73,33 @@ public sealed class TenantsController_Tests : IntegrationTest
         tenantProfileResponse.Slogan.Should().Be(updateTenantRequest.Slogan);
         tenantProfileResponse.UrlId.Should().Be(updateTenantRequest.UrlId);
     }
+
+    #endregion
+
+    #region Branch Offices
+
+    [Fact]
+    public async Task CanCreateBranchOffice()
+    {
+        var user = await AuthenticateAsync(scope: TenantApiPolicy.Tenants.Scope);
+
+        var request = new HttpRequestMessageBuilder(HttpMethod.Post, $"api/tenant/tenants/{user.TenantId}/branch-offices")
+            .WithAccessToken(user.AccessToken)
+            .WithJsonContent(new CreateBranchOfficeRequest(
+                Faker.Company.CompanyName(),
+                new AddressModel(
+                    new CoordinatesModel(0, 0),
+                    string.Empty),
+                null,
+                null))
+            .Build();
+
+        var response = await HttpClient.SendAsync(request);
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+
+        var branchOfficeCreatedResponse = await response.Content.DeserializeJsonAsync<BranchOfficeCreatedResponse>();
+        branchOfficeCreatedResponse.BranchOfficeId.Should().NotBeEmpty();
+    }
+
+    #endregion
 }
