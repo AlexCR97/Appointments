@@ -1,23 +1,42 @@
 ﻿using Appointments.Common.Domain;
-using Appointments.Common.MessageBroker.Abstractions;
-using Appointments.Core.Infrastructure.MessageBroker.Kafka;
+using Appointments.Core.Contracts.Users;
+using MassTransit;
 
 namespace Appointments.Core.Infrastructure.Services.Events;
 
 internal sealed class EventProcessor : IEventProcessor
 {
-    private readonly IPublisher<IEventsQueue> _publisher;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public EventProcessor(IPublisher<IEventsQueue> publisher)
+    public EventProcessor(IPublishEndpoint publishEndpoint)
     {
-        _publisher = publisher;
+        _publishEndpoint = publishEndpoint;
+    }
+
+    public async Task ProcessAsync(IDomainEvent @event)
+    {
+        var integrationEvent = MapToIntegrationEvent(@event);
+        await _publishEndpoint.Publish(integrationEvent);
     }
 
     public async Task ProcessAsync(IEnumerable<IDomainEvent> events)
     {
         foreach (var @event in events)
         {
-            await _publisher.PublishAsync(@event);
+            await ProcessAsync(@event);
         }
+    }
+
+    private static object MapToIntegrationEvent(object @event)
+    {
+        if (@event is Application.Requests.Users.UserSignedUpWithEmailEvent userSignedUpWithEmailEvent)
+        {
+            return new UserSignedUpWithEmailEvent(
+                userSignedUpWithEmailEvent.Id,
+                userSignedUpWithEmailEvent.OccurredAt,
+                userSignedUpWithEmailEvent.UserId);
+        }
+
+        throw new InvalidOperationException(@$"No such integration event for ""{@event.GetType().Name}""");
     }
 }

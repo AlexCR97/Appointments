@@ -118,35 +118,3 @@ public sealed class Tenant : Entity
         return tenant;
     }
 }
-
-#region Events
-
-public sealed record TenantCreatedEvent(
-    Guid Id,
-    DateTime CreatedAt,
-    string CreatedBy,
-    string Name,
-    string? Slogan,
-    TenantUrlId UrlId,
-    string? Logo,
-    IReadOnlyList<SocialMediaContact> SocialMediaContacts,
-    WeeklySchedule? WeeklySchedule)
-    : IDomainEvent;
-
-public sealed record TenantUpdatedEvent(
-    Guid Id,
-    DateTime UpdatedAt,
-    string UpdatedBy,
-    string Name,
-    string? Slogan,
-    TenantUrlId UrlId,
-    IReadOnlyList<SocialMediaContact> SocialMediaContacts,
-    WeeklySchedule? WeeklySchedule)
-    : IDomainEvent;
-
-public sealed record TenantDeletedEvent(
-    DateTime DeletedAt,
-    string DeletedBy)
-    : IDomainEvent;
-
-#endregion

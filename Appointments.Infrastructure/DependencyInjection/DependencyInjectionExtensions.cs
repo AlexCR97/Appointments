@@ -1,6 +1,4 @@
 using Appointments.Common.Domain;
-using Appointments.Common.MessageBroker.KafkaMessageBroker;
-using Appointments.Common.MessageBroker.KafkaMessageBroker.DependencyInjection;
 using Appointments.Common.MongoClient.DependencyInjection;
 using Appointments.Common.Secrets.Redis;
 using Appointments.Common.Secrets.Redis.DependencyInjection;
@@ -10,7 +8,6 @@ using Appointments.Core.Application.Requests.Customers;
 using Appointments.Core.Application.Requests.Services;
 using Appointments.Core.Application.Requests.Tenants;
 using Appointments.Core.Application.Requests.Users;
-using Appointments.Core.Infrastructure.MessageBroker.Kafka;
 using Appointments.Core.Infrastructure.Mongo.Appointments;
 using Appointments.Core.Infrastructure.Mongo.BranchOffices;
 using Appointments.Core.Infrastructure.Mongo.Customers;
@@ -30,20 +27,10 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         return services
-            .AddMessageBroker(configuration)
             .AddMongo(configuration)
             .AddRepositories()
             .AddSecretManager(configuration)
             .AddOtherServices(configuration);
-    }
-
-    private static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration)
-    {
-        var bootstrapServers = configuration.GetRequiredString("MessageBroker:Kafka:BootstrapServers");
-
-        return services
-            .AddKafka(new KafkaOptions(bootstrapServers))
-            .AddKafkaProducer<IEventsQueue>(new EventsQueue());
     }
 
     private static IServiceCollection AddMongo(this IServiceCollection services, IConfiguration configuration)

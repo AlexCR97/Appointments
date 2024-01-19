@@ -6,6 +6,7 @@ using Appointments.Api.Filters.Exceptions.ProblemDetailsFactories;
 using Appointments.Api.Tenant.DependencyInjection;
 using Appointments.Assets.DependencyInjection;
 using Appointments.Core.DependencyInjection;
+using Appointments.Notifications.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,8 @@ builder.Services.AddAuthorization(config => config
 builder.Services
     .AddCore(builder.Configuration)
     .AddCoreModule(builder.Configuration)
-    .AddAssetsModule(builder.Configuration);
+    .AddAssetsModule(builder.Configuration)
+    .AddNotificationsModule(builder.Configuration);
 
 builder.Services.AddScoped<IProblemDetailsFactory<Exception>, ExceptionProblemDetailsFactory>();
 

@@ -80,6 +80,11 @@ internal sealed class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWith
         await CreateBranchOfficeAsync(tenant);
         await CreateServiceAsync(tenant);
 
+        await _eventProcessor.ProcessAsync(new UserSignedUpWithEmailEvent(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
+            user.Id));
+
         return new UserSignedUpResult(user.Id, tenant.Id);
     }
 

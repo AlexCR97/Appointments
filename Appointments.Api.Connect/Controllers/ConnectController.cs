@@ -1,5 +1,6 @@
 ﻿using Appointments.Api.Connect.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Appointments.Api.Connect.Controllers;
@@ -8,6 +9,7 @@ namespace Appointments.Api.Connect.Controllers;
 [Route("api/connect")]
 [ApiVersion("1.0")]
 [Produces("application/json")]
+[AllowAnonymous]
 public class ConnectController : ControllerBase
 {
     private readonly ISender _sender;
