@@ -1,0 +1,61 @@
+﻿using Appointments.Api.Tenant;
+using Appointments.Api.Tenant.Models;
+using Appointments.Common.Domain.Http;
+using Appointments.Common.Domain.Json;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Xunit;
+using Xunit.Abstractions;
+
+namespace Appointments.Api.Tests.Tenant;
+
+public sealed class MeController_Tests : IntegrationTest
+{
+    public MeController_Tests(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper) : base(factory, testOutputHelper)
+    {
+    }
+
+    [Fact]
+    public async Task CanGetMyProfile()
+    {
+        var user = await AuthenticateAsync(scope: TenantApiPolicy.Me.Scope);
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "api/tenant/me");
+        request.Headers.Add("Authorization", $"Bearer {user.AccessToken}");
+
+        var response = await HttpClient.SendAsync(request);
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+
+        var userProfileResponse = await response.Content.DeserializeJsonAsync<UserProfileResponse>();
+        userProfileResponse.Id.Should().Be(user.UserId);
+        userProfileResponse.Tenants.Should().ContainSingle(x => x.TenantId == user.TenantId);
+        userProfileResponse.Logins.Should().ContainSingle(x => x.Email == user.Email.Value);
+    }
+
+    [Fact]
+    public async Task CanUpdateMyProfile()
+    {
+        var user = await AuthenticateAsync(scope: TenantApiPolicy.Me.Scope);
+
+        var updateUserProfileRequest = new UpdateUserProfileRequest(
+            Faker.Name.FirstName(),
+            Faker.Name.LastName());
+
+        var updateMyProfileRequest = new HttpRequestMessage(HttpMethod.Put, "api/tenant/me");
+        updateMyProfileRequest.Headers.Add("Authorization", $"Bearer {user.AccessToken}");
+        updateMyProfileRequest.Content = updateUserProfileRequest.ToJsonContent();
+
+        var updateMyProfileResponse = await HttpClient.SendAsync(updateMyProfileRequest);
+        updateMyProfileResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
+
+        var myProfileRequest = new HttpRequestMessage(HttpMethod.Get, "api/tenant/me");
+        myProfileRequest.Headers.Add("Authorization", $"Bearer {user.AccessToken}");
+
+        var myProfileResponse = await HttpClient.SendAsync(myProfileRequest);
+        myProfileResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
+
+        var userProfileResponse = await myProfileResponse.Content.DeserializeJsonAsync<UserProfileResponse>();
+        userProfileResponse.FirstName.Should().Be(updateUserProfileRequest.FirstName);
+        userProfileResponse.LastName.Should().Be(updateUserProfileRequest.LastName);
+    }
+}

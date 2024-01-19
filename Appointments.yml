@@ -1,0 +1,56 @@
+version: "3.8"
+
+networks:
+  appointments-network:
+    name: appointments-network
+
+volumes:
+  mongo:
+    driver: local
+  redis:
+    driver: local
+
+services:
+
+  mongo:
+    image: mongo:6.0.5
+    ports:
+      - 27017:27017
+    networks:
+      - appointments-network
+    volumes:
+      - mongo:/data/db
+  
+  redis:
+    image: redis:6.2.0-alpine
+    ports:
+      - 6379:6379
+    networks:
+      - appointments-network
+    volumes: 
+      - redis:/data
+
+  rabbitmq:
+    image: rabbitmq:3.12.12-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - appointments-network
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  # api:
+  #   build:
+  #     dockerfile: ./Appointments.Api/Dockerfile
+  #   ports:
+  #     - 5013:80
+  #   networks:
+  #     - appointments-network
+  #   depends_on:
+  #     - mongo
+  #     - redis
+  #     - rabbitmq
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: "Development"
