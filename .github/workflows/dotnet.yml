@@ -27,3 +27,5 @@ jobs:
     # TODO Enable tests later
     # - name: Test
     #   run: dotnet test --no-build --verbosity normal
+
+# This comment must trigger a github workflow. It can be removed later.
