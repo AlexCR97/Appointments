@@ -4,27 +4,29 @@ using Appointments.Common.Domain.Http;
 using Appointments.Common.Domain.Json;
 using Appointments.Core.Domain.Entities;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Appointments.Api.Tests.Tenant;
 
-public sealed class TenantsController_Tests : IntegrationTest
+[Collection(IntegrationTestCollectionFixture.Name)]
+public sealed class TenantsController_Tests
 {
-    public TenantsController_Tests(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper) : base(factory, testOutputHelper)
+    private readonly IntegrationTestFixture _fixture;
+
+    public TenantsController_Tests(IntegrationTestFixture fixture)
     {
+        _fixture = fixture;
     }
 
     [Fact]
     public async Task ShouldRespondWithForbiddenIfTokenNotTenantScoped()
     {
-        var user = await AuthenticateAsync(scope: TenantApiPolicy.Tenants.Scope);
+        var user = await _fixture.AuthenticateAsync(scope: TenantApiPolicy.Tenants.Scope);
 
         var request = new HttpRequestMessage(HttpMethod.Get, $"api/tenant/tenants/{Guid.NewGuid()}");
         request.Headers.Add("Authorization", $"Bearer {user.AccessToken}");
 
-        var response = await HttpClient.SendAsync(request);
+        var response = await _fixture.HttpClient.SendAsync(request);
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
     }
 
@@ -33,12 +35,12 @@ public sealed class TenantsController_Tests : IntegrationTest
     [Fact]
     public async Task CanGetTenantProfile()
     {
-        var user = await AuthenticateAsync(scope: TenantApiPolicy.Tenants.Scope);
+        var user = await _fixture.AuthenticateAsync(scope: TenantApiPolicy.Tenants.Scope);
 
         var request = new HttpRequestMessage(HttpMethod.Get, $"api/tenant/tenants/{user.TenantId}");
         request.Headers.Add("Authorization", $"Bearer {user.AccessToken}");
 
-        var response = await HttpClient.SendAsync(request);
+        var response = await _fixture.HttpClient.SendAsync(request);
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
         var tenantProfileResponse = await response.Content.DeserializeJsonAsync<TenantProfileResponse>();
@@ -50,23 +52,23 @@ public sealed class TenantsController_Tests : IntegrationTest
     [Fact]
     public async Task CanUpdateTenantProfile()
     {
-        var user = await AuthenticateAsync(scope: TenantApiPolicy.Tenants.Scope);
+        var user = await _fixture.AuthenticateAsync(scope: TenantApiPolicy.Tenants.Scope);
 
         var updateTenantRequest = new UpdateTenantProfileRequest(
-            Faker.Company.CompanyName(),
-            Faker.Company.CatchPhrase(),
+            _fixture.Faker.Company.CompanyName(),
+            _fixture.Faker.Company.CatchPhrase(),
             TenantUrlId.Random().Value,
             null);
 
         var updateTenantRequestMessage = new HttpRequestMessage(HttpMethod.Put, $"api/tenant/tenants/{user.TenantId}");
         updateTenantRequestMessage.Headers.Add("Authorization", $"Bearer {user.AccessToken}");
         updateTenantRequestMessage.Content = updateTenantRequest.ToJsonContent();
-        var updateTenantResponse = await HttpClient.SendAsync(updateTenantRequestMessage);
+        var updateTenantResponse = await _fixture.HttpClient.SendAsync(updateTenantRequestMessage);
         updateTenantResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
 
         var getTenantRequest = new HttpRequestMessage(HttpMethod.Get, $"api/tenant/tenants/{user.TenantId}");
         getTenantRequest.Headers.Add("Authorization", $"Bearer {user.AccessToken}");
-        var getTenantResponse = await HttpClient.SendAsync(getTenantRequest);
+        var getTenantResponse = await _fixture.HttpClient.SendAsync(getTenantRequest);
         var tenantProfileResponse = await getTenantResponse.Content.DeserializeJsonAsync<TenantProfileResponse>();
 
         tenantProfileResponse.Name.Should().Be(updateTenantRequest.Name);
@@ -81,12 +83,12 @@ public sealed class TenantsController_Tests : IntegrationTest
     [Fact]
     public async Task CanCreateBranchOffice()
     {
-        var user = await AuthenticateAsync(scope: TenantApiPolicy.Tenants.Scope);
+        var user = await _fixture.AuthenticateAsync(scope: TenantApiPolicy.Tenants.Scope);
 
         var request = new HttpRequestMessageBuilder(HttpMethod.Post, $"api/tenant/tenants/{user.TenantId}/branch-offices")
             .WithAccessToken(user.AccessToken)
             .WithJsonContent(new CreateBranchOfficeRequest(
-                Faker.Company.CompanyName(),
+                _fixture.Faker.Company.CompanyName(),
                 new AddressModel(
                     new CoordinatesModel(0, 0),
                     string.Empty),
@@ -94,7 +96,7 @@ public sealed class TenantsController_Tests : IntegrationTest
                 null))
             .Build();
 
-        var response = await HttpClient.SendAsync(request);
+        var response = await _fixture.HttpClient.SendAsync(request);
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
         var branchOfficeCreatedResponse = await response.Content.DeserializeJsonAsync<BranchOfficeCreatedResponse>();

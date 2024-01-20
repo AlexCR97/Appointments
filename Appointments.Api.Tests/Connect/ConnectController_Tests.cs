@@ -1,37 +1,38 @@
 ﻿using Appointments.Api.Connect.Models;
 using Appointments.Common.Domain.Http;
 using Appointments.Common.Domain.Json;
-using Bogus;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Appointments.Api.Tests.Connect;
 
-public sealed class ConnectController_Tests : IntegrationTest
+[Collection(IntegrationTestCollectionFixture.Name)]
+public sealed class ConnectController_Tests
 {
-    public ConnectController_Tests(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper) : base(factory, testOutputHelper)
+    private readonly IntegrationTestFixture _fixture;
+
+    public ConnectController_Tests(IntegrationTestFixture fixture)
     {
+        _fixture = fixture;
     }
 
     [Fact]
     public async Task CanSignUpWithEmail()
     {
-        var password = Faker.Internet.Password();
+        var password = _fixture.Faker.Internet.Password();
 
-        var response = await HttpClient.PostAsync(
+        var response = await _fixture.HttpClient.PostAsync(
             "api/connect/sign-up/email",
             new SignUpWithEmailRequest(
-                Faker.Name.FirstName(),
-                Faker.Name.LastName(),
-                Faker.Internet.Email(),
+                _fixture.Faker.Name.FirstName(),
+                _fixture.Faker.Name.LastName(),
+                _fixture.Faker.Internet.Email(),
                 password,
                 password,
-                Faker.Company.CompanyName())
+                _fixture.Faker.Company.CompanyName())
             .ToJsonContent());
 
-        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
 
         var userSignUpResponse = await response.Content.DeserializeJsonAsync<UserSignedUpResponse>();
         userSignUpResponse.UserId.Should().NotBeEmpty();
@@ -41,22 +42,22 @@ public sealed class ConnectController_Tests : IntegrationTest
     [Fact]
     public async Task CanLoginWithEmail()
     {
-        var password = Faker.Internet.Password();
+        var password = _fixture.Faker.Internet.Password();
         var signUpWithEmailRequest = new SignUpWithEmailRequest(
-            Faker.Name.FirstName(),
-            Faker.Name.LastName(),
-            Faker.Internet.Email(),
+            _fixture.Faker.Name.FirstName(),
+            _fixture.Faker.Name.LastName(),
+            _fixture.Faker.Internet.Email(),
             password,
             password,
-            Faker.Company.CompanyName());
+            _fixture.Faker.Company.CompanyName());
 
-        var signUpResponse = await HttpClient.PostAsync(
+        var signUpResponse = await _fixture.HttpClient.PostAsync(
             "api/connect/sign-up/email",
             signUpWithEmailRequest.ToJsonContent());
 
         signUpResponse.IsSuccessStatusCode.Should().BeTrue();
 
-        var loginResponse = await HttpClient.PostAsync(
+        var loginResponse = await _fixture.HttpClient.PostAsync(
             "api/connect/login/email",
             new LoginWithEmailRequest(
                 signUpWithEmailRequest.Email,

@@ -8,31 +8,36 @@ namespace Appointments.Common.Secrets.Redis.DependencyInjection;
 
 public static class RedisSecretManagerExtensions
 {
+    /// <summary>
+    /// This class is used for logging only.
+    /// </summary>
+    private sealed class RedisSecretManagerDependencyInjection { }
+
     public static IServiceCollection AddRedisSecretManager(this IServiceCollection services, IRedisSecretManagerOptions options)
     {
-        var logger = LoggerFactory
-            .Create(builder => builder
-                .AddConsole())
-            .CreateLogger(nameof(RedisSecretManagerExtensions));
-
-        var database = GetDatabaseOrDefault(
-            logger,
-            options.ConnectionString);
-
-        if (database is null)
+        return services.AddSingleton<ISecretManager>((serviceProvider) =>
         {
-            logger.LogWarning("The {ServiceName} will be used as a fallback.", nameof(NullSecretManager));
-            return services.AddNullSecretManager();
-        }
+            var logger = serviceProvider.GetRequiredService<ILogger<RedisSecretManagerDependencyInjection>>();
 
-        var cryptoService = new CryptoService(new CryptoOptions(options.Key));
-        var secretManager = new RedisSecretManager(database, cryptoService);
-        return services.AddSingleton<ISecretManager>(secretManager);
+            var database = GetDatabaseOrDefault(
+                logger,
+                options.ConnectionString);
+
+            if (database is null)
+            {
+                logger.LogWarning("The {ServiceName} will be used as a fallback.", nameof(NullSecretManager));
+                return new NullSecretManager();
+            }
+
+            var cryptoService = new CryptoService(new CryptoOptions(options.Key));
+
+            return new RedisSecretManager(database, cryptoService);
+        });
     }
 
     private static IDatabase? GetDatabaseOrDefault(ILogger logger, string connectionString)
     {
-        logger.LogInformation("Connecting to Redis...");
+        logger.LogDebug("Connecting to Redis...");
 
         try
         {
@@ -43,7 +48,7 @@ public static class RedisSecretManagerExtensions
                 config.IncludeDetailInExceptions = true;
             });
 
-            logger.LogInformation("A successful connection to Redis was established!");
+            logger.LogDebug("A successful connection to Redis was established!");
 
             return connectionMultiplexer.GetDatabase();
         }
