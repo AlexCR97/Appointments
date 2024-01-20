@@ -12,7 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Appointments.Infrastructure\Appointments.Core.Infrastructure.csproj" />
+    <ProjectReference Include="..\Appointments.Core.Application\Appointments.Core.Application.csproj" />
+    <ProjectReference Include="..\Appointments.Core.Infrastructure\Appointments.Core.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

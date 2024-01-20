@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Appointments.Common.Application\Appointments.Common.Application.csproj" />
-    <ProjectReference Include="..\Appointments.Domain\Appointments.Core.Domain.csproj" />
+    <ProjectReference Include="..\Appointments.Core.Domain\Appointments.Core.Domain.csproj" />
   </ItemGroup>
 
 </Project>

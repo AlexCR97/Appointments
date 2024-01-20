@@ -13,10 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Appointments.Application\Appointments.Core.Application.csproj" />
     <ProjectReference Include="..\Appointments.Common.MessageBroker\Appointments.Common.MessageBroker.csproj" />
     <ProjectReference Include="..\Appointments.Common.MongoClient\Appointments.Common.MongoClient.csproj" />
     <ProjectReference Include="..\Appointments.Common.Secrets\Appointments.Common.Secrets.csproj" />
+    <ProjectReference Include="..\Appointments.Core.Application\Appointments.Core.Application.csproj" />
     <ProjectReference Include="..\Appointments.Core.Contracts\Appointments.Core.Contracts.csproj" />
   </ItemGroup>
 
