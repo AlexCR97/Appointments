@@ -26,17 +26,17 @@ public class ConnectController : ControllerBase
         return UserSignedUpResponse.From(result);
     }
 
-    [HttpPost("login/email", Name = nameof(LoginWithEmail))]
-    public async Task<OAuthTokenResponse> LoginWithEmail([FromBody] LoginWithEmailRequest request)
-    {
-        var token = await _sender.Send(request.ToApplicationRequest());
-        return OAuthTokenResponse.From(token);
-    }
-
     [HttpGet("confirm/email")]
     public async Task<EmailConfirmationResponse> ConfirmEmail([FromQuery] string code)
     {
         var result = await _sender.Send(new Appointments.Core.Application.Requests.Users.ConfirmEmailRequest(code));
         return new EmailConfirmationResponse(result.ToString());
+    }
+
+    [HttpPost("login/email", Name = nameof(LoginWithEmail))]
+    public async Task<OAuthTokenResponse> LoginWithEmail([FromBody] LoginWithEmailRequest request)
+    {
+        var token = await _sender.Send(request.ToApplicationRequest());
+        return OAuthTokenResponse.From(token);
     }
 }
