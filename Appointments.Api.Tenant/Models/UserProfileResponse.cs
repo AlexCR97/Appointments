@@ -1,4 +1,5 @@
-﻿using Appointments.Core.Domain.Entities;
+﻿using Appointments.Common.Utils.Exceptions;
+using Appointments.Core.Domain.Entities;
 
 namespace Appointments.Api.Tenant.Models;
 
@@ -41,15 +42,25 @@ public sealed record UserProfileResponse(
 
 public sealed record UserLoginResponse(
     string IdentityProvider,
+    bool Confirmed,
     string? Email,
     string? PhoneNumber)
 {
-    internal static UserLoginResponse From(UserLogin userLogin)
+    internal static UserLoginResponse From(IUserLogin login)
+    {
+        if (login is LocalLogin localLogin)
+            return From(localLogin);
+
+        throw new MappingExtension<IUserLogin, UserLoginResponse>();
+    }
+
+    private static UserLoginResponse From(LocalLogin login)
     {
         return new UserLoginResponse(
-            userLogin.IdentityProvider.ToString(),
-            userLogin.Email?.Value,
-            userLogin.PhoneNumber);
+            login.IdentityProvider.ToString(),
+            login.Confirmed,
+            login.Email.Value,
+            login.Password);
     }
 }
 

@@ -32,9 +32,9 @@ internal sealed class UserService : IUserService
         return user;
     }
 
-    private async Task<bool> IsPasswordValid(string providedPassword, UserLogin login)
+    private async Task<bool> IsPasswordValid(string providedPassword, LocalLogin login)
     {
-        var actualPassword = await _userPasswordManager.GetAsync(login.GetPassword());
+        var actualPassword = await _userPasswordManager.GetAsync(login.Password);
         return providedPassword == actualPassword;
     }
 }

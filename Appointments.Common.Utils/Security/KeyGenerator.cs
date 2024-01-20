@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace Appointments.Core.Domain.Common.Keys;
+namespace Appointments.Common.Utils.Security;
 
 public static class KeyGenerator
 {

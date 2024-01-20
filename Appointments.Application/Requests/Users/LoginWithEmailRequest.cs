@@ -50,9 +50,7 @@ internal sealed class LoginWithEmailRequestHandler : IRequestHandler<LoginWithEm
 
         var user = await _userService.LoginWithEmailAsync(request.Email, request.Password);
 
-        var userEmail = user
-            .GetLocalLogin()
-            .GetEmail();
+        var userEmail = user.GetLocalLogin().Email;
 
         var userTenant = request.TenantId is null
             ? null

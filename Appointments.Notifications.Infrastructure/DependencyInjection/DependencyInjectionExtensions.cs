@@ -1,3 +1,5 @@
+using Appointments.Notifications.Application.Emails;
+using Appointments.Notifications.Infrastructure.Emails;
 using Appointments.Notifications.Infrastructure.UseCases.Users;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +12,8 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         return services
-            .AddRabbitMq(configuration);
+            .AddRabbitMq(configuration)
+            .AddEmailSender(configuration);
     }
 
     private static IServiceCollection AddRabbitMq(this IServiceCollection services, IConfiguration configuration)
@@ -34,5 +37,22 @@ public static class DependencyInjectionExtensions
                 rabbitMqConfig.ConfigureEndpoints(busContext);
             });
         });
+    }
+
+    private static IServiceCollection AddEmailSender(this IServiceCollection services, IConfiguration configuration)
+    {
+        var brevoApiOptions = new BrevoApiOptions(configuration.GetRequiredSection("Emails:Brevo:ApiKey").Value!);
+        services.AddSingleton(brevoApiOptions);
+        services.AddScoped<IBrevoApi, BrevoApi>();
+
+        var emailSenderOptions = new BrevoEmailSenderOptions(
+            new Subject(
+                configuration.GetRequiredSection("Emails:Sender:Name").Value!,
+                configuration.GetRequiredSection("Emails:Sender:Email").Value!),
+            configuration.GetRequiredSection("Emails:EmailConfirmationUrl").Value!);
+        services.AddSingleton(emailSenderOptions);
+        services.AddScoped<IEmailSender, BrevoEmailSender>();
+
+        return services;
     }
 }

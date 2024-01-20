@@ -10,8 +10,8 @@ public sealed class User : Entity
     public string LastName { get; private set; }
     public string? ProfileImage { get; private set; }
 
-    private readonly List<UserLogin> _logins = new();
-    public IReadOnlyList<UserLogin> Logins
+    private readonly List<IUserLogin> _logins = new();
+    public IReadOnlyList<IUserLogin> Logins
     {
         get
         {
@@ -52,6 +52,8 @@ public sealed class User : Entity
         }
     }
 
+    public string FullName => $"{FirstName} {LastName}";
+
     public User(
         Guid id,
         DateTime createdAt,
@@ -61,7 +63,7 @@ public sealed class User : Entity
         string firstName,
         string lastName,
         string? profileImage,
-        IReadOnlyList<UserLogin> logins,
+        IReadOnlyList<IUserLogin> logins,
         IReadOnlyList<UserTenant> tenants,
         IReadOnlyList<UserPreference> preferences)
     : base(
@@ -79,10 +81,21 @@ public sealed class User : Entity
         Preferences = preferences;
     }
 
-    public UserLogin GetLocalLogin()
+    public void ConfirmLogin(string updatedBy, IUserLogin login)
     {
-        return Logins.FirstOrDefault(x => x.IdentityProvider == IdentityProvider.Local)
+        login.Confirm();
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+
+        // TODO Add UserLoginConfirmedEvent
+    }
+
+    public LocalLogin GetLocalLogin()
+    {
+        var localLogin = Logins.FirstOrDefault(x => x.IdentityProvider == IdentityProvider.Local)
             ?? throw new OwnershipException("User", Id.ToString(), "Login", IdentityProvider.Local.ToString());
+
+        return (LocalLogin)localLogin;
     }
 
     public UserTenant GetTenant(Guid tenantId)
@@ -125,7 +138,7 @@ public sealed class User : Entity
         string firstName,
         string lastName,
         string? profileImage,
-        IReadOnlyList<UserLogin> logins,
+        IReadOnlyList<LocalLogin> logins,
         IReadOnlyList<UserTenant> tenants,
         IReadOnlyList<UserPreference> preferences)
     {
@@ -160,37 +173,10 @@ public sealed class User : Entity
             firstName,
             lastName,
             null,
-            new List<UserLogin> { UserLogin.CreateLocalLogin(email, password) },
+            new List<LocalLogin> { LocalLogin.Create(email, password) },
             new List<UserTenant> { tenant },
             new List<UserPreference> { UserPreference.CreateSelectedTenantPreference(tenant.TenantId) });
     }
-}
-
-public sealed record UserLogin(
-    IdentityProvider IdentityProvider,
-    Email? Email,
-    string? Password,
-    string? PhoneNumber)
-{
-    public Email GetEmail()
-    {
-        return Email ?? throw new DomainException("InvalidLogin", "UserLogin does not have an email");
-    }
-
-    public string GetPassword()
-    {
-        return Password ?? throw new DomainException("InvalidLogin", "UserLogin does not have a password");
-    }
-
-    public static UserLogin CreateLocalLogin(Email email, string password)
-    {
-        return new UserLogin(IdentityProvider.Local, email, password, null);
-    }
-}
-
-public enum IdentityProvider
-{
-    Local,
 }
 
 public sealed record UserTenant(

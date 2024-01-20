@@ -7,11 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Emails\HtmlTemplates\EmailConfirmation.html" />
+    <None Remove="Emails\HtmlTemplates\SignUpWithEmail.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Emails\HtmlTemplates\EmailConfirmation.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.1.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Appointments.Core.Contracts\Appointments.Core.Contracts.csproj" />
+    <ProjectReference Include="..\Appointments.Notifications.Application\Appointments.Notifications.Application.csproj" />
   </ItemGroup>
 
 </Project>

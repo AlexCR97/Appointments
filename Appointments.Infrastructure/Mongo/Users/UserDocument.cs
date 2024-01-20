@@ -1,4 +1,5 @@
-﻿using Appointments.Core.Domain.Entities;
+﻿using Appointments.Common.Utils.Exceptions;
+using Appointments.Core.Domain.Entities;
 using Appointments.Infrastructure.Mongo.Documents;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -70,28 +71,47 @@ internal sealed class UserDocument : MongoDocument
 
 internal sealed record UserLoginDocument(
     string IdentityProvider,
-    string? Email,
-    string? Password,
-    string? PhoneNumber)
+    bool Confirmed,
+    DateTime? ConfirmedAt,
+    string Email,
+    string Password,
+    string ConfirmationCode,
+    DateTime ConfirmationCodeExpiration)
 {
-    internal static UserLoginDocument From(UserLogin login)
+    internal static UserLoginDocument From(IUserLogin login)
+    {
+        if (login is LocalLogin localLogin)
+            return From(localLogin);
+
+        throw new MappingExtension(login.GetType(), typeof(UserLoginDocument));
+    }
+
+    private static UserLoginDocument From(LocalLogin login)
     {
         return new UserLoginDocument(
             login.IdentityProvider.ToString(),
-            login.Email?.ToString(),
+            login.Confirmed,
+            login.ConfirmedAt,
+            login.Email.Value,
             login.Password,
-            login.PhoneNumber);
+            login.ConfirmationCode,
+            login.ConfirmationCodeExpiration);
     }
 
-    internal UserLogin ToEntity()
+    internal LocalLogin ToEntity()
     {
-        return new UserLogin(
-            Enum.Parse<IdentityProvider>(IdentityProvider),
-            Email is not null
-                ? new Common.Domain.Models.Email(Email)
-                : null,
-            Password,
-            PhoneNumber);
+        if (IdentityProvider == Domain.Entities.IdentityProvider.Local.ToString())
+        {
+            return new LocalLogin(
+                Confirmed,
+                ConfirmedAt,
+                new Common.Domain.Models.Email(Email),
+                Password,
+                ConfirmationCode,
+                ConfirmationCodeExpiration);
+        }
+
+        throw new MappingExtension(typeof(UserLoginDocument), typeof(IUserLogin));
     }
 }
 
