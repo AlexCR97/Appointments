@@ -3,4 +3,7 @@
 public sealed record UserSignedUpWithEmailEvent(
     Guid Id,
     DateTime OccurredAt,
-    Guid UserId);
+    Guid UserId,
+    string Email,
+    string FullName,
+    string ConfirmationCode);

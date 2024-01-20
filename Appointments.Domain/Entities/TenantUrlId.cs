@@ -1,4 +1,4 @@
-﻿using Appointments.Core.Domain.Common.Keys;
+﻿using Appointments.Common.Utils.Security;
 using FluentValidation;
 
 namespace Appointments.Core.Domain.Entities;

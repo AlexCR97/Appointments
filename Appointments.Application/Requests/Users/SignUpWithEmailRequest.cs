@@ -83,7 +83,10 @@ internal sealed class SignUpWithEmailRequestHandler : IRequestHandler<SignUpWith
         await _eventProcessor.ProcessAsync(new UserSignedUpWithEmailEvent(
             Guid.NewGuid(),
             DateTime.UtcNow,
-            user.Id));
+            user.Id,
+            request.Email,
+            user.FullName,
+            user.GetLocalLogin().ConfirmationCode));
 
         return new UserSignedUpResult(user.Id, tenant.Id);
     }

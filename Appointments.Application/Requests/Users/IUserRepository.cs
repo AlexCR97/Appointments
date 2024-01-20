@@ -9,4 +9,5 @@ public interface IUserRepository : IRepository<User>
     Task<bool> ExistsByEmailAsync(Email email);
     Task<User> GetByEmailAsync(Email email);
     Task<User?> GetByEmailOrDefaultAsync(Email email);
+    Task<User?> GetByLocalLoginConfirmationCodeOrDefaultAsync(string confirmationCode);
 }

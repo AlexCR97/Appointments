@@ -3,6 +3,7 @@ using Appointments.Common.Domain.Models;
 using Appointments.Common.MongoClient.Abstractions;
 using Appointments.Core.Application.Requests.Users;
 using Appointments.Core.Domain.Entities;
+using static Appointments.Core.Domain.Entities.IdentityProvider;
 
 namespace Appointments.Core.Infrastructure.Mongo.Users;
 
@@ -81,6 +82,15 @@ internal sealed class UserRepository : IUserRepository
             .Any(login => true
                 && login.IdentityProvider == localIdentityProvider
                 && login.Email == emailValue));
+
+        return document?.ToEntity();
+    }
+
+    public async Task<User?> GetByLocalLoginConfirmationCodeOrDefaultAsync(string confirmationCode)
+    {
+        var document = await _repository.GetOneOrDefaultAsync(x => x.Logins.Any(login => true
+            && login.IdentityProvider == Local.ToString()
+            && login.ConfirmationCode == confirmationCode));
 
         return document?.ToEntity();
     }

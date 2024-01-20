@@ -34,7 +34,10 @@ internal sealed class EventProcessor : IEventProcessor
             return new UserSignedUpWithEmailEvent(
                 userSignedUpWithEmailEvent.Id,
                 userSignedUpWithEmailEvent.OccurredAt,
-                userSignedUpWithEmailEvent.UserId);
+                userSignedUpWithEmailEvent.UserId,
+                userSignedUpWithEmailEvent.Email.Value,
+                userSignedUpWithEmailEvent.FullName,
+                userSignedUpWithEmailEvent.ConfirmationCode);
         }
 
         throw new InvalidOperationException(@$"No such integration event for ""{@event.GetType().Name}""");
