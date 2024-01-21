@@ -3,27 +3,49 @@ using Appointments.Common.Domain.Http;
 using Appointments.Common.Domain.Json;
 using Appointments.Common.Domain.Models;
 using Bogus;
-using Meziantou.Extensions.Logging.Xunit;
+using Ductus.FluentDocker.Builders;
+using Ductus.FluentDocker.Services;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Appointments.Api.Tests;
 
-public abstract class IntegrationTest : IClassFixture<WebApplicationFactory<Program>>
+[CollectionDefinition(Name)]
+public sealed class IntegrationTestCollectionFixture : ICollectionFixture<IntegrationTestFixture>
 {
-    protected IntegrationTest(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
+    public const string Name = nameof(IntegrationTestCollectionFixture);
+}
+
+public sealed class IntegrationTestFixture : IDisposable
+{
+    private const string _dockerComposeFilePath = "./Appointments.Tests.yml";
+
+    private readonly ICompositeService _compositeService;
+
+    public IntegrationTestFixture()
     {
+        // TODO Fix error with Rabbit MQ:
+        // RabbitMQ.Client.Exceptions.BrokerUnreachableException: None of the specified endpoints were reachable
+
+        _compositeService = new Builder()
+            .UseContainer()
+            .UseCompose()
+            .FromFile(_dockerComposeFilePath)
+            .RemoveOrphans()
+            .Build()
+            .Start();
+
         Faker = new Faker();
 
-        HttpClient = factory
+        HttpClient = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(host =>
             {
-                host.ConfigureLogging(logging =>
-                {
-                    logging.ClearProviders();
-                    logging.Services.AddSingleton<ILoggerProvider>(new XUnitLoggerProvider(testOutputHelper));
-                });
+                // TODO Figure out how to output to xUnit test output
+                //host.ConfigureLogging(logging =>
+                //{
+                //    logging.ClearProviders();
+                //    logging.Services.AddSingleton<ILoggerProvider>(new XUnitLoggerProvider(testOutputHelper));
+                //});
             })
             .CreateClient();
     }
@@ -32,7 +54,7 @@ public abstract class IntegrationTest : IClassFixture<WebApplicationFactory<Prog
 
     public HttpClient HttpClient { get; private set; }
 
-    protected async Task<User> AuthenticateAsync(string? scope = null)
+    public async Task<User> AuthenticateAsync(string? scope = null)
     {
         var firstName = Faker.Name.FirstName();
         var lastName = Faker.Name.LastName();
@@ -71,6 +93,12 @@ public abstract class IntegrationTest : IClassFixture<WebApplicationFactory<Prog
             oAuthTokenResponse.access_token,
             firstName,
             lastName);
+    }
+
+    public void Dispose()
+    {
+        _compositeService.Stop();
+        _compositeService.Remove();
     }
 }
 

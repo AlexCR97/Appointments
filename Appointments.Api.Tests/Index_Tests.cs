@@ -1,21 +1,23 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
 using System.Text.Json.Nodes;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Appointments.Api.Tests;
 
-public sealed class Index_Tests : IntegrationTest
+[Collection(IntegrationTestCollectionFixture.Name)]
+public sealed class Index_Tests
 {
-    public Index_Tests(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper) : base(factory, testOutputHelper)
+    private readonly IntegrationTestFixture _fixture;
+
+    public Index_Tests(IntegrationTestFixture fixture)
     {
+        _fixture = fixture;
     }
 
     [Fact]
     public async Task CanGetSwaggerScheme()
     {
-        var response = await HttpClient.GetAsync("swagger/v1/swagger.json");
+        var response = await _fixture.HttpClient.GetAsync("swagger/v1/swagger.json");
 
         response.IsSuccessStatusCode.Should().BeTrue();
 
