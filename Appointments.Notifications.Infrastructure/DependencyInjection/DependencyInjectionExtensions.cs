@@ -4,6 +4,7 @@ using Appointments.Notifications.Infrastructure.UseCases.Users;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Appointments.Notifications.Infrastructure.DependencyInjection;
 
@@ -41,9 +42,15 @@ public static class DependencyInjectionExtensions
 
     private static IServiceCollection AddEmailSender(this IServiceCollection services, IConfiguration configuration)
     {
-        var brevoApiOptions = new BrevoApiOptions(configuration.GetRequiredSection("Emails:Brevo:ApiKey").Value!);
-        services.AddSingleton(brevoApiOptions);
-        services.AddScoped<IBrevoApi, BrevoApi>();
+        services
+            .AddHttpClient<BrevoApi>((_, httpClient) =>
+            {
+                var brevoApiKey = configuration.GetRequiredSection("Emails:Brevo:ApiKey").Value!;
+                httpClient.BaseAddress = new Uri("https://api.brevo.com");
+                httpClient.DefaultRequestHeaders.Add("api-key", brevoApiKey);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler())
+            .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
 
         var emailSenderOptions = new BrevoEmailSenderOptions(
             new Subject(
