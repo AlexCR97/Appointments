@@ -2,23 +2,13 @@
 
 namespace Appointments.Notifications.Infrastructure.Emails;
 
-internal interface IBrevoApi
-{
-    Task SendEmailAsync(SendEmailRequest request);
-}
-
-internal sealed class BrevoApi : IBrevoApi
+internal sealed class BrevoApi
 {
     private readonly HttpClient _httpClient;
 
-    public BrevoApi(BrevoApiOptions options)
+    public BrevoApi(HttpClient httpClient)
     {
-        _httpClient = new HttpClient
-        {
-            BaseAddress = new Uri("https://api.brevo.com"),
-        };
-
-        _httpClient.DefaultRequestHeaders.Add("api-key", options.ApiKey);
+        _httpClient = httpClient;
     }
 
     public async Task SendEmailAsync(SendEmailRequest request)

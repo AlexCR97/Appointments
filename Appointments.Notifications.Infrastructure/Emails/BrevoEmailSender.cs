@@ -5,9 +5,9 @@ namespace Appointments.Notifications.Infrastructure.Emails;
 internal sealed class BrevoEmailSender : IEmailSender
 {
     private readonly BrevoEmailSenderOptions _options;
-    private readonly IBrevoApi _brevoApi;
+    private readonly BrevoApi _brevoApi;
 
-    public BrevoEmailSender(BrevoEmailSenderOptions options, IBrevoApi brevoApi)
+    public BrevoEmailSender(BrevoEmailSenderOptions options, BrevoApi brevoApi)
     {
         _options = options;
         _brevoApi = brevoApi;
@@ -30,6 +30,4 @@ internal sealed class BrevoEmailSender : IEmailSender
                 new Subject(toName, toEmail),
             }));
     }
-
-    
 }
