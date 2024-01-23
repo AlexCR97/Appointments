@@ -10,6 +10,8 @@ using Appointments.Notifications.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseLogging();
+
 builder.Services
     .AddControllers(config => config.Filters.Add(typeof(ExceptionFilter)))
     .AddConnectApi()

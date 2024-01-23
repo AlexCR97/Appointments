@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 
 namespace Appointments.Api.Core.DependencyInjection;
@@ -12,6 +13,14 @@ namespace Appointments.Api.Core.DependencyInjection;
 public static class DependencyInjectionExtensions
 {
     private const string _defaultCorsPolicy = "DefaultCorsPolicy";
+
+    public static IHostBuilder UseLogging(this IHostBuilder host)
+    {
+        return host.UseSerilog((context, loggerConfig) =>
+        {
+            loggerConfig.ReadFrom.Configuration(context.Configuration);
+        });
+    }
 
     public static IServiceCollection AddCore(
         this IServiceCollection services,
@@ -103,6 +112,8 @@ public static class DependencyInjectionExtensions
         app.UseHttpsRedirection();
 
         app.UseCors(_defaultCorsPolicy);
+
+        app.UseSerilogRequestLogging();
 
         app.UseAuthentication();
 

@@ -41,6 +41,16 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
 
+  seq:
+    image: datalust/seq:latest
+    ports:
+      - 5341:5341
+      - 8081:80
+    networks:
+      - appointments-network
+    environment:
+      ACCEPT_EULA: "Y"
+
   # api:
   #   build:
   #     dockerfile: ./Appointments.Api/Dockerfile
