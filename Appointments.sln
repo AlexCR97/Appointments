@@ -26,13 +26,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Appointments.Common.MongoCl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Appointments.Common.MessageBroker", "Appointments.Common.MessageBroker\Appointments.Common.MessageBroker.csproj", "{3FD13EDD-D337-4979-8731-6BBAECBC75A0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{AC1030DE-00A0-4508-BBF3-B388B722BEB8}"
-	ProjectSection(SolutionItems) = preProject
-		Appointments.yml = Appointments.yml
-		ComposeDown.ps1 = ComposeDown.ps1
-		ComposeUp.ps1 = ComposeUp.ps1
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{01FEDDD1-3F95-46F3-9106-F46D84198594}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Appointments.Assets.Domain", "Appointments.Assets.Domain\Appointments.Assets.Domain.csproj", "{AD4BDAA4-05D6-4FE4-B895-21448CA598A6}"
