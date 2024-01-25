@@ -7,13 +7,41 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
+
+# api
 COPY ["Appointments.Api/Appointments.Api.csproj", "Appointments.Api/"]
-COPY ["Appointments.Application/Appointments.Application.csproj", "Appointments.Application/"]
-COPY ["Appointments.Domain/Appointments.Domain.csproj", "Appointments.Domain/"]
-COPY ["Appointments.Infrastructure/Appointments.Infrastructure.csproj", "Appointments.Infrastructure/"]
+COPY ["Appointments.Api.Assets/Appointments.Api.Assets.csproj", "Appointments.Api.Assets/"]
+COPY ["Appointments.Api.Client/Appointments.Api.Client.csproj", "Appointments.Api.Client/"]
+COPY ["Appointments.Api.Connect/Appointments.Api.Connect.csproj", "Appointments.Api.Connect/"]
+COPY ["Appointments.Api.Core/Appointments.Api.Core.csproj", "Appointments.Api.Core/"]
+COPY ["Appointments.Api.Tenant/Appointments.Api.Tenant.csproj", "Appointments.Api.Tenant/"]
+
+# common
+COPY ["Appointments.Common.Application/Appointments.Common.Application.csproj", "Appointments.Common.Application/"]
+COPY ["Appointments.Common.Domain/Appointments.Common.Domain.csproj", "Appointments.Common.Domain/"]
 COPY ["Appointments.Common.MessageBroker/Appointments.Common.MessageBroker.csproj", "Appointments.Common.MessageBroker/"]
 COPY ["Appointments.Common.MongoClient/Appointments.Common.MongoClient.csproj", "Appointments.Common.MongoClient/"]
 COPY ["Appointments.Common.Secrets/Appointments.Common.Secrets.csproj", "Appointments.Common.Secrets/"]
+COPY ["Appointments.Common.Utils/Appointments.Common.Utils.csproj", "Appointments.Common.Utils/"]
+
+# modules / assets
+COPY ["Appointments.Assets/Appointments.Assets.csproj", "Appointments.Assets/"]
+COPY ["Appointments.Assets.Application/Appointments.Assets.Application.csproj", "Appointments.Assets.Application/"]
+COPY ["Appointments.Assets.Domain/Appointments.Assets.Domain.csproj", "Appointments.Assets.Domain/"]
+COPY ["Appointments.Assets.Infrastructure/Appointments.Assets.Infrastructure.csproj", "Appointments.Assets.Infrastructure/"]
+
+# modules / core
+COPY ["Appointments.Core/Appointments.Core.csproj", "Appointments.Core/"]
+COPY ["Appointments.Core.Application/Appointments.Core.Application.csproj", "Appointments.Core.Application/"]
+COPY ["Appointments.Core.Contracts/Appointments.Core.Contracts.csproj", "Appointments.Core.Contracts/"]
+COPY ["Appointments.Core.Domain/Appointments.Core.Domain.csproj", "Appointments.Core.Domain/"]
+COPY ["Appointments.Core.Infrastructure/Appointments.Core.Infrastructure.csproj", "Appointments.Core.Infrastructure/"]
+
+# modules / notifications
+COPY ["Appointments.Notifications/Appointments.Notifications.csproj", "Appointments.Notifications/"]
+COPY ["Appointments.Notifications.Application/Appointments.Notifications.Application.csproj", "Appointments.Notifications.Application/"]
+COPY ["Appointments.Notifications.Infrastructure/Appointments.Notifications.Infrastructure.csproj", "Appointments.Notifications.Infrastructure/"]
+
 RUN dotnet restore "Appointments.Api/Appointments.Api.csproj"
 COPY . .
 WORKDIR "/src/Appointments.Api"

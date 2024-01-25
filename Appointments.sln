@@ -26,13 +26,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Appointments.Common.MongoCl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Appointments.Common.MessageBroker", "Appointments.Common.MessageBroker\Appointments.Common.MessageBroker.csproj", "{3FD13EDD-D337-4979-8731-6BBAECBC75A0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{AC1030DE-00A0-4508-BBF3-B388B722BEB8}"
-	ProjectSection(SolutionItems) = preProject
-		Appointments.yml = Appointments.yml
-		ComposeDown.ps1 = ComposeDown.ps1
-		ComposeUp.ps1 = ComposeUp.ps1
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{01FEDDD1-3F95-46F3-9106-F46D84198594}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Appointments.Assets.Domain", "Appointments.Assets.Domain\Appointments.Assets.Domain.csproj", "{AD4BDAA4-05D6-4FE4-B895-21448CA598A6}"
@@ -84,6 +77,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Appointments.Core.Application", "Appointments.Core.Application\Appointments.Core.Application.csproj", "{91847142-C4F9-4DDF-8947-4AB4F7DB567E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Appointments.Core.Infrastructure", "Appointments.Core.Infrastructure\Appointments.Core.Infrastructure.csproj", "{F7732AF7-58A1-49AD-A216-3E4475274055}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{80961BF0-1C6A-47FF-8DF8-7766459CF2EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -191,6 +186,10 @@ Global
 		{F7732AF7-58A1-49AD-A216-3E4475274055}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7732AF7-58A1-49AD-A216-3E4475274055}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7732AF7-58A1-49AD-A216-3E4475274055}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80961BF0-1C6A-47FF-8DF8-7766459CF2EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80961BF0-1C6A-47FF-8DF8-7766459CF2EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80961BF0-1C6A-47FF-8DF8-7766459CF2EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80961BF0-1C6A-47FF-8DF8-7766459CF2EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
