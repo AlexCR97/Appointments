@@ -17,10 +17,10 @@ internal sealed class BrevoApi
 
         if (!response.IsSuccessStatusCode)
         {
-            // TODO Throw exception
+            var responseContent = await response.Content.ReadAsStringAsync(); // Get response content to debug
+            response.EnsureSuccessStatusCode(); // Throw exception
         }
     }
-
 }
 
 public sealed record SendEmailRequest(

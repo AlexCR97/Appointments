@@ -8,33 +8,26 @@ namespace Appointments.Notifications.Infrastructure.UseCases.Users;
 
 internal sealed class UserSignedUpWithEmailConsumer : IConsumer<UserSignedUpWithEmailEvent>
 {
-    private readonly IEmailSender _emailSender;
     private readonly BrevoEmailSenderOptions _brevoEmailSenderOptions;
+    private readonly IEmailSender _emailSender;
 
-    public UserSignedUpWithEmailConsumer(IEmailSender emailSender, BrevoEmailSenderOptions brevoEmailSenderOptions)
+    public UserSignedUpWithEmailConsumer(BrevoEmailSenderOptions brevoEmailSenderOptions, IEmailSender emailSender)
     {
-        _emailSender = emailSender;
         _brevoEmailSenderOptions = brevoEmailSenderOptions;
+        _emailSender = emailSender;
     }
 
     public async Task Consume(ConsumeContext<UserSignedUpWithEmailEvent> context)
     {
-        try
-        {
-            await _emailSender.SendAsync(
-                HtmlTemplates.EmailConfirmation.Subject,
-                context.Message.Email,
-                context.Message.FullName,
-                HtmlTemplates.EmailConfirmation.ReadContent(new Dictionary<string, string>
-                {
-                    ["FULL_NAME"] = context.Message.FullName,
-                    ["EMAIL_CONFIRMATION_URL"] = _brevoEmailSenderOptions.EmailConfirmationUrl
-                        .Replace("CODE", context.Message.ConfirmationCode),
-                }));
-        }
-        catch (Exception ex)
-        {
-            // TODO Handle exception
-        }
+        await _emailSender.SendAsync(
+            HtmlTemplates.EmailConfirmation.Subject,
+            context.Message.Email,
+            context.Message.FullName,
+            HtmlTemplates.EmailConfirmation.ReadContent(new Dictionary<string, string>
+            {
+                ["FULL_NAME"] = context.Message.FullName,
+                ["EMAIL_CONFIRMATION_URL"] = _brevoEmailSenderOptions.EmailConfirmationUrl
+                    .Replace("CODE", context.Message.ConfirmationCode),
+            }));
     }
 }
