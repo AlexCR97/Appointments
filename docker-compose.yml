@@ -1,0 +1,65 @@
+version: '3.4'
+
+services:
+
+  Appointments.Api:
+    image: ${DOCKER_REGISTRY-}appointmentsapi
+    build:
+      context: .
+      dockerfile: Appointments.Api/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      - Appointments.RabbitMQ
+      - Appointments.MongoDB
+      - Appointments.Redis
+
+  Appointments.RabbitMQ:
+    image: rabbitmq:3.12.12-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - Appointments.Network
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  Appointments.MongoDB:
+    image: mongo:6.0.5
+    ports:
+      - 27017:27017
+    networks:
+      - Appointments.Network
+    volumes:
+      - Appointments.Volumes.Mongo:/data/db
+  
+  Appointments.Redis:
+    image: redis:6.2.0-alpine
+    ports:
+      - 6379:6379
+    networks:
+      - Appointments.Network
+    volumes: 
+      - Appointments.Volumes.Redis:/data
+
+  Appointments.Seq:
+    image: datalust/seq:latest
+    ports:
+      - 5341:5341
+      - 8081:80
+    networks:
+      - Appointments.Network
+    environment:
+      ACCEPT_EULA: "Y"
+
+networks:
+  Appointments.Network:
+    name: Appointments.Network
+
+volumes:
+  Appointments.Volumes.Mongo:
+    driver: local
+  Appointments.Volumes.Redis:
+    driver: local
