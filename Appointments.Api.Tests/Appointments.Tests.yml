@@ -1,32 +1,32 @@
-version: "3.8"
-
-networks:
-  appointments-tests-network:
-    name: appointments-tests-network
+version: '3.4'
 
 services:
 
-  mongo:
-    image: mongo:6.0.5
-    ports:
-      - 27017:27017
-    networks:
-      - appointments-tests-network
-  
-  redis:
-    image: redis:6.2.0-alpine
-    ports:
-      - 6379:6379
-    networks:
-      - appointments-tests-network
-
-  rabbitmq:
+  Appointments.RabbitMQ:
     image: rabbitmq:3.12.12-management
     ports:
       - 5672:5672
       - 15672:15672
     networks:
-      - appointments-tests-network
+      - Appointments.Network.Tests
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+
+  Appointments.MongoDB:
+    image: mongo:6.0.5
+    ports:
+      - 27017:27017
+    networks:
+      - Appointments.Network.Tests
+  
+  Appointments.Redis:
+    image: redis:6.2.0-alpine
+    ports:
+      - 6379:6379
+    networks:
+      - Appointments.Network.Tests
+
+networks:
+  Appointments.Network.Tests:
+    name: Appointments.Network.Tests
