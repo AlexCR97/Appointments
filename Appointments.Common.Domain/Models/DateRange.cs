@@ -33,11 +33,11 @@ public readonly struct DateRange
         return $"{StartDate.ToShortDateString()} - {EndDate.ToShortDateString()}";
     }
 
-    public static DateRange NineToFive()
+    public static DateRange NineToFiveUtc()
     {
         return new DateRange(
-            new DateTime().AddHours(9),
-            new DateTime().AddHours(17),
+            new DateTime().AddHours(9).ToUniversalTime(),
+            new DateTime().AddHours(17).ToUniversalTime(),
             false);
     }
 }

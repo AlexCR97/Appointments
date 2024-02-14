@@ -36,7 +36,7 @@ internal class MongoRepository<TDocument> : IMongoRepository<TDocument>
         string? filter = null)
     {
         var totalCount = await _collection
-            .CountDocumentsAsync(_ => true);
+            .CountDocumentsAsync(BuildFilterExpression(filter));
 
         var results = await _collection
             .Find(BuildFilterExpression(filter))

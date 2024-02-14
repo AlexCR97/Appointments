@@ -22,4 +22,11 @@ public sealed record DateRangeModel(
             EndDate,
             Disabled);
     }
+
+    public override string ToString()
+    {
+        return Disabled
+            ? $"[D] {StartDate} - {EndDate}"
+            : $"{StartDate} - {EndDate}";
+    }
 }
