@@ -92,7 +92,9 @@ public sealed class IntegrationTestFixture : IDisposable
             email,
             oAuthTokenResponse.access_token,
             firstName,
-            lastName);
+            lastName,
+            1 // Domain logic: a user sign up provisions 1 branch office
+            );
     }
 
     public void Dispose()
@@ -108,4 +110,5 @@ public sealed record User(
     Email Email,
     string AccessToken,
     string FirstName,
-    string LastName);
+    string LastName,
+    int BranchOfficesCount);

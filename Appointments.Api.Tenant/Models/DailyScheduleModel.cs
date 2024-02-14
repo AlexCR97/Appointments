@@ -25,4 +25,13 @@ public sealed record DailyScheduleModel(
                 ?? new List<DateRange>(),
             Disabled);
     }
+
+    public override string ToString()
+    {
+        var hours = Hours ?? Array.Empty<DateRangeModel>();
+
+        return Disabled
+            ? $"[D] Hours={hours.Length}"
+            : $"Hours={hours.Length}";
+    }
 }

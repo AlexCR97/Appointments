@@ -10,7 +10,7 @@ public sealed record DailySchedule(
     public static DailySchedule Weekday()
     {
         return new DailySchedule(
-            new List<DateRange> { DateRange.NineToFive() },
+            new List<DateRange> { DateRange.NineToFiveUtc() },
             false);
     }
 
