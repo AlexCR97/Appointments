@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Appointments.Common.Application\Appointments.Common.Application.csproj" />
+    <ProjectReference Include="..\Appointments.Jobs.Domain\Appointments.Jobs.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
