@@ -4,7 +4,8 @@ using Appointments.Jobs.Domain.Triggers;
 namespace Appointments.Api.Management.Models;
 
 public record RunJobRequest(
-    string TriggerType);
+    string TriggerType,
+    double? Timeout);
 
 internal static class RunJobRequestExtensions
 {
@@ -16,6 +17,7 @@ internal static class RunJobRequestExtensions
         return new Jobs.Application.UseCases.Executions.EnqueueExecutionRequest(
             createdBy,
             jobId,
-            request.TriggerType.ToEnum<TriggerType>());
+            request.TriggerType.ToEnum<TriggerType>(),
+            request.Timeout is null ? null : TimeSpan.FromMilliseconds(request.Timeout.Value));
     }
 }

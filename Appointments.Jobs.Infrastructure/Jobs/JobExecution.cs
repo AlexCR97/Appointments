@@ -10,9 +10,9 @@ internal abstract class JobExecution : IJob
 {
     protected readonly IEventProcessor _eventProcessor;
     protected readonly IExecutionRepository _executionRepository;
-    protected readonly ILogger<JobExecution> _logger;
+    protected readonly ILogger _logger;
 
-    protected JobExecution(IEventProcessor eventProcessor, IExecutionRepository executionRepository, ILogger<JobExecution> logger)
+    protected JobExecution(IEventProcessor eventProcessor, IExecutionRepository executionRepository, ILogger logger)
     {
         _eventProcessor = eventProcessor;
         _executionRepository = executionRepository;
@@ -21,33 +21,42 @@ internal abstract class JobExecution : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
-        var cancellationToken = context.CancellationToken;
-
-        cancellationToken.ThrowIfCancellationRequested();
-
         var executionId = context.MergedJobDataMap.GetGuidValue(JobDataMapKeys.ExecutionId);
-
         var execution = await _executionRepository.GetAsync(executionId);
+
+        var manualCancellationToken = context.CancellationToken;
+        var timeoutCancellationToken = new CancellationTokenSource(execution.Timeout ?? Execution.DefaultTimeout).Token;
+        var linkedCancellationToken = CancellationTokenSource.CreateLinkedTokenSource(manualCancellationToken, timeoutCancellationToken).Token;
 
         try
         {
             _logger.LogDebug("Execution {ExecutionId} started at {ExecutionStartDateTime}", execution.Id, DateTime.UtcNow);
+            await UpdateExecutionStatusAsync(execution, ExecutionStatus.Running);
 
-            await UpdateExecutionStatusAsync(execution, ExecutionStatus.Running, cancellationToken);
-
-            var jobExecutionResult = await ExecuteAsync(new ExecutionContext(execution), cancellationToken);
-
+            var jobExecutionResult = await ExecuteAsync(new ExecutionContext(execution), linkedCancellationToken);
+            
             var executionStatus = jobExecutionResult.ToExecutionStatus();
 
             _logger.LogDebug("Execution {ExecutionId} finished at {ExecutionStartDateTime}", execution.Id, DateTime.UtcNow);
-
-            await UpdateExecutionStatusAsync(execution, executionStatus, cancellationToken);
+            await UpdateExecutionStatusAsync(execution, executionStatus);
+        }
+        catch (OperationCanceledException)
+        {
+            if (manualCancellationToken.IsCancellationRequested)
+            {
+                _logger.LogDebug("Execution {ExecutionId} cancelled at {ExecutionStartDateTime}", execution.Id, DateTime.UtcNow);
+                await UpdateExecutionStatusAsync(execution, ExecutionStatus.Cancelled);
+            }
+            else if (timeoutCancellationToken.IsCancellationRequested)
+            {
+                _logger.LogWarning("Execution {ExecutionId} timed out at {ExecutionStartDateTime}", execution.Id, DateTime.UtcNow);
+                await UpdateExecutionStatusAsync(execution, ExecutionStatus.TimedOut);
+            }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Execution {ExecutionId} aborted at {ExecutionStartDateTime}", execution.Id, DateTime.UtcNow);
-
-            await UpdateExecutionStatusAsync(execution, ExecutionStatus.Aborted, cancellationToken);
+            await UpdateExecutionStatusAsync(execution, ExecutionStatus.Aborted);
         }
     }
 
@@ -57,10 +66,8 @@ internal abstract class JobExecution : IJob
 
     private async Task UpdateExecutionStatusAsync(
         Execution execution,
-        ExecutionStatus status,
-        CancellationToken cancellationToken)
+        ExecutionStatus status)
     {
-        cancellationToken.ThrowIfCancellationRequested();
         execution.SetStatus(status);
         await _executionRepository.UpdateAsync(execution);
         await _eventProcessor.ProcessAsync(execution.Events);

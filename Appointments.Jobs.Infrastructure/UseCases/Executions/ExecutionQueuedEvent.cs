@@ -8,4 +8,5 @@ public sealed record ExecutionQueuedEvent(
     DateTime OccurredAt,
     Guid ExecutionId,
     JobDto JobSnapshot,
-    TriggerDto TriggerSnapshot);
+    TriggerDto TriggerSnapshot,
+    double? Timeout);

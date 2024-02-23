@@ -11,7 +11,8 @@ namespace Appointments.Jobs.Application.UseCases.Executions;
 public sealed record EnqueueExecutionRequest(
     string CreatedBy,
     Guid JobId,
-    TriggerType TriggerType)
+    TriggerType TriggerType,
+    TimeSpan? Timeout)
     : IRequest<ExecutionQueuedResponse>;
 
 public sealed record ExecutionQueuedResponse(
@@ -54,7 +55,8 @@ internal sealed class EnqueueExecutionRequestHandler : IRequestHandler<EnqueueEx
         var execution = Execution.Enqueue(
             request.CreatedBy,
             job,
-            trigger);
+            trigger,
+            request.Timeout);
 
         if (execution.HasChanged)
         {

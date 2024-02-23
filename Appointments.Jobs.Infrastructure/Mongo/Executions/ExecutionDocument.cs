@@ -20,17 +20,20 @@ internal sealed class ExecutionDocument : MongoDocument
 
     public ExecutionDocument(
         Guid id, DateTime createdAt, string createdBy, DateTime? updatedAt, string? updatedBy,
-        JobDto jobSnapshot, TriggerDto triggerSnapshot, ExecutionStatusAuditDocument[] statusAudit)
+        JobDto jobSnapshot, TriggerDto triggerSnapshot, double? timeout, ExecutionStatusAuditDocument[] statusAudit)
         : base(id, createdAt, createdBy, updatedAt, updatedBy)
     {
         JobSnapshot = jobSnapshot;
         TriggerSnapshot = triggerSnapshot;
+        Timeout = timeout;
         StatusAudit = statusAudit;
     }
 
     public JobDto JobSnapshot { get; set; }
 
     public TriggerDto TriggerSnapshot { get; set; }
+
+    public double? Timeout { get; set; }
 
     public ExecutionStatusAuditDocument[] StatusAudit { get; set; }
 
@@ -44,6 +47,7 @@ internal sealed class ExecutionDocument : MongoDocument
             execution.UpdatedBy,
             execution.JobSnapshot.ToDto(),
             execution.TriggerSnapshot.ToDto(),
+            execution.Timeout?.TotalMilliseconds,
             execution.StatusAudit
                 .Select(x => new ExecutionStatusAuditDocument(
                     x.Status.ToString(),
@@ -61,6 +65,7 @@ internal sealed class ExecutionDocument : MongoDocument
             UpdatedBy,
             JobSnapshot.ToEntity(),
             TriggerSnapshot.ToEntity(),
+            Timeout is null ? null : TimeSpan.FromMilliseconds(Timeout.Value),
             ImmutableStack.CreateRange(StatusAudit.Select(x => new ExecutionStatusAudit(
                 x.Status.ToEnum<ExecutionStatus>(),
                 x.OccurredAt))));

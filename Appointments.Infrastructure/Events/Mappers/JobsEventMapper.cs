@@ -15,7 +15,8 @@ internal sealed class JobsEventMapper : IEventMapper
                 executionQueuedEvent.OccurredAt,
                 executionQueuedEvent.ExecutionId,
                 executionQueuedEvent.JobSnapshot.ToDto(),
-                executionQueuedEvent.TriggerSnapshot.ToDto());
+                executionQueuedEvent.TriggerSnapshot.ToDto(),
+                executionQueuedEvent.Timeout?.TotalMilliseconds);
         }
 
         if (domainEvent is Jobs.Domain.Jobs.JobCreatedEvent jobCreatedEvent)

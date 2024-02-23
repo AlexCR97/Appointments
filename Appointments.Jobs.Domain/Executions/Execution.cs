@@ -8,19 +8,24 @@ namespace Appointments.Jobs.Domain.Executions;
 
 public class Execution : Entity
 {
+    public static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(5);
+
     public Execution(
         Guid id, DateTime createdAt, string createdBy, DateTime? updatedAt, string? updatedBy,
-        Job jobSnapshot, Trigger triggerSnapshot, IImmutableStack<ExecutionStatusAudit> statusAudit)
+        Job jobSnapshot, Trigger triggerSnapshot, TimeSpan? timeout, IImmutableStack<ExecutionStatusAudit> statusAudit)
         : base(id, createdAt, createdBy, updatedAt, updatedBy)
     {
         JobSnapshot = jobSnapshot;
         TriggerSnapshot = triggerSnapshot;
+        Timeout = timeout;
         _statusAudit = new Stack<ExecutionStatusAudit>(statusAudit);
     }
 
     public Job JobSnapshot { get; }
 
     public Trigger TriggerSnapshot { get; }
+
+    public TimeSpan? Timeout { get; }
 
     public IImmutableStack<ExecutionStatusAudit> StatusAudit => ImmutableStack.CreateRange(_statusAudit);
     private readonly Stack<ExecutionStatusAudit> _statusAudit;
@@ -44,7 +49,8 @@ public class Execution : Entity
     public static Execution Enqueue(
         string createdBy,
         Job jobSnapshot,
-        Trigger triggerSnapshot)
+        Trigger triggerSnapshot,
+        TimeSpan? timeout)
     {
         var execution = new Execution(
             Guid.NewGuid(),
@@ -54,6 +60,7 @@ public class Execution : Entity
             null,
             jobSnapshot,
             triggerSnapshot,
+            timeout,
             ImmutableStack.Create(new ExecutionStatusAudit(
                 ExecutionStatus.Queued,
                 DateTime.UtcNow)));
@@ -64,12 +71,12 @@ public class Execution : Entity
             DateTime.UtcNow,
             execution.Id,
             execution.JobSnapshot,
-            execution.TriggerSnapshot));
+            execution.TriggerSnapshot,
+            execution.Timeout));
 
         return execution;
     }
 }
-
 
 public readonly record struct ExecutionStatusAudit(
     ExecutionStatus Status,
@@ -80,5 +87,6 @@ public sealed record ExecutionQueuedEvent(
     DateTime OccurredAt,
     Guid ExecutionId,
     Job JobSnapshot,
-    Trigger TriggerSnapshot)
+    Trigger TriggerSnapshot,
+    TimeSpan? Timeout)
     : IDomainEvent;
