@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Appointments.Jobs.Domain;
+namespace Appointments.Jobs.Domain.Executions;
 
 public enum ExecutionStatus
 {

@@ -3,10 +3,11 @@ using Appointments.Api.Connect.DependencyInjection;
 using Appointments.Api.Core.DependencyInjection;
 using Appointments.Api.Filters.Exceptions;
 using Appointments.Api.Filters.Exceptions.ProblemDetailsFactories;
-using Appointments.Api.Infrastructure.DependencyInjection;
+using Appointments.Api.Management.DependencyInjection;
 using Appointments.Api.Tenant.DependencyInjection;
 using Appointments.Assets.DependencyInjection;
 using Appointments.Core.DependencyInjection;
+using Appointments.Infrastructure.DependencyInjection;
 using Appointments.Jobs.DependencyInjection;
 using Appointments.Notifications.DependencyInjection;
 
@@ -18,11 +19,13 @@ builder.Services
     .AddControllers(config => config.Filters.Add(typeof(ExceptionFilter)))
     .AddConnectApi()
     .AddTenantApi()
-    .AddAssetsApi();
+    .AddAssetsApi()
+    .AddManagementApi();
 
 builder.Services.AddAuthorization(config => config
     .AddTenantApiPolicies()
-    .AddAssetsApiPolicies());
+    .AddAssetsApiPolicies()
+    .AddManagementApiPolicies());
 
 builder.Services
     .AddCore(builder.Configuration)

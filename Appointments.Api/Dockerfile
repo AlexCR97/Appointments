@@ -15,6 +15,7 @@ COPY ["Appointments.Api.Client/Appointments.Api.Client.csproj", "Appointments.Ap
 COPY ["Appointments.Api.Connect/Appointments.Api.Connect.csproj", "Appointments.Api.Connect/"]
 COPY ["Appointments.Api.Core/Appointments.Api.Core.csproj", "Appointments.Api.Core/"]
 COPY ["Appointments.Api.Infrastructure/Appointments.Api.Infrastructure.csproj", "Appointments.Api.Infrastructure/"]
+COPY ["Appointments.Api.Management/Appointments.Api.Management.csproj", "Appointments.Api.Management/"]
 COPY ["Appointments.Api.Tenant/Appointments.Api.Tenant.csproj", "Appointments.Api.Tenant/"]
 
 # common

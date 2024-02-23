@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Appointments.Jobs.Domain.Jobs;
+﻿namespace Appointments.Jobs.Domain.Jobs;
 
 public class LoginMethodConfirmationReminderJob : Job
 {

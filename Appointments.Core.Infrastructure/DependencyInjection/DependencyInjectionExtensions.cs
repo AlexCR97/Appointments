@@ -14,7 +14,6 @@ using Appointments.Core.Infrastructure.Mongo.Customers;
 using Appointments.Core.Infrastructure.Mongo.Services;
 using Appointments.Core.Infrastructure.Mongo.Tenants;
 using Appointments.Core.Infrastructure.Mongo.Users;
-using Appointments.Core.Infrastructure.Services.Events;
 using Appointments.Core.Infrastructure.Services.Geo;
 using Appointments.Core.Infrastructure.Services.Users;
 using Microsoft.Extensions.Configuration;
@@ -71,9 +70,6 @@ public static class DependencyInjectionExtensions
 
     private static IServiceCollection AddOtherServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Events
-        services.AddScoped<IEventProcessor, EventProcessor>();
-
         // Geo
         services.AddGeoService(configuration);
 

@@ -1,6 +1,6 @@
 ﻿using Appointments.Common.Domain;
 
-namespace Appointments.Jobs.Domain;
+namespace Appointments.Jobs.Domain.Executions;
 
 public class ExecutionLog : Entity
 {
@@ -14,7 +14,7 @@ public class ExecutionLog : Entity
     }
 
     public Guid ExecutionId { get; }
-    public Guid JobId {  get; }
+    public Guid JobId { get; }
     public Guid TriggerId { get; }
     public ExecutionLogLevel Level { get; }
     public string Message { get; }

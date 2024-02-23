@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Appointments.Assets.Infrastructure\Appointments.Assets.Infrastructure.csproj" />
+    <ProjectReference Include="..\Appointments.Core.Infrastructure\Appointments.Core.Infrastructure.csproj" />
     <ProjectReference Include="..\Appointments.Jobs.Infrastructure\Appointments.Jobs.Infrastructure.csproj" />
     <ProjectReference Include="..\Appointments.Notifications.Infrastructure\Appointments.Notifications.Infrastructure.csproj" />
   </ItemGroup>

@@ -37,6 +37,7 @@ public static class DependencyInjectionExtensions
     private static IServiceCollection AddMongo(this IServiceCollection services)
     {
         services
+            .AddMongoRepository<ExecutionDocument>(ExecutionDocument.CollectionName)
             .AddMongoRepository<JobDocument>(JobDocument.CollectionName);
 
         services

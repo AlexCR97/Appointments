@@ -1,7 +1,7 @@
 ﻿using Appointments.Common.Domain;
 using Appointments.Jobs.Application.UseCases.Jobs;
 using Appointments.Jobs.Application.UseCases.Triggers;
-using Appointments.Jobs.Domain;
+using Appointments.Jobs.Domain.Executions;
 using Appointments.Jobs.Domain.Triggers;
 using FluentValidation;
 using MediatR;

@@ -1,38 +1,74 @@
-﻿using Appointments.Common.Domain.Models;
+﻿using Appointments.Common.Domain.Exceptions;
+using Appointments.Common.Domain.Models;
+using Appointments.Common.MongoClient.Abstractions;
 using Appointments.Jobs.Application.UseCases.Executions;
-using Appointments.Jobs.Domain;
+using Appointments.Jobs.Domain.Executions;
 
 namespace Appointments.Jobs.Infrastructure.Mongo.Executions;
 
 internal sealed class ExecutionRepository : IExecutionRepository
 {
-    public Task<Execution> CreateAsync(Execution entity)
+    private readonly IMongoRepository<ExecutionDocument> _repository;
+
+    public ExecutionRepository(IMongoRepository<ExecutionDocument> repository)
     {
-        throw new NotImplementedException();
+        _repository = repository;
     }
 
-    public Task DeleteAsync(Guid id)
+    public async Task<Execution> CreateAsync(Execution entity)
     {
-        throw new NotImplementedException();
+        var document = ExecutionDocument.From(entity);
+        var createdDocument = await _repository.CreateAsync(document);
+        return createdDocument.ToEntity();
     }
 
-    public Task<PagedResult<Execution>> FindAsync(int pageIndex, int pageSize, string? sort, string? filter)
+    public async Task DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        await _repository.DeleteAsync(id);
     }
 
-    public Task<Execution> GetAsync(Guid id)
+    public async Task<PagedResult<Execution>> FindAsync(int pageIndex, int pageSize, string? sort, string? filter)
     {
-        throw new NotImplementedException();
+        var documents = await _repository.GetAsync(
+            pageIndex,
+            pageSize,
+            sort: sort,
+            filter: filter);
+
+        return new PagedResult<Execution>(
+            pageIndex,
+            pageSize,
+            documents.TotalCount,
+            documents.Results
+                .Select(x => x.ToEntity())
+                .ToList());
     }
 
-    public Task<Execution?> GetOrDefaultAsync(Guid id)
+    public async Task<Execution> GetAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var document = await _repository.GetOneAsync(id);
+            return document.ToEntity();
+        }
+        catch (Exception ex)
+        {
+            if (ex is Common.MongoClient.Exceptions.NotFoundException<ExecutionDocument>)
+                throw new NotFoundException(nameof(Execution), "ID", id.ToString());
+
+            throw;
+        }
     }
 
-    public Task UpdateAsync(Execution entity)
+    public async Task<Execution?> GetOrDefaultAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var document = await _repository.GetOneOrDefaultAsync(id);
+        return document?.ToEntity();
+    }
+
+    public async Task UpdateAsync(Execution entity)
+    {
+        var document = ExecutionDocument.From(entity);
+        await _repository.UpdateAsync(document);
     }
 }

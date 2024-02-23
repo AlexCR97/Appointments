@@ -4,7 +4,7 @@ using Appointments.Jobs.Domain.Jobs;
 using Appointments.Jobs.Domain.Triggers;
 using System.Collections.Immutable;
 
-namespace Appointments.Jobs.Domain;
+namespace Appointments.Jobs.Domain.Executions;
 
 public class Execution : Entity
 {
@@ -19,7 +19,7 @@ public class Execution : Entity
     }
 
     public Job JobSnapshot { get; }
-    
+
     public Trigger TriggerSnapshot { get; }
 
     public IImmutableStack<ExecutionStatusAudit> StatusAudit => ImmutableStack.CreateRange(_statusAudit);
