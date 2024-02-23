@@ -20,6 +20,11 @@ public enum ExecutionStatus
     Running,
 
     /// <summary>
+    /// The execution was requested to be cancelled.
+    /// </summary>
+    CancellationRequested,
+
+    /// <summary>
     /// The execution was stopped before completion, either manually or due to external factors.
     /// </summary>
     Cancelled,
@@ -59,6 +64,7 @@ internal static class ExecutionStatusStateMachine
         [ExecutionStatus.Unknown] = ImmutableHashSet.CreateRange(new ExecutionStatus[]
         {
             ExecutionStatus.Queued,
+            ExecutionStatus.CancellationRequested,
             ExecutionStatus.Cancelled,
             ExecutionStatus.TimedOut,
             ExecutionStatus.Aborted,
@@ -66,11 +72,13 @@ internal static class ExecutionStatusStateMachine
         [ExecutionStatus.Queued] = ImmutableHashSet.CreateRange(new ExecutionStatus[]
         {
             ExecutionStatus.Running,
+            ExecutionStatus.CancellationRequested,
             ExecutionStatus.Cancelled,
             ExecutionStatus.Aborted,
         }),
         [ExecutionStatus.Running] = ImmutableHashSet.CreateRange(new ExecutionStatus[]
         {
+            ExecutionStatus.CancellationRequested,
             ExecutionStatus.Cancelled,
             ExecutionStatus.TimedOut,
             ExecutionStatus.Aborted,
@@ -78,6 +86,7 @@ internal static class ExecutionStatusStateMachine
             ExecutionStatus.Completed,
             ExecutionStatus.Succeeded,
         }),
+        [ExecutionStatus.CancellationRequested] = ImmutableHashSet<ExecutionStatus>.Empty,
         [ExecutionStatus.Cancelled] = ImmutableHashSet<ExecutionStatus>.Empty,
         [ExecutionStatus.TimedOut] = ImmutableHashSet<ExecutionStatus>.Empty,
         [ExecutionStatus.Aborted] = ImmutableHashSet<ExecutionStatus>.Empty,

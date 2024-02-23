@@ -68,7 +68,7 @@ internal abstract class JobExecution : IJob
         Execution execution,
         ExecutionStatus status)
     {
-        execution.SetStatus(status);
+        execution.SetStatus(typeof(JobExecution).FullName ?? typeof(JobExecution).Name, status);
         await _executionRepository.UpdateAsync(execution);
         await _eventProcessor.ProcessAsync(execution.Events);
     }

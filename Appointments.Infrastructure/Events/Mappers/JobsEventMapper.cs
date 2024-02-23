@@ -8,6 +8,16 @@ internal sealed class JobsEventMapper : IEventMapper
 {
     public object ToIntegrationEvent(object domainEvent)
     {
+        if (domainEvent is Jobs.Domain.Executions.ExecutionCancellationRequestedEvent executionCancellationRequested)
+        {
+            return new ExecutionCancellationRequestedEvent(
+                executionCancellationRequested.Id,
+                executionCancellationRequested.OccurredAt,
+                executionCancellationRequested.ExecutionId,
+                executionCancellationRequested.JobSnapshot.ToDto(),
+                executionCancellationRequested.TriggerSnapshot.ToDto());
+        }
+
         if (domainEvent is Jobs.Domain.Executions.ExecutionQueuedEvent executionQueuedEvent)
         {
             return new ExecutionQueuedEvent(

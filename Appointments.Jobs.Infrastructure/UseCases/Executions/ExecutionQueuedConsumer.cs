@@ -1,4 +1,5 @@
-﻿using Appointments.Jobs.Domain.Jobs;
+﻿using Appointments.Jobs.Domain.Executions;
+using Appointments.Jobs.Domain.Jobs;
 using Appointments.Jobs.Domain.Triggers;
 using Appointments.Jobs.Infrastructure.Jobs;
 using Appointments.Jobs.Infrastructure.UseCases.Jobs;
@@ -25,10 +26,10 @@ internal sealed class ExecutionQueuedConsumer : IConsumer<ExecutionQueuedEvent>
         var jobDetail = CreateJobDetail(jobSnapshot, context.Message.ExecutionId);
 
         var triggerSnapshot = context.Message.TriggerSnapshot.ToEntity();
-        var quartzTrigger = CreateTrigger(triggerSnapshot);
+        var quartzTrigger = CreateTrigger(triggerSnapshot, jobSnapshot);
 
-        var _scheduler = await _schedulerFactory.GetScheduler(context.CancellationToken);
-        await _scheduler.ScheduleJob(jobDetail, quartzTrigger);
+        var scheduler = await _schedulerFactory.GetScheduler(context.CancellationToken);
+        await scheduler.ScheduleJob(jobDetail, quartzTrigger);
     }
 
     private static IJobDetail CreateJobDetail(Job job, Guid executionId)
@@ -40,7 +41,7 @@ internal sealed class ExecutionQueuedConsumer : IConsumer<ExecutionQueuedEvent>
         {
             return JobBuilder
                 .Create<LoginMethodConfirmationReminderQuartzJob>()
-                .WithIdentity(job.Name.Value, job.Group.Value)
+                .WithIdentity(JobKeyFactory.CreateJobKey(job))
                 .UsingJobData(JobDataMapKeys.ExecutionId, executionId)
                 .Build();
         }
@@ -48,13 +49,13 @@ internal sealed class ExecutionQueuedConsumer : IConsumer<ExecutionQueuedEvent>
         throw new UnsupportedJobTypeException(JobType.Unknown);
     }
 
-    private static ITrigger CreateTrigger(Trigger trigger)
+    private static ITrigger CreateTrigger(Trigger trigger, Job job)
     {
         if (trigger.Type == TriggerType.FireAndForget)
         {
             return TriggerBuilder
                 .Create()
-                .WithIdentity(trigger.Name.Value)
+                .WithIdentity(TriggerKeyFactory.CreateTriggerKey(trigger, job))
                 .StartNow()
                 .Build();
         }

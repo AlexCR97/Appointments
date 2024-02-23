@@ -50,6 +50,7 @@ public static class DependencyInjectionExtensions
 
     public static IBusRegistrationConfigurator AddJobsInfrastructure(this IBusRegistrationConfigurator config)
     {
+        config.AddConsumer<ExecutionCancellationRequestedConsumer>();
         config.AddConsumer<ExecutionQueuedConsumer>();
         return config;
     }

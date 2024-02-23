@@ -39,4 +39,18 @@ public class JobsController : ControllerBase
         var response = await _sender.Send(applicationRequest);
         return new ExecutionQueuedResponse(response.ExecutionId);
     }
+
+    [HttpPost("{jobId}/executions/{executionId}/cancel", Name = nameof(CancelExecution))]
+    public async Task<AcceptedResult> CancelExecution(
+        [FromRoute] Guid jobId,
+        [FromRoute] Guid executionId)
+    {
+        // TODO Verify that the execution belongs to the job
+
+        await _sender.Send(new Jobs.Application.UseCases.Executions.CancelExecutionRequest(
+            "Unknown",
+            executionId));
+
+        return Accepted();
+    }
 }

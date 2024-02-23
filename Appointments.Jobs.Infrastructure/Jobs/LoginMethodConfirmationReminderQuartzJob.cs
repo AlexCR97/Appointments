@@ -13,7 +13,7 @@ internal sealed class LoginMethodConfirmationReminderQuartzJob : JobExecution
     public override async Task<JobExecutionResult> ExecuteAsync(ExecutionContext context, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        await Task.Delay(TimeSpan.FromSeconds(3), cancellationToken);
+        await Task.Delay(TimeSpan.FromSeconds(60), cancellationToken);
         return JobExecutionResult.Succeeded;
     }
 }

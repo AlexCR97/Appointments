@@ -34,16 +34,29 @@ public class Execution : Entity
     public DateTime? OccurredAt => LastAuditOrDefault?.OccurredAt;
     private ExecutionStatusAudit? LastAuditOrDefault => _statusAudit.TryPeek(out var audit) ? audit : null;
 
-    public void SetStatus(ExecutionStatus status)
+    public void RequestCancellation(string updatedBy)
+    {
+        SetStatus(updatedBy, ExecutionStatus.CancellationRequested);
+
+        AddEvent(new ExecutionCancellationRequestedEvent(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
+            Id,
+            JobSnapshot,
+            TriggerSnapshot));
+    }
+
+    public void SetStatus(string updatedBy, ExecutionStatus status)
     {
         if (!Status.CanTransitionTo(status))
             throw new DomainException("InvalidExecutionStatusTransition", $"Cannot transition from {Status} to {status}");
 
+        UpdatedAt = DateTime.UtcNow;
+        UpdatedBy = updatedBy;
+
         _statusAudit.Push(new ExecutionStatusAudit(
             status,
-            DateTime.UtcNow));
-
-        // TODO Add event
+            UpdatedAt.Value));
     }
 
     public static Execution Enqueue(
@@ -65,7 +78,6 @@ public class Execution : Entity
                 ExecutionStatus.Queued,
                 DateTime.UtcNow)));
 
-        // TODO Add Event
         execution.AddEvent(new ExecutionQueuedEvent(
             Guid.NewGuid(),
             DateTime.UtcNow,
@@ -81,12 +93,3 @@ public class Execution : Entity
 public readonly record struct ExecutionStatusAudit(
     ExecutionStatus Status,
     DateTime OccurredAt);
-
-public sealed record ExecutionQueuedEvent(
-    Guid Id,
-    DateTime OccurredAt,
-    Guid ExecutionId,
-    Job JobSnapshot,
-    Trigger TriggerSnapshot,
-    TimeSpan? Timeout)
-    : IDomainEvent;
