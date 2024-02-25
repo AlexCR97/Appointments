@@ -18,6 +18,21 @@ public class ExecutionLog : Entity
     public Guid TriggerId { get; }
     public ExecutionLogLevel Level { get; }
     public string Message { get; }
+
+    public static ExecutionLog Create(string createdBy, Guid executionId, Guid jobId, Guid triggerId, ExecutionLogLevel level, string message)
+    {
+        return new ExecutionLog(
+            Guid.NewGuid(),
+            DateTime.UtcNow,
+            createdBy,
+            null,
+            null,
+            executionId,
+            jobId,
+            triggerId,
+            level,
+            message);
+    }
 }
 
 public enum ExecutionLogLevel

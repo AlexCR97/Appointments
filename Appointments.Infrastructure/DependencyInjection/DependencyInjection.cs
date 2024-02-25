@@ -1,5 +1,6 @@
 ﻿using Appointments.Common.Domain;
 using Appointments.Infrastructure.Events;
+using Elastic.Clients.Elasticsearch;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,9 +12,20 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         return services
+            .AddElasticsearchClient(configuration)
             .AddModules(configuration)
             .AddRabbitMq(configuration)
             .AddScoped<IEventProcessor, EventProcessor>();
+    }
+
+    private static IServiceCollection AddElasticsearchClient(this IServiceCollection services, IConfiguration configuration)
+    {
+        return services.AddSingleton((_) =>
+        {
+            var uri = configuration.GetRequiredSection("Elasticsearch:Uri").Value!;
+            var settings = new ElasticsearchClientSettings(new Uri(uri));
+            return new ElasticsearchClient(settings);
+        });
     }
 
     private static IServiceCollection AddModules(this IServiceCollection services, IConfiguration configuration)

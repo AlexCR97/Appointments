@@ -2,6 +2,7 @@ using Appointments.Common.MongoClient.DependencyInjection;
 using Appointments.Jobs.Application.UseCases.Executions;
 using Appointments.Jobs.Application.UseCases.Jobs;
 using Appointments.Jobs.Application.UseCases.Triggers;
+using Appointments.Jobs.Infrastructure.Elasticsearch.Executions;
 using Appointments.Jobs.Infrastructure.Mongo.Executions;
 using Appointments.Jobs.Infrastructure.Mongo.Jobs;
 using Appointments.Jobs.Infrastructure.Mongo.Triggers;
@@ -18,6 +19,8 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         return services
+            .AddSingleton<ExecutionLoggerFactory>()
+            .AddSingleton<IExecutionLogRepository, ExecutionLogRepository>()
             .AddCustomQuartz()
             .AddMongo();
     }

@@ -1,4 +1,6 @@
 ﻿using Appointments.Api.Management.Models;
+using Appointments.Common.Application;
+using Appointments.Common.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,5 +54,26 @@ public class JobsController : ControllerBase
             executionId));
 
         return Accepted();
+    }
+
+    [HttpGet("{jobId}/executions/{executionId}/logs", Name = nameof(FindExecutionLogs))]
+    public async Task<PagedResult<ExecutionLogResponse>> FindExecutionLogs(
+        [FromRoute] Guid jobId,
+        [FromRoute] Guid executionId,
+        [FromQuery] int pageIndex = 0,
+        [FromQuery] int pageSize = FindRequest.PageSize.Default,
+        [FromQuery] string? sort = null,
+        [FromQuery] string? filter = null)
+    {
+        // TODO Verify that the execution belongs to the job
+
+        var pagedResult = await _sender.Send(new Jobs.Application.UseCases.Executions.FindExecutionLogsRequest(
+            pageIndex,
+            pageSize,
+            sort,
+            filter,
+            executionId));
+
+        return pagedResult.Map(ExecutionLogResponse.From);
     }
 }

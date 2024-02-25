@@ -11,20 +11,31 @@ services:
       - "5000:5000"
       - "5001:5001"
     depends_on:
-      - Appointments.RabbitMQ
+      - Appointments.Elasticsearch
       - Appointments.MongoDB
+      - Appointments.RabbitMQ
       - Appointments.Redis
 
-  Appointments.RabbitMQ:
-    image: rabbitmq:3.12.12-management
+  Appointments.Elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
     ports:
-      - 5672:5672
-      - 15672:15672
+      - 9200:9200
     networks:
       - Appointments.Network
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      - ES_SETTING_XPACK_SECURITY_ENABLED=false
+      - ES_SETTING_XPACK_SECURITY_ENROLLMENT_ENABLED=false
+      # - ES_SETTING_CLUSTER_NAME=elasticsearch
+      - ES_SETTING_DISCOVERY_TYPE=single-node
+      - ES_SETTING_BOOTSTRAP_MEMORY__LOCK=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - Appointments.Volumes.Elasticsearch:/usr/share/elasticsearch/data
+    mem_limit: 1GB
+    ulimits:
+     memlock:
+       soft: -1
+       hard: -1
 
   Appointments.MongoDB:
     image: mongo:6.0.5
@@ -35,13 +46,24 @@ services:
     volumes:
       - Appointments.Volumes.Mongo:/data/db
   
+  Appointments.RabbitMQ:
+    image: rabbitmq:3.12.12-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - Appointments.Network
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+  
   Appointments.Redis:
     image: redis:6.2.0-alpine
     ports:
       - 6379:6379
     networks:
       - Appointments.Network
-    volumes: 
+    volumes:
       - Appointments.Volumes.Redis:/data
 
   Appointments.Seq:
@@ -59,6 +81,8 @@ networks:
     name: Appointments.Network
 
 volumes:
+  Appointments.Volumes.Elasticsearch:
+    driver: local
   Appointments.Volumes.Mongo:
     driver: local
   Appointments.Volumes.Redis:
