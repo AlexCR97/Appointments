@@ -6,4 +6,9 @@ public static class EnumerableExtensions
     {
         return string.Join(separator, source);
     }
+
+    public static string JoinToString<T>(this IEnumerable<T> source, string separator)
+    {
+        return string.Join(separator, source);
+    }
 }

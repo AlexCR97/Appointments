@@ -14,6 +14,8 @@ COPY ["Appointments.Api.Assets/Appointments.Api.Assets.csproj", "Appointments.Ap
 COPY ["Appointments.Api.Client/Appointments.Api.Client.csproj", "Appointments.Api.Client/"]
 COPY ["Appointments.Api.Connect/Appointments.Api.Connect.csproj", "Appointments.Api.Connect/"]
 COPY ["Appointments.Api.Core/Appointments.Api.Core.csproj", "Appointments.Api.Core/"]
+COPY ["Appointments.Api.Infrastructure/Appointments.Api.Infrastructure.csproj", "Appointments.Api.Infrastructure/"]
+COPY ["Appointments.Api.Management/Appointments.Api.Management.csproj", "Appointments.Api.Management/"]
 COPY ["Appointments.Api.Tenant/Appointments.Api.Tenant.csproj", "Appointments.Api.Tenant/"]
 
 # common
@@ -36,6 +38,12 @@ COPY ["Appointments.Core.Application/Appointments.Core.Application.csproj", "App
 COPY ["Appointments.Core.Contracts/Appointments.Core.Contracts.csproj", "Appointments.Core.Contracts/"]
 COPY ["Appointments.Core.Domain/Appointments.Core.Domain.csproj", "Appointments.Core.Domain/"]
 COPY ["Appointments.Core.Infrastructure/Appointments.Core.Infrastructure.csproj", "Appointments.Core.Infrastructure/"]
+
+# modules / jobs
+COPY ["Appointments.Jobs/Appointments.Jobs.csproj", "Appointments.Jobs/"]
+COPY ["Appointments.Jobs.Application/Appointments.Jobs.Application.csproj", "Appointments.Jobs.Application/"]
+COPY ["Appointments.Jobs.Domain/Appointments.Jobs.Domain.csproj", "Appointments.Jobs.Domain/"]
+COPY ["Appointments.Jobs.Infrastructure/Appointments.Jobs.Infrastructure.csproj", "Appointments.Jobs.Infrastructure/"]
 
 # modules / notifications
 COPY ["Appointments.Notifications/Appointments.Notifications.csproj", "Appointments.Notifications/"]
