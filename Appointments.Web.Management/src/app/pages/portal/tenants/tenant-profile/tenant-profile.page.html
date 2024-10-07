@@ -1,0 +1,18 @@
+<app-page-header
+  [title]="tenant.name"
+  [subtitle]="tenant.id"
+  [menuItems]="pageHeaderMenuItems"
+/>
+
+<div class="container p-5">
+  <div class="mb-4">
+    <label class="form-label" for="nameInput"> Name </label>
+    <input
+      class="form-control"
+      id="nameInput"
+      type="text"
+      readonly
+      [value]="tenant.name"
+    />
+  </div>
+</div>

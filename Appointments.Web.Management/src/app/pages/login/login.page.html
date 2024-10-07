@@ -1,0 +1,30 @@
+<div class="container py-5">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-4">
+      <label class="form-label" for="emailInput"> Email </label>
+      <input
+        class="form-control"
+        formControlName="email"
+        id="emailInput"
+        type="email"
+        placeholder="example@domain.com"
+      />
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label" for="passwordInput">Password</label>
+      <input
+        id="passwordInput"
+        formControlName="password"
+        type="password"
+        class="form-control"
+      />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Login</button>
+
+    @if(form.dirty && form.invalid) {
+    <p>Errors: {{form.errors}}</p>
+    }
+  </form>
+</div>

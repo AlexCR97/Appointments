@@ -1,0 +1,22 @@
+<header class="border-bottom d-flex align-items-center w-100 px-3 py-2">
+  <div>
+    <p class="fw-bold m-0">{{ title }}</p>
+
+    @if (subtitle) {
+    <span class="text-secondary fs-8">{{ subtitle }}</span>
+    }
+  </div>
+
+  <div class="ms-auto d-flex">
+    @for (menuItem of menuItems; track menuItem.id) {
+    <app-button
+      class="ms-2"
+      [label]="menuItem.label"
+      [routerLink]="getRouterLink(menuItem)"
+      [type]="menuItem.type"
+      [variant]="menuItem.variant"
+      (click)="onButtonClick(menuItem)"
+    />
+    }
+  </div>
+</header>

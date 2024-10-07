@@ -1,0 +1,43 @@
+<div class="d-flex flex-column" style="width: 100vw; height: 100vh">
+  <header class="border-bottom">
+    <span>header</span>
+  </header>
+
+  <div class="w-100 h-100 d-flex overflow-hidden">
+    <!-- <aside class="h-100 border-end overflow-y-auto" style="width: 300px">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item list-group-item-action" role="button">
+          Appointments
+        </li>
+        <li class="list-group-item list-group-item-action" role="button">
+          Jobs
+        </li>
+        <li class="list-group-item list-group-item-action" role="button">
+          Services
+        </li>
+        <li
+          class="list-group-item list-group-item-action"
+          role="button"
+          routerLink="tenants"
+        >
+          Tenants
+        </li>
+        <li
+          class="list-group-item list-group-item-action"
+          role="button"
+          routerLink="users"
+        >
+          Users
+        </li>
+      </ul>
+    </aside> -->
+
+    <main class="w-100 h-100 overflow-y-auto">
+      <router-outlet />
+    </main>
+  </div>
+
+  <footer class="border-top">
+    <span>footer</span>
+  </footer>
+</div>

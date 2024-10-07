@@ -199,10 +199,10 @@
 
 <div class="p-4">
 	<Grid
-		columns={gridColumns}
+    server={gridServer}
+    columns={gridColumns}
+    search={gridSearch}
+    sort={gridSort}
 		pagination={gridPagination}
-		search={gridSearch}
-		server={gridServer}
-		sort={gridSort}
 	/>
 </div>

@@ -1,0 +1,17 @@
+<app-page-header title="New Tenant" />
+
+<div class="container p-5">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-4">
+      <label class="form-label" for="nameInput"> Name </label>
+      <input
+        class="form-control"
+        formControlName="name"
+        id="nameInput"
+        type="text"
+      />
+    </div>
+
+    <app-button label="Create Tenant +" type="submit" variant="primary" />
+  </form>
+</div>
